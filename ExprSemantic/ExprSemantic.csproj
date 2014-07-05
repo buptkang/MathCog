@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -39,8 +40,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="BuiltInEngine.cs" />
+    <Compile Include="Engine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ExprMathML\ExprMathML.fsproj">
+      <Project>{c647dee7-18a0-4f6e-809b-ba02d474aba5}</Project>
+      <Name>ExprMathML</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ExprText\ExprText.fsproj">
+      <Project>{75819ff3-51e9-4230-9248-e15526726c3b}</Project>
+      <Name>ExprText</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Expr\Expr.csproj">
+      <Project>{eff3e46c-89cb-4e15-84d3-bf7ce0d72b4b}</Project>
+      <Name>Expr</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Unicode\Unicode.csproj">
+      <Project>{bef41126-6dac-4589-8da5-21dd9fb06911}</Project>
+      <Name>Unicode</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
