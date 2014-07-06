@@ -68,6 +68,11 @@
     <Content Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Unicode\Unicode.csproj">
+      <Name>Unicode</Name>
+      <Project>{bef41126-6dac-4589-8da5-21dd9fb06911}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <Reference Include="FSharp.PowerPack, Version=4.0.0.1, Culture=neutral, PublicKeyToken=f536804aa0eb945b" />
     <Reference Include="FSharp.PowerPack.Compatibility, Version=4.0.0.1, Culture=neutral, PublicKeyToken=f536804aa0eb945b" />
     <Reference Include="mscorlib" />
@@ -80,11 +85,6 @@
     <ProjectReference Include="..\Expr\Expr.csproj">
       <Name>Expr</Name>
       <Project>{eff3e46c-89cb-4e15-84d3-bf7ce0d72b4b}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Unicode\Unicode.csproj">
-      <Name>Unicode</Name>
-      <Project>{bef41126-6dac-4589-8da5-21dd9fb06911}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

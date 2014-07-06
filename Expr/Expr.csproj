@@ -48,9 +48,6 @@
     <Compile Include="Syntax.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Unicode\Unicode.csproj">
       <Project>{bef41126-6dac-4589-8da5-21dd9fb06911}</Project>
       <Name>Unicode</Name>

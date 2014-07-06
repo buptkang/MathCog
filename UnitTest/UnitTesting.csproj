@@ -67,10 +67,6 @@
       <Project>{eff3e46c-89cb-4e15-84d3-bf7ce0d72b4b}</Project>
       <Name>Expr</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Unicode\Unicode.csproj">
-      <Project>{bef41126-6dac-4589-8da5-21dd9fb06911}</Project>
-      <Name>Unicode</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
