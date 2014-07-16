@@ -56,16 +56,27 @@
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <None Include="TextParser.fsy" />
+    <None Include="TextLexer.fsl" />
+    <Content Include="ReadMe.txt" />
     <Compile Include="TextParser.fsi" />
     <Compile Include="TextParser.fs" />
-    <None Include="TextLexer.fsl" />
-    <Compile Include="TextLexer.fsi" />
     <Compile Include="TextLexer.fs" />
     <Compile Include="Text.fsi" />
     <Compile Include="Text.fs" />
-    <Content Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Unicode\Unicode.csproj">

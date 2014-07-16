@@ -3,13 +3,14 @@ module starPadSDK.MathExpr.TextInternals.Lexer
 
 open System
 open starPadSDK.MathExpr.TextInternals.Parser
+open Lexing
 }
 
 let whitespace = [' ' '\t']
 
 rule token = parse
-    | ['0'-'9']+'.'['0'-'9']*(['e' 'E']['-' '+']?['0'-'9']+)? { DOUBLE(Float.of_string (Lexing.lexeme lexbuf)) }
-    | ['0'-'9']+ { INTEGER(Lexing.lexeme lexbuf) }
+    | ['0'-'9']+'.'['0'-'9']*(['e' 'E']['-' '+']?['0'-'9']+)? { DOUBLE(Float.of_string (LexBuffer<_>.LexemeString lexbuf)) }
+    | ['0'-'9']+ { INTEGER(LexBuffer<_>.LexemeString lexbuf) }
     | "infinit2" { DOUBLE(Double.PositiveInfinity) }
     | "NaN" { DOUBLE(Double.NaN) }
     | "<=" {LE} | ">=" {GE} | "/=" {NE} | "!=" {NE}
@@ -26,12 +27,12 @@ rule token = parse
     | "GroupedLetterSym" { GROUPEDLETTERSYM }
     | "WordSym" { WORDSYM }
     | "NULL" { NULL }
-    | "i"|"e"|"pi"|"infinity"|"naturals"|"integers"|"rationals"|"reals"|"complexes"|"del"|"re"|"im"|"arg"|"magnitude"|"ln"|"log"|"limit"|"integral"|"summation"|"differentiald"|"partiald"|"root"|"sin"|"cos"|"tan"|"sec"|"csc"|"cot"|"asin"|"acos"|"atan"|"asec"|"acsc"|"acot"|"sinh"|"cosh"|"tanh"|"sech"|"csch"|"coth"|"asinh"|"acosh"|"atanh"|"asech"|"acsch"|"acoth"|"plus"|"minus"|"plusminus"|"minusplus"|"times"|"divide"|"mod"|"power"|"factorial"|"assignment"|"definition"|"equals"|"greaterthan"|"lessthan"|"greaterequals"|"lessequals"|"notequals"|"True"|"False"|"lognot"|"logand"|"logor"|"floor"|"ceiling"|"dot"|"cross"|"index"|"subscript"|"elementof"|"subsetof"|"supersetof"|"subseteq"|"superseteq"|"setexplicit"|"setdef" { WKS(Lexing.lexeme lexbuf) }
+    | "i"|"e"|"pi"|"infinity"|"naturals"|"integers"|"rationals"|"reals"|"complexes"|"del"|"re"|"im"|"arg"|"magnitude"|"ln"|"log"|"limit"|"integral"|"summation"|"differentiald"|"partiald"|"root"|"sin"|"cos"|"tan"|"sec"|"csc"|"cot"|"asin"|"acos"|"atan"|"asec"|"acsc"|"acot"|"sinh"|"cosh"|"tanh"|"sech"|"csch"|"coth"|"asinh"|"acosh"|"atanh"|"asech"|"acsch"|"acoth"|"plus"|"minus"|"plusminus"|"minusplus"|"times"|"divide"|"mod"|"power"|"factorial"|"assignment"|"definition"|"equals"|"greaterthan"|"lessthan"|"greaterequals"|"lessequals"|"notequals"|"True"|"False"|"lognot"|"logand"|"logor"|"floor"|"ceiling"|"dot"|"cross"|"index"|"subscript"|"elementof"|"subsetof"|"supersetof"|"subseteq"|"superseteq"|"setexplicit"|"setdef" { WKS(LexBuffer<_>.LexemeString lexbuf) }
     | "\"" { ID(string lexbuf.StartPos "" lexbuf) }
-    | [^'[' ']' '_' '<' '>' ',' '(' ')' '{' '=' '}' '!' '+' '-' '*' '/' '^' ' ' '\t' '\n' '!' '|' '\"']+ { ID(Lexing.lexeme lexbuf) }
+    | [^'[' ']' '_' '<' '>' ',' '(' ')' '{' '=' '}' '!' '+' '-' '*' '/' '^' ' ' '\t' '\n' '!' '|' '\"']+ { ID(LexBuffer<_>.LexemeString lexbuf) }
     | eof { EOF }
 and string pos s = parse
-    | "\\" ['"' '\\'] { let s' = s + (match Lexing.lexeme lexbuf with
+    | "\\" ['"' '\\'] { let s' = s + (match LexBuffer<_>.LexemeString lexbuf with
                                       | "\\\"" -> "\""
                                       | "\\\\" -> "\\"
                                       | _ -> "") in
@@ -40,7 +41,7 @@ and string pos s = parse
     | "\n" { lexbuf.EndPos <- lexbuf.EndPos.NextLine;
              string pos (s + "\n") lexbuf }
     | eof { failwithf "end of input in string started at or near %A" pos }
-    | _ { string pos (s + (Lexing.lexeme lexbuf)) lexbuf }
+    | _ { string pos (s + (LexBuffer<_>.LexemeString lexbuf)) lexbuf }
 
 {
 }

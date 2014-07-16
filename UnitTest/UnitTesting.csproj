@@ -55,10 +55,6 @@
       <Project>{c647dee7-18a0-4f6e-809b-ba02d474aba5}</Project>
       <Name>ExprMathML</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ExprSemantic\ExprSemantic.csproj">
-      <Project>{71ed2833-ddd7-43d4-8bdf-23fbb83d000c}</Project>
-      <Name>ExprSemantic</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ExprText\ExprText.fsproj">
       <Project>{75819ff3-51e9-4230-9248-e15526726c3b}</Project>
       <Name>ExprText</Name>

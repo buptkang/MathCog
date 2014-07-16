@@ -54,19 +54,19 @@ namespace starPadSDK.MathExpr {
         public virtual bool Exists { get { return true; } }
 
 		private static Engine[] _engines;
-		public static Engine[] Engines { get { return _engines; } }
+		//public static Engine[] Engines { get { return _engines; } }
 		private static Engine _current;
 		public static Engine Current { 
 			get { return _current; }
             set { _current.Deactivate(); _current = value; _current.Activate(); }
 		}
         private static Stack<Engine> _engineStack = new Stack<Engine>();
-        public static void PushEngine(Engine e) {
+        private static void PushEngine(Engine e) {
             _engineStack.Push(_current);
             _current = e;
             _current.Activate();
         }
-        public static void PopEngine() {
+        private static void PopEngine() {
             if(_engineStack.Count != 0) {
                 _current.Deactivate();
                 _current = _engineStack.Pop();

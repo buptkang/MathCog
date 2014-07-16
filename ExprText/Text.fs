@@ -179,9 +179,9 @@ type public Text() =
     //------------------------
     //[<OverloadID("string")>]
     static member Convert(s:string) =
-        let lexbuf = Lexing.from_string s
+        let lexbuf = Lexing.LexBuffer<_>.FromString s
         try
             Parser.expr Lexer.token lexbuf
         with e ->
             let pos = lexbuf.EndPos
-            raise(new TextParseException(pos.Line, pos.AbsoluteOffset, pos.Column, Lexing.lexeme(*_utf8*) lexbuf, e))
+            raise(new TextParseException(pos.Line, pos.AbsoluteOffset, pos.Column, s, e))
