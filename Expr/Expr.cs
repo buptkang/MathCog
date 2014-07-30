@@ -730,7 +730,9 @@ namespace starPadSDK.MathExpr
         index, /* takes thing to be indexed then a one-dimensional array of however many indices -- ***NOTE*** that the indices here are 1-based even though indices from c# into the array are 0-based. */
         subscript, /* takes object and then its subscript */
         elementof, subsetof, supersetof, subseteq, superseteq, setexplicit, setdef,
-        none
+        none,
+
+        point
     }
     [Serializable]
     public class WellKnownSym : Sym
@@ -854,6 +856,8 @@ namespace starPadSDK.MathExpr
         public static WellKnownSym setexplicit { get { return new WellKnownSym(WKSID.setexplicit); } }
         public static WellKnownSym setdef { get { return new WellKnownSym(WKSID.setdef); } }
         public static WellKnownSym none { get { return new WellKnownSym(WKSID.none); } }
+
+        public static WellKnownSym point { get { return new WellKnownSym(WKSID.point); } }
     }
     /// <summary>
 	/// Only some Engines, converters, etc will support this.

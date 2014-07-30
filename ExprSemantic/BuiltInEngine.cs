@@ -13,18 +13,14 @@ namespace starPadSDK.MathExpr {
         {
          //   Expr ret = Canonicalize(e);
          //   return Reformat(ret);
+            return null;
         }
 
         public override Expr _Approximate(Expr e)
         {
          //   Expr ret = Numericize(_Simplify(e));
          //   return Reformat(ret);
-        }
-
-    
-        public override Expr _Approximate(Expr e)
-        {
-
+            return null;
         }
 
         #region substitution
