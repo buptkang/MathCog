@@ -42,20 +42,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AGDoubleEntity.cs" />
-    <Compile Include="AGEntityTypes.cs" />
-    <Compile Include="AGExceptions.cs" />
     <Compile Include="AGKnowlegeReasoner.cs" />
-    <Compile Include="AGUnitEntityExpr.cs" />
-    <Compile Include="AGUtils.cs" />
-    <Compile Include="BuiltInEngine.cs" />
-    <Compile Include="Engine.cs" />
-    <Compile Include="AGUnitEntity.cs" />
+    <Compile Include="KnowledgeBase\AGShapeCreator.cs" />
+    <Compile Include="KnowledgeBase\AGShapeExprMatcher.cs" />
+    <Compile Include="KnowledgeBase\AGShapes.cs" />
+    <Compile Include="KnowledgeBase\AGShapeTypes.cs" />
+    <Compile Include="KnowledgeBase\AGShapeExprs.cs" />
+    <Compile Include="KnowledgeBase\AGTemplateExpressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tracer.cs" />
-    <Compile Include="TrsSubstitution.cs" />
-    <Compile Include="TrsDataStructures.cs" />
-    <Compile Include="TrsUnifier.cs" />
+    <Compile Include="KnowledgeRelation\Relations.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ExprMathML\ExprMathML.fsproj">
@@ -70,6 +65,10 @@
       <Project>{eff3e46c-89cb-4e15-84d3-bf7ce0d72b4b}</Project>
       <Name>Expr</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="KnowledgeUnification\" />
+    <Folder Include="QueryEngine\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

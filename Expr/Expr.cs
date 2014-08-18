@@ -732,7 +732,7 @@ namespace starPadSDK.MathExpr
         elementof, subsetof, supersetof, subseteq, superseteq, setexplicit, setdef,
         none,
 
-        point
+        point, comma
     }
     [Serializable]
     public class WellKnownSym : Sym
@@ -858,6 +858,7 @@ namespace starPadSDK.MathExpr
         public static WellKnownSym none { get { return new WellKnownSym(WKSID.none); } }
 
         public static WellKnownSym point { get { return new WellKnownSym(WKSID.point); } }
+        public static WellKnownSym comma { get { return new WellKnownSym(WKSID.comma); } }
     }
     /// <summary>
 	/// Only some Engines, converters, etc will support this.

@@ -17,47 +17,27 @@
 //  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //  ******************************************************************************/
 
-namespace ExprSemantic
+namespace ExprSemantic.KnowledgeBase
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
-    public class AGKnowlegeReasoner
+    public enum RepresentationType
     {
-        #region Singleton Pattern
+        Explicit, Implicit, Parametric
+    }
 
-        private AGKnowlegeReasoner()
-        {
-
-        }
-
-        private static AGKnowlegeReasoner _agKnowlegeReasoner;
-
-        public static AGKnowlegeReasoner Instance
-        {
-            get
-            {
-                if (_agKnowlegeReasoner == null)
-                {
-                    _agKnowlegeReasoner = new AGKnowlegeReasoner();
-                }
-                return _agKnowlegeReasoner;
-            }
-        }
-
-        #endregion
-/*
-        public Shape MatchShape(string repr)
-        {
-            return null;
-        }
-
-        public void Query(Shape shape, string query)
-        {
-            
-        }
-*/
+    public enum CoordinateSystemType
+    {
+        Cartesian, Polar
+    }
+ 
+    public enum ShapeType
+    {
+        Point = 0,
+        Line = 1,
+        QuadraticCurve = 2,
+        Circle = 3,
+        Ellipse = 4,
+        Parabola = 5,
+        Hyperbola = 6,
+        None = -1       
     }
 }

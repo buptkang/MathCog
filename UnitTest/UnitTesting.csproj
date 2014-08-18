@@ -49,9 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DoubleEntityUnitTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SingleEntityUnitTest.cs" />
     <Compile Include="TestProgram.cs" />
   </ItemGroup>
   <ItemGroup>

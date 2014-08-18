@@ -729,7 +729,7 @@ let _fsyacc_reductions ()  =    [|
                 (
                    (
 # 69 "C:\Bo\MathSemanticParser\ExprText\TextParser.fsy"
-                                                                      new CompositeExpr(WellKnownSym.point, [|_2;_4|]) :> Expr 
+                                                                      new CompositeExpr(WellKnownSym.comma, [|_2;_4|]) :> Expr 
                    )
 # 69 "C:\Bo\MathSemanticParser\ExprText\TextParser.fsy"
                  : 'primaryexpr));
