@@ -197,12 +197,13 @@ namespace starPadSDK.MathExpr
                 || this.Head == WellKnownSym.union
                 || this.Head == WellKnownSym.plus)
             {
-                this.Annotations["Force Parentheses"] = 1;
+                //this.Annotations["Force Parentheses"] = 1;
             }
         } // TJC: force parenthesis on intersections for readability
 
         public override bool Equals(Object obj)
         {
+            if (obj == null) return false;
             if (obj.GetType() != this.GetType()) return false;
             CompositeExpr ce = (CompositeExpr)obj;
             if (!_head.Equals(ce._head)) return false;

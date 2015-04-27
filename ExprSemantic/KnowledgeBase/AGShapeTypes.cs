@@ -17,7 +17,7 @@
 //  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //  ******************************************************************************/
 
-namespace ExprSemantic.KnowledgeBase
+namespace AGSemantic.KnowledgeBase
 {
     public enum RepresentationType
     {

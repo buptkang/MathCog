@@ -58,7 +58,8 @@ namespace starPadSDK.MathExpr
         public static explicit operator int( BigInt i )
         {
             if ( !i.CanBeInt() ) throw new ArithmeticException( "BigInt is too large to convert to an integer: " + i.ToString() );
-            return Convert.ToInt32( i.Num );
+            //return Convert.ToInt32( i.Num );
+            return (int) i.Num;
         }
         private static FSBigInt _maxlong = new FSBigInt( long.MaxValue );
         private static FSBigInt _minlong = new FSBigInt( long.MinValue );
@@ -73,7 +74,7 @@ namespace starPadSDK.MathExpr
         ///  WARNING: THIS WILL LOSE INFORMATION
         /// </summary>
         /// <returns></returns>
-        public double AsDouble() { return Convert.ToDouble( _num ); }
+        public double AsDouble() { return double.Parse( _num.ToString() ); }
 
         static private readonly BigInt _zero = (BigInt)0;
         static public BigInt Zero { get { return _zero; } }
