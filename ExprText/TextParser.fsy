@@ -57,7 +57,6 @@ nonpfxpowerexpr : postfixexpr	{ $1 }
 	| postfixexpr POW nonpfxpowerexpr	{ new CompositeExpr(WellKnownSym.power, [|$1; $3|]) :> Expr }
 
 prefixexpr : postfixexpr	{ $1 }
-	| MINUS prefixexpr	{ match $2 with :? DoubleNumber as dn -> new DoubleNumber(-dn.Num) :> Expr | _ -> new CompositeExpr(WellKnownSym.minus, [|$2|]) :> Expr }
 	| PLUS prefixexpr	{ $2 }
 
 postfixexpr : primaryexpr	{ $1 }
@@ -68,6 +67,7 @@ primaryexpr : primaryexprnovb { $1}
 	| VB primaryexprnovb VB { new CompositeExpr(WellKnownSym.magnitude, [|$2|]) :> Expr }
 	| LP primaryexprnovb COMMA primaryexprnovb RP { new CompositeExpr(WellKnownSym.comma, [|$2;$4|]) :> Expr }
 	| primaryexprnovb LP primaryexprnovb COMMA primaryexprnovb RP { new CompositeExpr($1, [|$3;$5|]) :> Expr }
+
 primaryexprnovb : sym	{ $1 }
 	| number	{ $1 }
 	| LP expr RP	{ $2 }		
@@ -75,6 +75,7 @@ primaryexprnovb : sym	{ $1 }
 	| LCB arrlist RCB { new ArrayExpr($2) :> Expr }
 	| ERRS ID ERRE { new ErrorMsgExpr($2) :> Expr }
 	| NULL { new NullExpr() :> Expr }
+	| MINUS primaryexprnovb	{ match $2 with :? DoubleNumber as dn -> new DoubleNumber(-dn.Num) :> Expr | _ -> new CompositeExpr(WellKnownSym.minus, [|$2|]) :> Expr }	
 
 arrlist : LSB arglist RSB { Array2D.init 1 $2.Length (fun i j -> $2.[j]) }
 	| arrlist LSB arglist RSB { Array2D.init (1 + Array2D.length1 $1) (Array2D.length2 $1) (fun i j -> if i < Array2D.length1 $1 then $1.[i,j] else $3.[j]) }

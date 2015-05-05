@@ -1,4 +1,4 @@
-# 1 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 1 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
  
 module starPadSDK.MathExpr.TextInternals.Lexer
 
@@ -6,7 +6,7 @@ open System
 open starPadSDK.MathExpr.TextInternals.Parser
 open Lexing
 
-# 9 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 9 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
 let trans : uint16[] array = 
     [| 
     (* State 0 *)
@@ -723,252 +723,252 @@ and string pos s (lexbuf : Microsoft.FSharp.Text.Lexing.LexBuffer<_>) = _fslex_s
 and _fslex_token  _fslex_state lexbuf =
   match _fslex_tables.Interpret(_fslex_state,lexbuf) with
   | 0 -> ( 
-# 12 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 12 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                                                DOUBLE(Float.of_string (LexBuffer<_>.LexemeString lexbuf)) 
-# 728 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 728 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 1 -> ( 
-# 13 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 13 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                   INTEGER(LexBuffer<_>.LexemeString lexbuf) 
-# 733 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 733 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 2 -> ( 
-# 14 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 14 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                   DOUBLE(Double.PositiveInfinity) 
-# 738 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 738 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 3 -> ( 
-# 15 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 15 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                              DOUBLE(Double.NaN) 
-# 743 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 743 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 4 -> ( 
-# 16 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 16 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                            LE
-# 748 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 748 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 5 -> ( 
-# 16 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 16 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                        GE
-# 753 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 753 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 6 -> ( 
-# 16 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 16 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                    NE
-# 758 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 758 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 7 -> ( 
-# 16 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 16 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                                NE
-# 763 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 763 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 8 -> ( 
-# 17 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 17 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                              PM 
-# 768 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 768 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 9 -> ( 
-# 18 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 18 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                              MP 
-# 773 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 773 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 10 -> ( 
-# 19 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 19 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                             ERRS 
-# 778 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 778 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 11 -> ( 
-# 20 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 20 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                             ERRE 
-# 783 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 783 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 12 -> ( 
-# 21 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 21 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                           LSB
-# 788 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 788 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 13 -> ( 
-# 21 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 21 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                       RSB
-# 793 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 793 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 14 -> ( 
-# 21 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 21 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                   US
-# 798 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 798 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 15 -> ( 
-# 21 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 21 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                              LT
-# 803 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 803 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 16 -> ( 
-# 21 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 21 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                                         GT
-# 808 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 808 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 17 -> ( 
-# 21 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 21 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                                                    COMMA
-# 813 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 813 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 18 -> ( 
-# 21 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 21 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                                                                  LP
-# 818 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 818 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 19 -> ( 
-# 21 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 21 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                                                                             RP
-# 823 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 823 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 20 -> ( 
-# 21 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 21 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                                                                                        LCB
-# 828 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 828 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 21 -> ( 
-# 21 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 21 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                                                                                                    RCB
-# 833 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 833 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 22 -> ( 
-# 21 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 21 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                                                                                                                EQ
-# 838 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 838 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 23 -> ( 
-# 21 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 21 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                                                                                                                           FACT
-# 843 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 843 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 24 -> ( 
-# 22 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 22 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                           PLUS
-# 848 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 848 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 25 -> ( 
-# 22 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 22 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                        MINUS
-# 853 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 853 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 26 -> ( 
-# 22 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 22 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                      TIMES
-# 858 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 858 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 27 -> ( 
-# 22 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 22 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                                    DIVIDE
-# 863 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 863 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 28 -> ( 
-# 22 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 22 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                                                   POW
-# 868 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 868 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 29 -> ( 
-# 23 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 23 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                           VB
-# 873 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 873 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 30 -> ( 
-# 23 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 23 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                       LLT
-# 878 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 878 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 31 -> ( 
-# 23 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 23 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                    GGT
-# 883 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 883 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 32 -> ( 
-# 24 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 24 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                    token lexbuf 
-# 888 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 888 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 33 -> ( 
-# 25 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 25 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                             lexbuf.EndPos <- lexbuf.EndPos.NextLine; token lexbuf 
-# 893 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 893 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 34 -> ( 
-# 26 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 26 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                    LETTERSYM 
-# 898 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 898 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 35 -> ( 
-# 27 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 27 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                           GROUPEDLETTERSYM 
-# 903 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 903 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 36 -> ( 
-# 28 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 28 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                  WORDSYM 
-# 908 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 908 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 37 -> ( 
-# 29 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 29 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                               NULL 
-# 913 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 913 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 38 -> ( 
-# 30 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 30 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   WKS(LexBuffer<_>.LexemeString lexbuf) 
-# 918 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 918 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 39 -> ( 
-# 31 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 31 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                             ID(string lexbuf.StartPos "" lexbuf) 
-# 923 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 923 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 40 -> ( 
-# 32 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 32 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                                                                                                           ID(LexBuffer<_>.LexemeString lexbuf) 
-# 928 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 928 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 41 -> ( 
-# 33 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 33 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                            EOF 
-# 933 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 933 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | _ -> failwith "token"
 (* Rule string *)
 and _fslex_string pos s _fslex_state lexbuf =
   match _fslex_tables.Interpret(_fslex_state,lexbuf) with
   | 0 -> ( 
-# 35 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 35 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                                        let s' = s + (match LexBuffer<_>.LexemeString lexbuf with
                                                      | "\\\"" -> "\""
                                                      | "\\\\" -> "\\"
                                                      | _ -> "") in
                                        string pos s' lexbuf 
-# 946 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 946 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 1 -> ( 
-# 40 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 40 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                             s 
-# 951 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 951 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 2 -> ( 
-# 41 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 41 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                             lexbuf.EndPos <- lexbuf.EndPos.NextLine;
                             string pos (s + "\n") lexbuf 
-# 957 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 957 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 3 -> ( 
-# 43 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 43 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                            failwithf "end of input in string started at or near %A" pos 
-# 962 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 962 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | 4 -> ( 
-# 44 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 44 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
                          string pos (s + (LexBuffer<_>.LexemeString lexbuf)) lexbuf 
-# 967 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 967 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
           )
   | _ -> failwith "string"
 
-# 46 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fsl"
+# 46 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fsl"
  
 
-# 3000000 "C:\Bo\MathSemanticParser\ExprText\TextLexer.fs"
+# 3000000 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextLexer.fs"
