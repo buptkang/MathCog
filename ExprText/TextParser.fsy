@@ -29,7 +29,11 @@ let maketimes args =
 
 %%
 
-expr : relnexpr { $1 }
+expr : relexpr { $1 }
+
+relexpr : relnexpr {$1}
+	| LP relnexpr COMMA relnexpr RP { new CompositeExpr(WellKnownSym.comma, [|$2;$4|]) :> Expr }
+	| sym LP relnexpr COMMA relnexpr RP { new CompositeExpr($1, [|$3;$5|]) :> Expr }
 
 relnexpr : plusexpr { makeplus $1 }
 	| relnexpr EQ relnexpr { new CompositeExpr(WellKnownSym.equals, [|$1; $3|]) :> Expr }
@@ -58,6 +62,7 @@ nonpfxpowerexpr : postfixexpr	{ $1 }
 
 prefixexpr : postfixexpr	{ $1 }
 	| PLUS prefixexpr	{ $2 }
+	| MINUS prefixexpr	{ match $2 with :? DoubleNumber as dn -> new DoubleNumber(-dn.Num) :> Expr | _ -> new CompositeExpr(WellKnownSym.minus, [|$2|]) :> Expr }
 
 postfixexpr : primaryexpr	{ $1 }
 	| postfixexpr LSB arglist RSB	{ new CompositeExpr($1, Array.of_list $3) :> Expr }
@@ -65,8 +70,6 @@ postfixexpr : primaryexpr	{ $1 }
 
 primaryexpr : primaryexprnovb { $1}
 	| VB primaryexprnovb VB { new CompositeExpr(WellKnownSym.magnitude, [|$2|]) :> Expr }
-	| LP primaryexprnovb COMMA primaryexprnovb RP { new CompositeExpr(WellKnownSym.comma, [|$2;$4|]) :> Expr }
-	| primaryexprnovb LP primaryexprnovb COMMA primaryexprnovb RP { new CompositeExpr($1, [|$3;$5|]) :> Expr }
 
 primaryexprnovb : sym	{ $1 }
 	| number	{ $1 }
@@ -74,8 +77,7 @@ primaryexprnovb : sym	{ $1 }
 	| LCB arglist RCB { new ArrayExpr(Array.of_list $2) :> Expr }
 	| LCB arrlist RCB { new ArrayExpr($2) :> Expr }
 	| ERRS ID ERRE { new ErrorMsgExpr($2) :> Expr }
-	| NULL { new NullExpr() :> Expr }
-	| MINUS primaryexprnovb	{ match $2 with :? DoubleNumber as dn -> new DoubleNumber(-dn.Num) :> Expr | _ -> new CompositeExpr(WellKnownSym.minus, [|$2|]) :> Expr }	
+	| NULL { new NullExpr() :> Expr }		
 
 arrlist : LSB arglist RSB { Array2D.init 1 $2.Length (fun i j -> $2.[j]) }
 	| arrlist LSB arglist RSB { Array2D.init (1 + Array2D.length1 $1) (Array2D.length2 $1) (fun i j -> if i < Array2D.length1 $1 then $1.[i,j] else $3.[j]) }

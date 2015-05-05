@@ -82,6 +82,7 @@ type tokenId =
 type nonTerminalId = 
     | NONTERM__startexpr
     | NONTERM_expr
+    | NONTERM_relexpr
     | NONTERM_relnexpr
     | NONTERM_plusexpr
     | NONTERM_timesexpr

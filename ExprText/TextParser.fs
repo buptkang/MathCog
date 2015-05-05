@@ -105,6 +105,7 @@ type tokenId =
 type nonTerminalId = 
     | NONTERM__startexpr
     | NONTERM_expr
+    | NONTERM_relexpr
     | NONTERM_relnexpr
     | NONTERM_plusexpr
     | NONTERM_timesexpr
@@ -218,68 +219,69 @@ let prodIdxToNonTerminal (prodIdx:int) =
   match prodIdx with
     | 0 -> NONTERM__startexpr 
     | 1 -> NONTERM_expr 
-    | 2 -> NONTERM_relnexpr 
-    | 3 -> NONTERM_relnexpr 
-    | 4 -> NONTERM_relnexpr 
+    | 2 -> NONTERM_relexpr 
+    | 3 -> NONTERM_relexpr 
+    | 4 -> NONTERM_relexpr 
     | 5 -> NONTERM_relnexpr 
     | 6 -> NONTERM_relnexpr 
     | 7 -> NONTERM_relnexpr 
     | 8 -> NONTERM_relnexpr 
-    | 9 -> NONTERM_plusexpr 
-    | 10 -> NONTERM_plusexpr 
-    | 11 -> NONTERM_plusexpr 
+    | 9 -> NONTERM_relnexpr 
+    | 10 -> NONTERM_relnexpr 
+    | 11 -> NONTERM_relnexpr 
     | 12 -> NONTERM_plusexpr 
     | 13 -> NONTERM_plusexpr 
-    | 14 -> NONTERM_timesexpr 
-    | 15 -> NONTERM_timesexpr 
-    | 16 -> NONTERM_timesexpr 
+    | 14 -> NONTERM_plusexpr 
+    | 15 -> NONTERM_plusexpr 
+    | 16 -> NONTERM_plusexpr 
     | 17 -> NONTERM_timesexpr 
-    | 18 -> NONTERM_powerexpr 
-    | 19 -> NONTERM_powerexpr 
-    | 20 -> NONTERM_nonpfxpowerexpr 
-    | 21 -> NONTERM_nonpfxpowerexpr 
-    | 22 -> NONTERM_prefixexpr 
-    | 23 -> NONTERM_prefixexpr 
-    | 24 -> NONTERM_postfixexpr 
-    | 25 -> NONTERM_postfixexpr 
-    | 26 -> NONTERM_postfixexpr 
-    | 27 -> NONTERM_primaryexpr 
-    | 28 -> NONTERM_primaryexpr 
-    | 29 -> NONTERM_primaryexpr 
-    | 30 -> NONTERM_primaryexpr 
-    | 31 -> NONTERM_primaryexprnovb 
-    | 32 -> NONTERM_primaryexprnovb 
+    | 18 -> NONTERM_timesexpr 
+    | 19 -> NONTERM_timesexpr 
+    | 20 -> NONTERM_timesexpr 
+    | 21 -> NONTERM_powerexpr 
+    | 22 -> NONTERM_powerexpr 
+    | 23 -> NONTERM_nonpfxpowerexpr 
+    | 24 -> NONTERM_nonpfxpowerexpr 
+    | 25 -> NONTERM_prefixexpr 
+    | 26 -> NONTERM_prefixexpr 
+    | 27 -> NONTERM_prefixexpr 
+    | 28 -> NONTERM_postfixexpr 
+    | 29 -> NONTERM_postfixexpr 
+    | 30 -> NONTERM_postfixexpr 
+    | 31 -> NONTERM_primaryexpr 
+    | 32 -> NONTERM_primaryexpr 
     | 33 -> NONTERM_primaryexprnovb 
     | 34 -> NONTERM_primaryexprnovb 
     | 35 -> NONTERM_primaryexprnovb 
     | 36 -> NONTERM_primaryexprnovb 
     | 37 -> NONTERM_primaryexprnovb 
     | 38 -> NONTERM_primaryexprnovb 
-    | 39 -> NONTERM_arrlist 
+    | 39 -> NONTERM_primaryexprnovb 
     | 40 -> NONTERM_arrlist 
-    | 41 -> NONTERM_arglist 
+    | 41 -> NONTERM_arrlist 
     | 42 -> NONTERM_arglist 
     | 43 -> NONTERM_arglist 
-    | 44 -> NONTERM_sym 
+    | 44 -> NONTERM_arglist 
     | 45 -> NONTERM_sym 
     | 46 -> NONTERM_sym 
     | 47 -> NONTERM_sym 
     | 48 -> NONTERM_sym 
-    | 49 -> NONTERM_number 
+    | 49 -> NONTERM_sym 
     | 50 -> NONTERM_number 
-    | 51 -> NONTERM_realnumber 
+    | 51 -> NONTERM_number 
     | 52 -> NONTERM_realnumber 
-    | 53 -> NONTERM_doublenumber 
-    | 54 -> NONTERM_integernumber 
-    | 55 -> NONTERM_complexnumber 
-    | 56 -> NONTERM_lettersym 
+    | 53 -> NONTERM_realnumber 
+    | 54 -> NONTERM_doublenumber 
+    | 55 -> NONTERM_integernumber 
+    | 56 -> NONTERM_complexnumber 
     | 57 -> NONTERM_lettersym 
-    | 58 -> NONTERM_groupedlettersym 
-    | 59 -> NONTERM_lettersymlist 
+    | 58 -> NONTERM_lettersym 
+    | 59 -> NONTERM_groupedlettersym 
     | 60 -> NONTERM_lettersymlist 
-    | 61 -> NONTERM_wordsym 
+    | 61 -> NONTERM_lettersymlist 
     | 62 -> NONTERM_wordsym 
-    | 63 -> NONTERM_wellknownsym 
+    | 63 -> NONTERM_wordsym 
+    | 64 -> NONTERM_wellknownsym 
     | _ -> failwith "prodIdxToNonTerminal: bad production index"
 
 let _fsyacc_endOfInputTag = 39 
@@ -366,18 +368,18 @@ let _fsyacc_dataOfToken (t:token) =
   | TOKEN _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
   | INTEGER _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
   | DOUBLE _fsyacc_x -> Microsoft.FSharp.Core.Operators.box _fsyacc_x 
-let _fsyacc_gotos = [| 0us; 65535us; 10us; 65535us; 0us; 1us; 41us; 81us; 50us; 62us; 61us; 62us; 64us; 81us; 75us; 81us; 78us; 81us; 82us; 83us; 104us; 105us; 118us; 119us; 16us; 65535us; 0us; 2us; 10us; 4us; 11us; 5us; 12us; 6us; 13us; 7us; 14us; 8us; 15us; 9us; 41us; 2us; 50us; 2us; 61us; 2us; 64us; 2us; 75us; 2us; 78us; 2us; 82us; 2us; 104us; 2us; 118us; 2us; 16us; 65535us; 0us; 3us; 10us; 3us; 11us; 3us; 12us; 3us; 13us; 3us; 14us; 3us; 15us; 3us; 41us; 3us; 50us; 3us; 61us; 3us; 64us; 3us; 75us; 3us; 78us; 3us; 82us; 3us; 104us; 3us; 118us; 3us; 20us; 65535us; 0us; 16us; 10us; 16us; 11us; 16us; 12us; 16us; 13us; 16us; 14us; 16us; 15us; 16us; 17us; 18us; 19us; 20us; 21us; 22us; 23us; 24us; 41us; 16us; 50us; 16us; 61us; 16us; 64us; 16us; 75us; 16us; 78us; 16us; 82us; 16us; 104us; 16us; 118us; 16us; 23us; 65535us; 0us; 25us; 10us; 25us; 11us; 25us; 12us; 25us; 13us; 25us; 14us; 25us; 15us; 25us; 17us; 25us; 19us; 25us; 21us; 25us; 23us; 25us; 26us; 27us; 29us; 30us; 32us; 33us; 41us; 25us; 50us; 25us; 61us; 25us; 64us; 25us; 75us; 25us; 78us; 25us; 82us; 25us; 104us; 25us; 118us; 25us; 6us; 65535us; 16us; 28us; 18us; 28us; 20us; 28us; 22us; 28us; 24us; 28us; 35us; 36us; 24us; 65535us; 0us; 31us; 10us; 31us; 11us; 31us; 12us; 31us; 13us; 31us; 14us; 31us; 15us; 31us; 17us; 31us; 19us; 31us; 21us; 31us; 23us; 31us; 26us; 31us; 29us; 31us; 32us; 31us; 38us; 39us; 41us; 31us; 50us; 31us; 61us; 31us; 64us; 31us; 75us; 31us; 78us; 31us; 82us; 31us; 104us; 31us; 118us; 31us; 30us; 65535us; 0us; 37us; 10us; 37us; 11us; 37us; 12us; 37us; 13us; 37us; 14us; 37us; 15us; 37us; 16us; 34us; 17us; 37us; 18us; 34us; 19us; 37us; 20us; 34us; 21us; 37us; 22us; 34us; 23us; 37us; 24us; 34us; 26us; 37us; 29us; 37us; 32us; 37us; 35us; 34us; 38us; 37us; 41us; 37us; 50us; 37us; 61us; 37us; 64us; 37us; 75us; 37us; 78us; 37us; 82us; 37us; 104us; 37us; 118us; 37us; 30us; 65535us; 0us; 40us; 10us; 40us; 11us; 40us; 12us; 40us; 13us; 40us; 14us; 40us; 15us; 40us; 16us; 40us; 17us; 40us; 18us; 40us; 19us; 40us; 20us; 40us; 21us; 40us; 22us; 40us; 23us; 40us; 24us; 40us; 26us; 40us; 29us; 40us; 32us; 40us; 35us; 40us; 38us; 40us; 41us; 40us; 50us; 40us; 61us; 40us; 64us; 40us; 75us; 40us; 78us; 40us; 82us; 40us; 104us; 40us; 118us; 40us; 35us; 65535us; 0us; 46us; 10us; 46us; 11us; 46us; 12us; 46us; 13us; 46us; 14us; 46us; 15us; 46us; 16us; 46us; 17us; 46us; 18us; 46us; 19us; 46us; 20us; 46us; 21us; 46us; 22us; 46us; 23us; 46us; 24us; 46us; 26us; 46us; 29us; 46us; 32us; 46us; 35us; 46us; 38us; 46us; 41us; 46us; 47us; 48us; 50us; 45us; 51us; 52us; 54us; 55us; 56us; 57us; 61us; 46us; 64us; 46us; 73us; 74us; 75us; 46us; 78us; 46us; 82us; 46us; 104us; 46us; 118us; 46us; 1us; 65535us; 64us; 67us; 4us; 65535us; 41us; 42us; 64us; 65us; 75us; 76us; 78us; 79us; 35us; 65535us; 0us; 59us; 10us; 59us; 11us; 59us; 12us; 59us; 13us; 59us; 14us; 59us; 15us; 59us; 16us; 59us; 17us; 59us; 18us; 59us; 19us; 59us; 20us; 59us; 21us; 59us; 22us; 59us; 23us; 59us; 24us; 59us; 26us; 59us; 29us; 59us; 32us; 59us; 35us; 59us; 38us; 59us; 41us; 59us; 47us; 59us; 50us; 59us; 51us; 59us; 54us; 59us; 56us; 59us; 61us; 59us; 64us; 59us; 73us; 59us; 75us; 59us; 78us; 59us; 82us; 59us; 104us; 59us; 118us; 59us; 35us; 65535us; 0us; 60us; 10us; 60us; 11us; 60us; 12us; 60us; 13us; 60us; 14us; 60us; 15us; 60us; 16us; 60us; 17us; 60us; 18us; 60us; 19us; 60us; 20us; 60us; 21us; 60us; 22us; 60us; 23us; 60us; 24us; 60us; 26us; 60us; 29us; 60us; 32us; 60us; 35us; 60us; 38us; 60us; 41us; 60us; 47us; 60us; 50us; 60us; 51us; 60us; 54us; 60us; 56us; 60us; 61us; 60us; 64us; 60us; 73us; 60us; 75us; 60us; 78us; 60us; 82us; 60us; 104us; 60us; 118us; 60us; 37us; 65535us; 0us; 89us; 10us; 89us; 11us; 89us; 12us; 89us; 13us; 89us; 14us; 89us; 15us; 89us; 16us; 89us; 17us; 89us; 18us; 89us; 19us; 89us; 20us; 89us; 21us; 89us; 22us; 89us; 23us; 89us; 24us; 89us; 26us; 89us; 29us; 89us; 32us; 89us; 35us; 89us; 38us; 89us; 41us; 89us; 47us; 89us; 50us; 89us; 51us; 89us; 54us; 89us; 56us; 89us; 61us; 89us; 64us; 89us; 73us; 89us; 75us; 89us; 78us; 89us; 82us; 89us; 95us; 96us; 97us; 98us; 104us; 89us; 118us; 89us; 37us; 65535us; 0us; 91us; 10us; 91us; 11us; 91us; 12us; 91us; 13us; 91us; 14us; 91us; 15us; 91us; 16us; 91us; 17us; 91us; 18us; 91us; 19us; 91us; 20us; 91us; 21us; 91us; 22us; 91us; 23us; 91us; 24us; 91us; 26us; 91us; 29us; 91us; 32us; 91us; 35us; 91us; 38us; 91us; 41us; 91us; 47us; 91us; 50us; 91us; 51us; 91us; 54us; 91us; 56us; 91us; 61us; 91us; 64us; 91us; 73us; 91us; 75us; 91us; 78us; 91us; 82us; 91us; 95us; 91us; 97us; 91us; 104us; 91us; 118us; 91us; 37us; 65535us; 0us; 92us; 10us; 92us; 11us; 92us; 12us; 92us; 13us; 92us; 14us; 92us; 15us; 92us; 16us; 92us; 17us; 92us; 18us; 92us; 19us; 92us; 20us; 92us; 21us; 92us; 22us; 92us; 23us; 92us; 24us; 92us; 26us; 92us; 29us; 92us; 32us; 92us; 35us; 92us; 38us; 92us; 41us; 92us; 47us; 92us; 50us; 92us; 51us; 92us; 54us; 92us; 56us; 92us; 61us; 92us; 64us; 92us; 73us; 92us; 75us; 92us; 78us; 92us; 82us; 92us; 95us; 92us; 97us; 92us; 104us; 92us; 118us; 92us; 35us; 65535us; 0us; 90us; 10us; 90us; 11us; 90us; 12us; 90us; 13us; 90us; 14us; 90us; 15us; 90us; 16us; 90us; 17us; 90us; 18us; 90us; 19us; 90us; 20us; 90us; 21us; 90us; 22us; 90us; 23us; 90us; 24us; 90us; 26us; 90us; 29us; 90us; 32us; 90us; 35us; 90us; 38us; 90us; 41us; 90us; 47us; 90us; 50us; 90us; 51us; 90us; 54us; 90us; 56us; 90us; 61us; 90us; 64us; 90us; 73us; 90us; 75us; 90us; 78us; 90us; 82us; 90us; 104us; 90us; 118us; 90us; 37us; 65535us; 0us; 84us; 10us; 84us; 11us; 84us; 12us; 84us; 13us; 84us; 14us; 84us; 15us; 84us; 16us; 84us; 17us; 84us; 18us; 84us; 19us; 84us; 20us; 84us; 21us; 84us; 22us; 84us; 23us; 84us; 24us; 84us; 26us; 84us; 29us; 84us; 32us; 84us; 35us; 84us; 38us; 84us; 41us; 84us; 47us; 84us; 50us; 84us; 51us; 84us; 54us; 84us; 56us; 84us; 61us; 84us; 64us; 84us; 73us; 84us; 75us; 84us; 78us; 84us; 82us; 84us; 104us; 84us; 108us; 111us; 112us; 111us; 118us; 84us; 35us; 65535us; 0us; 85us; 10us; 85us; 11us; 85us; 12us; 85us; 13us; 85us; 14us; 85us; 15us; 85us; 16us; 85us; 17us; 85us; 18us; 85us; 19us; 85us; 20us; 85us; 21us; 85us; 22us; 85us; 23us; 85us; 24us; 85us; 26us; 85us; 29us; 85us; 32us; 85us; 35us; 85us; 38us; 85us; 41us; 85us; 47us; 85us; 50us; 85us; 51us; 85us; 54us; 85us; 56us; 85us; 61us; 85us; 64us; 85us; 73us; 85us; 75us; 85us; 78us; 85us; 82us; 85us; 104us; 85us; 118us; 85us; 2us; 65535us; 108us; 109us; 112us; 113us; 35us; 65535us; 0us; 86us; 10us; 86us; 11us; 86us; 12us; 86us; 13us; 86us; 14us; 86us; 15us; 86us; 16us; 86us; 17us; 86us; 18us; 86us; 19us; 86us; 20us; 86us; 21us; 86us; 22us; 86us; 23us; 86us; 24us; 86us; 26us; 86us; 29us; 86us; 32us; 86us; 35us; 86us; 38us; 86us; 41us; 86us; 47us; 86us; 50us; 86us; 51us; 86us; 54us; 86us; 56us; 86us; 61us; 86us; 64us; 86us; 73us; 86us; 75us; 86us; 78us; 86us; 82us; 86us; 104us; 86us; 118us; 86us; 35us; 65535us; 0us; 87us; 10us; 87us; 11us; 87us; 12us; 87us; 13us; 87us; 14us; 87us; 15us; 87us; 16us; 87us; 17us; 87us; 18us; 87us; 19us; 87us; 20us; 87us; 21us; 87us; 22us; 87us; 23us; 87us; 24us; 87us; 26us; 87us; 29us; 87us; 32us; 87us; 35us; 87us; 38us; 87us; 41us; 87us; 47us; 87us; 50us; 87us; 51us; 87us; 54us; 87us; 56us; 87us; 61us; 87us; 64us; 87us; 73us; 87us; 75us; 87us; 78us; 87us; 82us; 87us; 104us; 87us; 118us; 87us; |]
-let _fsyacc_sparseGotoTableRowOffsets = [|0us; 1us; 12us; 29us; 46us; 67us; 91us; 98us; 123us; 154us; 185us; 221us; 223us; 228us; 264us; 300us; 338us; 376us; 414us; 450us; 488us; 524us; 527us; 563us; |]
-let _fsyacc_stateToProdIdxsTableElements = [| 1us; 0us; 1us; 0us; 7us; 1us; 3us; 4us; 5us; 6us; 7us; 8us; 5us; 2us; 10us; 11us; 12us; 13us; 7us; 3us; 3us; 4us; 5us; 6us; 7us; 8us; 7us; 3us; 4us; 4us; 5us; 6us; 7us; 8us; 7us; 3us; 4us; 5us; 5us; 6us; 7us; 8us; 7us; 3us; 4us; 5us; 6us; 6us; 7us; 8us; 7us; 3us; 4us; 5us; 6us; 7us; 7us; 8us; 7us; 3us; 4us; 5us; 6us; 7us; 8us; 8us; 1us; 3us; 1us; 4us; 1us; 5us; 1us; 6us; 1us; 7us; 1us; 8us; 4us; 9us; 15us; 16us; 17us; 1us; 10us; 4us; 10us; 15us; 16us; 17us; 1us; 11us; 4us; 11us; 15us; 16us; 17us; 1us; 12us; 4us; 12us; 15us; 16us; 17us; 1us; 13us; 4us; 13us; 15us; 16us; 17us; 1us; 14us; 1us; 15us; 1us; 15us; 1us; 16us; 1us; 17us; 1us; 17us; 2us; 18us; 19us; 1us; 19us; 1us; 19us; 4us; 20us; 21us; 25us; 26us; 1us; 21us; 1us; 21us; 3us; 22us; 25us; 26us; 1us; 23us; 1us; 23us; 1us; 24us; 1us; 25us; 2us; 25us; 43us; 1us; 25us; 1us; 26us; 3us; 27us; 29us; 30us; 2us; 27us; 30us; 1us; 28us; 1us; 28us; 1us; 28us; 2us; 29us; 33us; 1us; 29us; 1us; 29us; 1us; 29us; 1us; 30us; 1us; 30us; 1us; 30us; 1us; 30us; 1us; 30us; 1us; 31us; 1us; 32us; 1us; 33us; 1us; 33us; 1us; 33us; 2us; 34us; 35us; 2us; 34us; 43us; 1us; 34us; 2us; 35us; 40us; 1us; 35us; 1us; 36us; 1us; 36us; 1us; 36us; 1us; 37us; 1us; 38us; 1us; 38us; 1us; 39us; 2us; 39us; 43us; 1us; 39us; 1us; 40us; 2us; 40us; 43us; 1us; 40us; 1us; 42us; 1us; 43us; 1us; 43us; 1us; 44us; 1us; 45us; 1us; 46us; 1us; 47us; 1us; 48us; 1us; 49us; 1us; 50us; 1us; 51us; 1us; 52us; 1us; 53us; 1us; 54us; 1us; 55us; 1us; 55us; 1us; 55us; 1us; 55us; 1us; 55us; 2us; 56us; 57us; 2us; 56us; 57us; 2us; 56us; 57us; 1us; 56us; 1us; 57us; 1us; 57us; 1us; 57us; 1us; 58us; 1us; 58us; 1us; 58us; 1us; 58us; 2us; 59us; 60us; 1us; 60us; 1us; 60us; 2us; 61us; 62us; 2us; 61us; 62us; 2us; 61us; 62us; 1us; 61us; 1us; 62us; 1us; 62us; 1us; 62us; 1us; 63us; |]
-let _fsyacc_stateToProdIdxsTableRowOffsets = [|0us; 2us; 4us; 12us; 18us; 26us; 34us; 42us; 50us; 58us; 66us; 68us; 70us; 72us; 74us; 76us; 78us; 83us; 85us; 90us; 92us; 97us; 99us; 104us; 106us; 111us; 113us; 115us; 117us; 119us; 121us; 123us; 126us; 128us; 130us; 135us; 137us; 139us; 143us; 145us; 147us; 149us; 151us; 154us; 156us; 158us; 162us; 165us; 167us; 169us; 171us; 174us; 176us; 178us; 180us; 182us; 184us; 186us; 188us; 190us; 192us; 194us; 196us; 198us; 200us; 203us; 206us; 208us; 211us; 213us; 215us; 217us; 219us; 221us; 223us; 225us; 227us; 230us; 232us; 234us; 237us; 239us; 241us; 243us; 245us; 247us; 249us; 251us; 253us; 255us; 257us; 259us; 261us; 263us; 265us; 267us; 269us; 271us; 273us; 275us; 277us; 280us; 283us; 286us; 288us; 290us; 292us; 294us; 296us; 298us; 300us; 302us; 305us; 307us; 309us; 312us; 315us; 318us; 320us; 322us; 324us; 326us; |]
-let _fsyacc_action_rows = 122
-let _fsyacc_actionTableElements = [|15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 0us; 49152us; 6us; 16385us; 1us; 13us; 2us; 14us; 3us; 15us; 11us; 11us; 12us; 12us; 18us; 10us; 4us; 16386us; 4us; 21us; 5us; 23us; 20us; 17us; 21us; 19us; 6us; 16387us; 1us; 13us; 2us; 14us; 3us; 15us; 11us; 11us; 12us; 12us; 18us; 10us; 6us; 16388us; 1us; 13us; 2us; 14us; 3us; 15us; 11us; 11us; 12us; 12us; 18us; 10us; 6us; 16389us; 1us; 13us; 2us; 14us; 3us; 15us; 11us; 11us; 12us; 12us; 18us; 10us; 6us; 16390us; 1us; 13us; 2us; 14us; 3us; 15us; 11us; 11us; 12us; 12us; 18us; 10us; 6us; 16391us; 1us; 13us; 2us; 14us; 3us; 15us; 11us; 11us; 12us; 12us; 18us; 10us; 6us; 16392us; 1us; 13us; 2us; 14us; 3us; 15us; 11us; 11us; 12us; 12us; 18us; 10us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 16us; 16393us; 6us; 69us; 14us; 50us; 16us; 64us; 21us; 73us; 22us; 26us; 23us; 29us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 16us; 16394us; 6us; 69us; 14us; 50us; 16us; 64us; 21us; 73us; 22us; 26us; 23us; 29us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 16us; 16395us; 6us; 69us; 14us; 50us; 16us; 64us; 21us; 73us; 22us; 26us; 23us; 29us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 16us; 16396us; 6us; 69us; 14us; 50us; 16us; 64us; 21us; 73us; 22us; 26us; 23us; 29us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 16us; 16397us; 6us; 69us; 14us; 50us; 16us; 64us; 21us; 73us; 22us; 26us; 23us; 29us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 0us; 16398us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 0us; 16399us; 0us; 16400us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 0us; 16401us; 1us; 16402us; 24us; 32us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 0us; 16403us; 3us; 16404us; 8us; 41us; 19us; 44us; 24us; 35us; 14us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 0us; 16405us; 2us; 16406us; 8us; 41us; 19us; 44us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 0us; 16407us; 0us; 16408us; 15us; 16425us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 2us; 32768us; 9us; 43us; 13us; 82us; 0us; 16409us; 0us; 16410us; 2us; 16411us; 13us; 51us; 14us; 54us; 1us; 16411us; 14us; 54us; 13us; 32768us; 6us; 69us; 14us; 61us; 16us; 64us; 21us; 73us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 1us; 32768us; 25us; 49us; 0us; 16412us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 13us; 32768us; 6us; 69us; 14us; 61us; 16us; 64us; 21us; 73us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 1us; 32768us; 15us; 53us; 0us; 16413us; 13us; 32768us; 6us; 69us; 14us; 61us; 16us; 64us; 21us; 73us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 1us; 32768us; 13us; 56us; 13us; 32768us; 6us; 69us; 14us; 61us; 16us; 64us; 21us; 73us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 1us; 32768us; 15us; 58us; 0us; 16414us; 0us; 16415us; 0us; 16416us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 1us; 32768us; 15us; 63us; 0us; 16417us; 16us; 16425us; 6us; 69us; 8us; 75us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 2us; 32768us; 13us; 82us; 17us; 66us; 0us; 16418us; 2us; 32768us; 8us; 78us; 17us; 68us; 0us; 16419us; 1us; 32768us; 28us; 70us; 1us; 32768us; 7us; 71us; 0us; 16420us; 0us; 16421us; 13us; 32768us; 6us; 69us; 14us; 61us; 16us; 64us; 21us; 73us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 0us; 16422us; 15us; 16425us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 2us; 32768us; 9us; 77us; 13us; 82us; 0us; 16423us; 15us; 16425us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 2us; 32768us; 9us; 80us; 13us; 82us; 0us; 16424us; 0us; 16426us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 0us; 16427us; 0us; 16428us; 0us; 16429us; 0us; 16430us; 0us; 16431us; 0us; 16432us; 0us; 16433us; 0us; 16434us; 0us; 16435us; 0us; 16436us; 0us; 16437us; 0us; 16438us; 2us; 32768us; 35us; 94us; 36us; 93us; 1us; 32768us; 13us; 97us; 2us; 32768us; 35us; 94us; 36us; 93us; 1us; 32768us; 27us; 99us; 0us; 16439us; 1us; 32768us; 8us; 101us; 1us; 32768us; 28us; 102us; 2us; 32768us; 9us; 103us; 13us; 104us; 0us; 16440us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 1us; 32768us; 9us; 106us; 0us; 16441us; 1us; 32768us; 8us; 108us; 1us; 32768us; 30us; 100us; 1us; 32768us; 9us; 110us; 0us; 16442us; 1us; 16443us; 13us; 112us; 1us; 32768us; 30us; 100us; 0us; 16444us; 1us; 32768us; 8us; 115us; 1us; 32768us; 28us; 116us; 2us; 32768us; 9us; 117us; 13us; 118us; 0us; 16445us; 15us; 32768us; 6us; 69us; 14us; 50us; 16us; 64us; 20us; 38us; 21us; 73us; 25us; 47us; 26us; 95us; 28us; 88us; 29us; 121us; 30us; 100us; 31us; 107us; 32us; 114us; 33us; 72us; 35us; 94us; 36us; 93us; 1us; 32768us; 9us; 120us; 0us; 16446us; 0us; 16447us; |]
-let _fsyacc_actionTableRowOffsets = [|0us; 16us; 17us; 24us; 29us; 36us; 43us; 50us; 57us; 64us; 71us; 87us; 103us; 119us; 135us; 151us; 167us; 184us; 200us; 217us; 233us; 250us; 266us; 283us; 299us; 316us; 317us; 333us; 334us; 335us; 351us; 352us; 354us; 370us; 371us; 375us; 390us; 391us; 394us; 410us; 411us; 412us; 428us; 431us; 432us; 433us; 436us; 438us; 452us; 454us; 455us; 471us; 485us; 487us; 488us; 502us; 504us; 518us; 520us; 521us; 522us; 523us; 539us; 541us; 542us; 559us; 562us; 563us; 566us; 567us; 569us; 571us; 572us; 573us; 587us; 588us; 604us; 607us; 608us; 624us; 627us; 628us; 629us; 645us; 646us; 647us; 648us; 649us; 650us; 651us; 652us; 653us; 654us; 655us; 656us; 657us; 660us; 662us; 665us; 667us; 668us; 670us; 672us; 675us; 676us; 692us; 694us; 695us; 697us; 699us; 701us; 702us; 704us; 706us; 707us; 709us; 711us; 714us; 715us; 731us; 733us; 734us; |]
-let _fsyacc_reductionSymbolCounts = [|1us; 1us; 1us; 3us; 3us; 3us; 3us; 3us; 3us; 1us; 3us; 3us; 3us; 3us; 1us; 3us; 2us; 3us; 1us; 3us; 1us; 3us; 1us; 2us; 1us; 4us; 2us; 1us; 3us; 5us; 6us; 1us; 1us; 3us; 3us; 3us; 3us; 1us; 2us; 3us; 4us; 0us; 1us; 3us; 1us; 1us; 1us; 1us; 1us; 1us; 1us; 1us; 1us; 1us; 1us; 5us; 4us; 6us; 4us; 1us; 3us; 4us; 6us; 1us; |]
-let _fsyacc_productionToNonTerminalTable = [|0us; 1us; 2us; 2us; 2us; 2us; 2us; 2us; 2us; 3us; 3us; 3us; 3us; 3us; 4us; 4us; 4us; 4us; 5us; 5us; 6us; 6us; 7us; 7us; 8us; 8us; 8us; 9us; 9us; 9us; 9us; 10us; 10us; 10us; 10us; 10us; 10us; 10us; 10us; 11us; 11us; 12us; 12us; 12us; 13us; 13us; 13us; 13us; 13us; 14us; 14us; 15us; 15us; 16us; 17us; 18us; 19us; 19us; 20us; 21us; 21us; 22us; 22us; 23us; |]
-let _fsyacc_immediateActions = [|65535us; 49152us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 16398us; 65535us; 16399us; 16400us; 65535us; 16401us; 65535us; 65535us; 16403us; 65535us; 65535us; 16405us; 65535us; 65535us; 16407us; 16408us; 65535us; 65535us; 16409us; 16410us; 65535us; 65535us; 65535us; 65535us; 16412us; 65535us; 65535us; 65535us; 16413us; 65535us; 65535us; 65535us; 65535us; 16414us; 16415us; 16416us; 65535us; 65535us; 16417us; 65535us; 65535us; 16418us; 65535us; 16419us; 65535us; 65535us; 16420us; 16421us; 65535us; 16422us; 65535us; 65535us; 16423us; 65535us; 65535us; 16424us; 16426us; 65535us; 16427us; 16428us; 16429us; 16430us; 16431us; 16432us; 16433us; 16434us; 16435us; 16436us; 16437us; 16438us; 65535us; 65535us; 65535us; 65535us; 16439us; 65535us; 65535us; 65535us; 16440us; 65535us; 65535us; 16441us; 65535us; 65535us; 65535us; 16442us; 65535us; 65535us; 16444us; 65535us; 65535us; 65535us; 16445us; 65535us; 65535us; 16446us; 16447us; |]
+let _fsyacc_gotos = [| 0us; 65535us; 10us; 65535us; 0us; 1us; 5us; 66us; 55us; 83us; 65us; 66us; 68us; 83us; 77us; 83us; 80us; 83us; 84us; 85us; 106us; 107us; 120us; 121us; 10us; 65535us; 0us; 2us; 5us; 2us; 55us; 2us; 65us; 2us; 68us; 2us; 77us; 2us; 80us; 2us; 84us; 2us; 106us; 2us; 120us; 2us; 19us; 65535us; 0us; 4us; 5us; 3us; 6us; 7us; 10us; 11us; 12us; 13us; 22us; 16us; 23us; 17us; 24us; 18us; 25us; 19us; 26us; 20us; 27us; 21us; 55us; 4us; 65us; 4us; 68us; 4us; 77us; 4us; 80us; 4us; 84us; 4us; 106us; 4us; 120us; 4us; 19us; 65535us; 0us; 15us; 5us; 15us; 6us; 15us; 10us; 15us; 12us; 15us; 22us; 15us; 23us; 15us; 24us; 15us; 25us; 15us; 26us; 15us; 27us; 15us; 55us; 15us; 65us; 15us; 68us; 15us; 77us; 15us; 80us; 15us; 84us; 15us; 106us; 15us; 120us; 15us; 23us; 65535us; 0us; 28us; 5us; 28us; 6us; 28us; 10us; 28us; 12us; 28us; 22us; 28us; 23us; 28us; 24us; 28us; 25us; 28us; 26us; 28us; 27us; 28us; 29us; 30us; 31us; 32us; 33us; 34us; 35us; 36us; 55us; 28us; 65us; 28us; 68us; 28us; 77us; 28us; 80us; 28us; 84us; 28us; 106us; 28us; 120us; 28us; 26us; 65535us; 0us; 37us; 5us; 37us; 6us; 37us; 10us; 37us; 12us; 37us; 22us; 37us; 23us; 37us; 24us; 37us; 25us; 37us; 26us; 37us; 27us; 37us; 29us; 37us; 31us; 37us; 33us; 37us; 35us; 37us; 38us; 39us; 41us; 42us; 44us; 45us; 55us; 37us; 65us; 37us; 68us; 37us; 77us; 37us; 80us; 37us; 84us; 37us; 106us; 37us; 120us; 37us; 6us; 65535us; 28us; 40us; 30us; 40us; 32us; 40us; 34us; 40us; 36us; 40us; 47us; 48us; 28us; 65535us; 0us; 43us; 5us; 43us; 6us; 43us; 10us; 43us; 12us; 43us; 22us; 43us; 23us; 43us; 24us; 43us; 25us; 43us; 26us; 43us; 27us; 43us; 29us; 43us; 31us; 43us; 33us; 43us; 35us; 43us; 38us; 43us; 41us; 43us; 44us; 43us; 50us; 51us; 52us; 53us; 55us; 43us; 65us; 43us; 68us; 43us; 77us; 43us; 80us; 43us; 84us; 43us; 106us; 43us; 120us; 43us; 34us; 65535us; 0us; 49us; 5us; 49us; 6us; 49us; 10us; 49us; 12us; 49us; 22us; 49us; 23us; 49us; 24us; 49us; 25us; 49us; 26us; 49us; 27us; 49us; 28us; 46us; 29us; 49us; 30us; 46us; 31us; 49us; 32us; 46us; 33us; 49us; 34us; 46us; 35us; 49us; 36us; 46us; 38us; 49us; 41us; 49us; 44us; 49us; 47us; 46us; 50us; 49us; 52us; 49us; 55us; 49us; 65us; 49us; 68us; 49us; 77us; 49us; 80us; 49us; 84us; 49us; 106us; 49us; 120us; 49us; 34us; 65535us; 0us; 54us; 5us; 54us; 6us; 54us; 10us; 54us; 12us; 54us; 22us; 54us; 23us; 54us; 24us; 54us; 25us; 54us; 26us; 54us; 27us; 54us; 28us; 54us; 29us; 54us; 30us; 54us; 31us; 54us; 32us; 54us; 33us; 54us; 34us; 54us; 35us; 54us; 36us; 54us; 38us; 54us; 41us; 54us; 44us; 54us; 47us; 54us; 50us; 54us; 52us; 54us; 55us; 54us; 65us; 54us; 68us; 54us; 77us; 54us; 80us; 54us; 84us; 54us; 106us; 54us; 120us; 54us; 35us; 65535us; 0us; 59us; 5us; 59us; 6us; 59us; 10us; 59us; 12us; 59us; 22us; 59us; 23us; 59us; 24us; 59us; 25us; 59us; 26us; 59us; 27us; 59us; 28us; 59us; 29us; 59us; 30us; 59us; 31us; 59us; 32us; 59us; 33us; 59us; 34us; 59us; 35us; 59us; 36us; 59us; 38us; 59us; 41us; 59us; 44us; 59us; 47us; 59us; 50us; 59us; 52us; 59us; 55us; 59us; 60us; 61us; 65us; 59us; 68us; 59us; 77us; 59us; 80us; 59us; 84us; 59us; 106us; 59us; 120us; 59us; 1us; 65535us; 68us; 71us; 4us; 65535us; 55us; 56us; 68us; 69us; 77us; 78us; 80us; 81us; 35us; 65535us; 0us; 9us; 5us; 9us; 6us; 63us; 10us; 63us; 12us; 63us; 22us; 63us; 23us; 63us; 24us; 63us; 25us; 63us; 26us; 63us; 27us; 63us; 28us; 63us; 29us; 63us; 30us; 63us; 31us; 63us; 32us; 63us; 33us; 63us; 34us; 63us; 35us; 63us; 36us; 63us; 38us; 63us; 41us; 63us; 44us; 63us; 47us; 63us; 50us; 63us; 52us; 63us; 55us; 9us; 60us; 63us; 65us; 9us; 68us; 9us; 77us; 9us; 80us; 9us; 84us; 9us; 106us; 9us; 120us; 9us; 35us; 65535us; 0us; 64us; 5us; 64us; 6us; 64us; 10us; 64us; 12us; 64us; 22us; 64us; 23us; 64us; 24us; 64us; 25us; 64us; 26us; 64us; 27us; 64us; 28us; 64us; 29us; 64us; 30us; 64us; 31us; 64us; 32us; 64us; 33us; 64us; 34us; 64us; 35us; 64us; 36us; 64us; 38us; 64us; 41us; 64us; 44us; 64us; 47us; 64us; 50us; 64us; 52us; 64us; 55us; 64us; 60us; 64us; 65us; 64us; 68us; 64us; 77us; 64us; 80us; 64us; 84us; 64us; 106us; 64us; 120us; 64us; 37us; 65535us; 0us; 91us; 5us; 91us; 6us; 91us; 10us; 91us; 12us; 91us; 22us; 91us; 23us; 91us; 24us; 91us; 25us; 91us; 26us; 91us; 27us; 91us; 28us; 91us; 29us; 91us; 30us; 91us; 31us; 91us; 32us; 91us; 33us; 91us; 34us; 91us; 35us; 91us; 36us; 91us; 38us; 91us; 41us; 91us; 44us; 91us; 47us; 91us; 50us; 91us; 52us; 91us; 55us; 91us; 60us; 91us; 65us; 91us; 68us; 91us; 77us; 91us; 80us; 91us; 84us; 91us; 97us; 98us; 99us; 100us; 106us; 91us; 120us; 91us; 37us; 65535us; 0us; 93us; 5us; 93us; 6us; 93us; 10us; 93us; 12us; 93us; 22us; 93us; 23us; 93us; 24us; 93us; 25us; 93us; 26us; 93us; 27us; 93us; 28us; 93us; 29us; 93us; 30us; 93us; 31us; 93us; 32us; 93us; 33us; 93us; 34us; 93us; 35us; 93us; 36us; 93us; 38us; 93us; 41us; 93us; 44us; 93us; 47us; 93us; 50us; 93us; 52us; 93us; 55us; 93us; 60us; 93us; 65us; 93us; 68us; 93us; 77us; 93us; 80us; 93us; 84us; 93us; 97us; 93us; 99us; 93us; 106us; 93us; 120us; 93us; 37us; 65535us; 0us; 94us; 5us; 94us; 6us; 94us; 10us; 94us; 12us; 94us; 22us; 94us; 23us; 94us; 24us; 94us; 25us; 94us; 26us; 94us; 27us; 94us; 28us; 94us; 29us; 94us; 30us; 94us; 31us; 94us; 32us; 94us; 33us; 94us; 34us; 94us; 35us; 94us; 36us; 94us; 38us; 94us; 41us; 94us; 44us; 94us; 47us; 94us; 50us; 94us; 52us; 94us; 55us; 94us; 60us; 94us; 65us; 94us; 68us; 94us; 77us; 94us; 80us; 94us; 84us; 94us; 97us; 94us; 99us; 94us; 106us; 94us; 120us; 94us; 35us; 65535us; 0us; 92us; 5us; 92us; 6us; 92us; 10us; 92us; 12us; 92us; 22us; 92us; 23us; 92us; 24us; 92us; 25us; 92us; 26us; 92us; 27us; 92us; 28us; 92us; 29us; 92us; 30us; 92us; 31us; 92us; 32us; 92us; 33us; 92us; 34us; 92us; 35us; 92us; 36us; 92us; 38us; 92us; 41us; 92us; 44us; 92us; 47us; 92us; 50us; 92us; 52us; 92us; 55us; 92us; 60us; 92us; 65us; 92us; 68us; 92us; 77us; 92us; 80us; 92us; 84us; 92us; 106us; 92us; 120us; 92us; 37us; 65535us; 0us; 86us; 5us; 86us; 6us; 86us; 10us; 86us; 12us; 86us; 22us; 86us; 23us; 86us; 24us; 86us; 25us; 86us; 26us; 86us; 27us; 86us; 28us; 86us; 29us; 86us; 30us; 86us; 31us; 86us; 32us; 86us; 33us; 86us; 34us; 86us; 35us; 86us; 36us; 86us; 38us; 86us; 41us; 86us; 44us; 86us; 47us; 86us; 50us; 86us; 52us; 86us; 55us; 86us; 60us; 86us; 65us; 86us; 68us; 86us; 77us; 86us; 80us; 86us; 84us; 86us; 106us; 86us; 110us; 113us; 114us; 113us; 120us; 86us; 35us; 65535us; 0us; 87us; 5us; 87us; 6us; 87us; 10us; 87us; 12us; 87us; 22us; 87us; 23us; 87us; 24us; 87us; 25us; 87us; 26us; 87us; 27us; 87us; 28us; 87us; 29us; 87us; 30us; 87us; 31us; 87us; 32us; 87us; 33us; 87us; 34us; 87us; 35us; 87us; 36us; 87us; 38us; 87us; 41us; 87us; 44us; 87us; 47us; 87us; 50us; 87us; 52us; 87us; 55us; 87us; 60us; 87us; 65us; 87us; 68us; 87us; 77us; 87us; 80us; 87us; 84us; 87us; 106us; 87us; 120us; 87us; 2us; 65535us; 110us; 111us; 114us; 115us; 35us; 65535us; 0us; 88us; 5us; 88us; 6us; 88us; 10us; 88us; 12us; 88us; 22us; 88us; 23us; 88us; 24us; 88us; 25us; 88us; 26us; 88us; 27us; 88us; 28us; 88us; 29us; 88us; 30us; 88us; 31us; 88us; 32us; 88us; 33us; 88us; 34us; 88us; 35us; 88us; 36us; 88us; 38us; 88us; 41us; 88us; 44us; 88us; 47us; 88us; 50us; 88us; 52us; 88us; 55us; 88us; 60us; 88us; 65us; 88us; 68us; 88us; 77us; 88us; 80us; 88us; 84us; 88us; 106us; 88us; 120us; 88us; 35us; 65535us; 0us; 89us; 5us; 89us; 6us; 89us; 10us; 89us; 12us; 89us; 22us; 89us; 23us; 89us; 24us; 89us; 25us; 89us; 26us; 89us; 27us; 89us; 28us; 89us; 29us; 89us; 30us; 89us; 31us; 89us; 32us; 89us; 33us; 89us; 34us; 89us; 35us; 89us; 36us; 89us; 38us; 89us; 41us; 89us; 44us; 89us; 47us; 89us; 50us; 89us; 52us; 89us; 55us; 89us; 60us; 89us; 65us; 89us; 68us; 89us; 77us; 89us; 80us; 89us; 84us; 89us; 106us; 89us; 120us; 89us; |]
+let _fsyacc_sparseGotoTableRowOffsets = [|0us; 1us; 12us; 23us; 43us; 63us; 87us; 114us; 121us; 150us; 185us; 220us; 256us; 258us; 263us; 299us; 335us; 373us; 411us; 449us; 485us; 523us; 559us; 562us; 598us; |]
+let _fsyacc_stateToProdIdxsTableElements = [| 1us; 0us; 1us; 0us; 1us; 1us; 8us; 2us; 3us; 6us; 7us; 8us; 9us; 10us; 11us; 7us; 2us; 6us; 7us; 8us; 9us; 10us; 11us; 2us; 3us; 35us; 1us; 3us; 7us; 3us; 6us; 7us; 8us; 9us; 10us; 11us; 1us; 3us; 2us; 4us; 33us; 1us; 4us; 7us; 4us; 6us; 7us; 8us; 9us; 10us; 11us; 1us; 4us; 7us; 4us; 6us; 7us; 8us; 9us; 10us; 11us; 1us; 4us; 5us; 5us; 13us; 14us; 15us; 16us; 7us; 6us; 6us; 7us; 8us; 9us; 10us; 11us; 7us; 6us; 7us; 7us; 8us; 9us; 10us; 11us; 7us; 6us; 7us; 8us; 8us; 9us; 10us; 11us; 7us; 6us; 7us; 8us; 9us; 9us; 10us; 11us; 7us; 6us; 7us; 8us; 9us; 10us; 10us; 11us; 7us; 6us; 7us; 8us; 9us; 10us; 11us; 11us; 1us; 6us; 1us; 7us; 1us; 8us; 1us; 9us; 1us; 10us; 1us; 11us; 4us; 12us; 18us; 19us; 20us; 1us; 13us; 4us; 13us; 18us; 19us; 20us; 1us; 14us; 4us; 14us; 18us; 19us; 20us; 1us; 15us; 4us; 15us; 18us; 19us; 20us; 1us; 16us; 4us; 16us; 18us; 19us; 20us; 1us; 17us; 1us; 18us; 1us; 18us; 1us; 19us; 1us; 20us; 1us; 20us; 2us; 21us; 22us; 1us; 22us; 1us; 22us; 4us; 23us; 24us; 29us; 30us; 1us; 24us; 1us; 24us; 3us; 25us; 29us; 30us; 1us; 26us; 1us; 26us; 1us; 27us; 1us; 27us; 1us; 28us; 1us; 29us; 2us; 29us; 44us; 1us; 29us; 1us; 30us; 1us; 31us; 1us; 32us; 1us; 32us; 1us; 32us; 1us; 33us; 1us; 34us; 1us; 35us; 1us; 35us; 1us; 35us; 2us; 36us; 37us; 2us; 36us; 44us; 1us; 36us; 2us; 37us; 41us; 1us; 37us; 1us; 38us; 1us; 38us; 1us; 38us; 1us; 39us; 1us; 40us; 2us; 40us; 44us; 1us; 40us; 1us; 41us; 2us; 41us; 44us; 1us; 41us; 1us; 43us; 1us; 44us; 1us; 44us; 1us; 45us; 1us; 46us; 1us; 47us; 1us; 48us; 1us; 49us; 1us; 50us; 1us; 51us; 1us; 52us; 1us; 53us; 1us; 54us; 1us; 55us; 1us; 56us; 1us; 56us; 1us; 56us; 1us; 56us; 1us; 56us; 2us; 57us; 58us; 2us; 57us; 58us; 2us; 57us; 58us; 1us; 57us; 1us; 58us; 1us; 58us; 1us; 58us; 1us; 59us; 1us; 59us; 1us; 59us; 1us; 59us; 2us; 60us; 61us; 1us; 61us; 1us; 61us; 2us; 62us; 63us; 2us; 62us; 63us; 2us; 62us; 63us; 1us; 62us; 1us; 63us; 1us; 63us; 1us; 63us; 1us; 64us; |]
+let _fsyacc_stateToProdIdxsTableRowOffsets = [|0us; 2us; 4us; 6us; 15us; 23us; 26us; 28us; 36us; 38us; 41us; 43us; 51us; 53us; 61us; 63us; 69us; 77us; 85us; 93us; 101us; 109us; 117us; 119us; 121us; 123us; 125us; 127us; 129us; 134us; 136us; 141us; 143us; 148us; 150us; 155us; 157us; 162us; 164us; 166us; 168us; 170us; 172us; 174us; 177us; 179us; 181us; 186us; 188us; 190us; 194us; 196us; 198us; 200us; 202us; 204us; 206us; 209us; 211us; 213us; 215us; 217us; 219us; 221us; 223us; 225us; 227us; 229us; 231us; 234us; 237us; 239us; 242us; 244us; 246us; 248us; 250us; 252us; 254us; 257us; 259us; 261us; 264us; 266us; 268us; 270us; 272us; 274us; 276us; 278us; 280us; 282us; 284us; 286us; 288us; 290us; 292us; 294us; 296us; 298us; 300us; 302us; 304us; 307us; 310us; 313us; 315us; 317us; 319us; 321us; 323us; 325us; 327us; 329us; 332us; 334us; 336us; 339us; 342us; 345us; 347us; 349us; 351us; 353us; |]
+let _fsyacc_action_rows = 124
+let _fsyacc_actionTableElements = [|15us; 32768us; 6us; 73us; 14us; 5us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 0us; 49152us; 0us; 16385us; 7us; 16386us; 1us; 25us; 2us; 26us; 3us; 27us; 11us; 23us; 12us; 24us; 13us; 6us; 18us; 22us; 6us; 16386us; 1us; 25us; 2us; 26us; 3us; 27us; 11us; 23us; 12us; 24us; 18us; 22us; 15us; 32768us; 6us; 73us; 14us; 5us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 15us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 7us; 32768us; 1us; 25us; 2us; 26us; 3us; 27us; 11us; 23us; 12us; 24us; 15us; 8us; 18us; 22us; 0us; 16387us; 1us; 16417us; 14us; 10us; 15us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 7us; 32768us; 1us; 25us; 2us; 26us; 3us; 27us; 11us; 23us; 12us; 24us; 13us; 12us; 18us; 22us; 15us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 7us; 32768us; 1us; 25us; 2us; 26us; 3us; 27us; 11us; 23us; 12us; 24us; 15us; 14us; 18us; 22us; 0us; 16388us; 4us; 16389us; 4us; 33us; 5us; 35us; 20us; 29us; 21us; 31us; 6us; 16390us; 1us; 25us; 2us; 26us; 3us; 27us; 11us; 23us; 12us; 24us; 18us; 22us; 6us; 16391us; 1us; 25us; 2us; 26us; 3us; 27us; 11us; 23us; 12us; 24us; 18us; 22us; 6us; 16392us; 1us; 25us; 2us; 26us; 3us; 27us; 11us; 23us; 12us; 24us; 18us; 22us; 6us; 16393us; 1us; 25us; 2us; 26us; 3us; 27us; 11us; 23us; 12us; 24us; 18us; 22us; 6us; 16394us; 1us; 25us; 2us; 26us; 3us; 27us; 11us; 23us; 12us; 24us; 18us; 22us; 6us; 16395us; 1us; 25us; 2us; 26us; 3us; 27us; 11us; 23us; 12us; 24us; 18us; 22us; 15us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 15us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 15us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 15us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 15us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 15us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 15us; 16396us; 6us; 73us; 14us; 65us; 16us; 68us; 22us; 38us; 23us; 41us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 15us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 15us; 16397us; 6us; 73us; 14us; 65us; 16us; 68us; 22us; 38us; 23us; 41us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 15us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 15us; 16398us; 6us; 73us; 14us; 65us; 16us; 68us; 22us; 38us; 23us; 41us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 15us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 15us; 16399us; 6us; 73us; 14us; 65us; 16us; 68us; 22us; 38us; 23us; 41us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 15us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 15us; 16400us; 6us; 73us; 14us; 65us; 16us; 68us; 22us; 38us; 23us; 41us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 0us; 16401us; 15us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 0us; 16402us; 0us; 16403us; 15us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 0us; 16404us; 1us; 16405us; 24us; 44us; 15us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 0us; 16406us; 3us; 16407us; 8us; 55us; 19us; 58us; 24us; 47us; 13us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 0us; 16408us; 2us; 16409us; 8us; 55us; 19us; 58us; 15us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 0us; 16410us; 15us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 0us; 16411us; 0us; 16412us; 15us; 16426us; 6us; 73us; 14us; 5us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 2us; 32768us; 9us; 57us; 13us; 84us; 0us; 16413us; 0us; 16414us; 0us; 16415us; 12us; 32768us; 6us; 73us; 14us; 65us; 16us; 68us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 1us; 32768us; 25us; 62us; 0us; 16416us; 0us; 16417us; 0us; 16418us; 15us; 32768us; 6us; 73us; 14us; 5us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 1us; 32768us; 15us; 67us; 0us; 16419us; 16us; 16426us; 6us; 73us; 8us; 77us; 14us; 5us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 2us; 32768us; 13us; 84us; 17us; 70us; 0us; 16420us; 2us; 32768us; 8us; 80us; 17us; 72us; 0us; 16421us; 1us; 32768us; 28us; 74us; 1us; 32768us; 7us; 75us; 0us; 16422us; 0us; 16423us; 15us; 16426us; 6us; 73us; 14us; 5us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 2us; 32768us; 9us; 79us; 13us; 84us; 0us; 16424us; 15us; 16426us; 6us; 73us; 14us; 5us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 2us; 32768us; 9us; 82us; 13us; 84us; 0us; 16425us; 0us; 16427us; 15us; 32768us; 6us; 73us; 14us; 5us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 0us; 16428us; 0us; 16429us; 0us; 16430us; 0us; 16431us; 0us; 16432us; 0us; 16433us; 0us; 16434us; 0us; 16435us; 0us; 16436us; 0us; 16437us; 0us; 16438us; 0us; 16439us; 2us; 32768us; 35us; 96us; 36us; 95us; 1us; 32768us; 13us; 99us; 2us; 32768us; 35us; 96us; 36us; 95us; 1us; 32768us; 27us; 101us; 0us; 16440us; 1us; 32768us; 8us; 103us; 1us; 32768us; 28us; 104us; 2us; 32768us; 9us; 105us; 13us; 106us; 0us; 16441us; 15us; 32768us; 6us; 73us; 14us; 5us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 1us; 32768us; 9us; 108us; 0us; 16442us; 1us; 32768us; 8us; 110us; 1us; 32768us; 30us; 102us; 1us; 32768us; 9us; 112us; 0us; 16443us; 1us; 16444us; 13us; 114us; 1us; 32768us; 30us; 102us; 0us; 16445us; 1us; 32768us; 8us; 117us; 1us; 32768us; 28us; 118us; 2us; 32768us; 9us; 119us; 13us; 120us; 0us; 16446us; 15us; 32768us; 6us; 73us; 14us; 5us; 16us; 68us; 20us; 50us; 21us; 52us; 25us; 60us; 26us; 97us; 28us; 90us; 29us; 123us; 30us; 102us; 31us; 109us; 32us; 116us; 33us; 76us; 35us; 96us; 36us; 95us; 1us; 32768us; 9us; 122us; 0us; 16447us; 0us; 16448us; |]
+let _fsyacc_actionTableRowOffsets = [|0us; 16us; 17us; 18us; 26us; 33us; 49us; 65us; 73us; 74us; 76us; 92us; 100us; 116us; 124us; 125us; 130us; 137us; 144us; 151us; 158us; 165us; 172us; 188us; 204us; 220us; 236us; 252us; 268us; 284us; 300us; 316us; 332us; 348us; 364us; 380us; 396us; 412us; 413us; 429us; 430us; 431us; 447us; 448us; 450us; 466us; 467us; 471us; 485us; 486us; 489us; 505us; 506us; 522us; 523us; 524us; 540us; 543us; 544us; 545us; 546us; 559us; 561us; 562us; 563us; 564us; 580us; 582us; 583us; 600us; 603us; 604us; 607us; 608us; 610us; 612us; 613us; 614us; 630us; 633us; 634us; 650us; 653us; 654us; 655us; 671us; 672us; 673us; 674us; 675us; 676us; 677us; 678us; 679us; 680us; 681us; 682us; 683us; 686us; 688us; 691us; 693us; 694us; 696us; 698us; 701us; 702us; 718us; 720us; 721us; 723us; 725us; 727us; 728us; 730us; 732us; 733us; 735us; 737us; 740us; 741us; 757us; 759us; 760us; |]
+let _fsyacc_reductionSymbolCounts = [|1us; 1us; 1us; 5us; 6us; 1us; 3us; 3us; 3us; 3us; 3us; 3us; 1us; 3us; 3us; 3us; 3us; 1us; 3us; 2us; 3us; 1us; 3us; 1us; 3us; 1us; 2us; 2us; 1us; 4us; 2us; 1us; 3us; 1us; 1us; 3us; 3us; 3us; 3us; 1us; 3us; 4us; 0us; 1us; 3us; 1us; 1us; 1us; 1us; 1us; 1us; 1us; 1us; 1us; 1us; 1us; 5us; 4us; 6us; 4us; 1us; 3us; 4us; 6us; 1us; |]
+let _fsyacc_productionToNonTerminalTable = [|0us; 1us; 2us; 2us; 2us; 3us; 3us; 3us; 3us; 3us; 3us; 3us; 4us; 4us; 4us; 4us; 4us; 5us; 5us; 5us; 5us; 6us; 6us; 7us; 7us; 8us; 8us; 8us; 9us; 9us; 9us; 10us; 10us; 11us; 11us; 11us; 11us; 11us; 11us; 11us; 12us; 12us; 13us; 13us; 13us; 14us; 14us; 14us; 14us; 14us; 15us; 15us; 16us; 16us; 17us; 18us; 19us; 20us; 20us; 21us; 22us; 22us; 23us; 23us; 24us; |]
+let _fsyacc_immediateActions = [|65535us; 49152us; 16385us; 65535us; 65535us; 65535us; 65535us; 65535us; 16387us; 65535us; 65535us; 65535us; 65535us; 65535us; 16388us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 16401us; 65535us; 16402us; 16403us; 65535us; 16404us; 65535us; 65535us; 16406us; 65535us; 65535us; 16408us; 65535us; 65535us; 16410us; 65535us; 16411us; 16412us; 65535us; 65535us; 16413us; 16414us; 16415us; 65535us; 65535us; 16416us; 16417us; 16418us; 65535us; 65535us; 16419us; 65535us; 65535us; 16420us; 65535us; 16421us; 65535us; 65535us; 16422us; 16423us; 65535us; 65535us; 16424us; 65535us; 65535us; 16425us; 16427us; 65535us; 16428us; 16429us; 16430us; 16431us; 16432us; 16433us; 16434us; 16435us; 16436us; 16437us; 16438us; 16439us; 65535us; 65535us; 65535us; 65535us; 16440us; 65535us; 65535us; 65535us; 16441us; 65535us; 65535us; 16442us; 65535us; 65535us; 65535us; 16443us; 65535us; 65535us; 16445us; 65535us; 65535us; 65535us; 16446us; 65535us; 65535us; 16447us; 16448us; |]
 let _fsyacc_reductions ()  =    [| 
-# 380 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 382 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Expr)) in
             Microsoft.FSharp.Core.Operators.box
@@ -386,724 +388,735 @@ let _fsyacc_reductions ()  =    [|
                       raise (Microsoft.FSharp.Text.Parsing.Accept(Microsoft.FSharp.Core.Operators.box _1))
                    )
                  : '_startexpr));
-# 389 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 391 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+        (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'relexpr)) in
+            Microsoft.FSharp.Core.Operators.box
+                (
+                   (
+# 32 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+                                      _1 
+                   )
+# 32 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+                 : Expr));
+# 402 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'relnexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 32 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
-                                       _1 
+# 34 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+                                         _1
                    )
-# 32 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
-                 : Expr));
-# 400 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 34 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+                 : 'relexpr));
+# 413 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+        (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
+            let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'relnexpr)) in
+            let _4 = (let data = parseState.GetInput(4) in (Microsoft.FSharp.Core.Operators.unbox data : 'relnexpr)) in
+            Microsoft.FSharp.Core.Operators.box
+                (
+                   (
+# 35 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+                                                        new CompositeExpr(WellKnownSym.comma, [|_2;_4|]) :> Expr 
+                   )
+# 35 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+                 : 'relexpr));
+# 425 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+        (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
+            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'sym)) in
+            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'relnexpr)) in
+            let _5 = (let data = parseState.GetInput(5) in (Microsoft.FSharp.Core.Operators.unbox data : 'relnexpr)) in
+            Microsoft.FSharp.Core.Operators.box
+                (
+                   (
+# 36 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+                                                            new CompositeExpr(_1, [|_3;_5|]) :> Expr 
+                   )
+# 36 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+                 : 'relexpr));
+# 438 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'plusexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 34 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 38 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                            makeplus _1 
                    )
-# 34 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 38 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'relnexpr));
-# 411 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 449 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'relnexpr)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'relnexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 35 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 39 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                new CompositeExpr(WellKnownSym.equals, [|_1; _3|]) :> Expr 
                    )
-# 35 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 39 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'relnexpr));
-# 423 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 461 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'relnexpr)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'relnexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 36 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 40 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                new CompositeExpr(WellKnownSym.lessthan, [|_1; _3|]) :> Expr 
                    )
-# 36 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 40 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'relnexpr));
-# 435 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 473 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'relnexpr)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'relnexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 37 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 41 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                new CompositeExpr(WellKnownSym.greaterthan, [|_1; _3|]) :> Expr 
                    )
-# 37 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 41 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'relnexpr));
-# 447 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 485 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'relnexpr)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'relnexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 38 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 42 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                new CompositeExpr(WellKnownSym.lessequals, [|_1; _3|]) :> Expr 
                    )
-# 38 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 42 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'relnexpr));
-# 459 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 497 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'relnexpr)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'relnexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 39 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 43 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                new CompositeExpr(WellKnownSym.greaterequals, [|_1; _3|]) :> Expr 
                    )
-# 39 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 43 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'relnexpr));
-# 471 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 509 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'relnexpr)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'relnexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 40 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 44 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                new CompositeExpr(WellKnownSym.notequals, [|_1; _3|]) :> Expr 
                    )
-# 40 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 44 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'relnexpr));
-# 483 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 521 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'timesexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 42 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 46 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                             [maketimes _1] 
                    )
-# 42 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 46 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'plusexpr));
-# 494 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 532 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'plusexpr)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'timesexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 43 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 47 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                   _1 @ [maketimes _3] 
                    )
-# 43 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 47 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'plusexpr));
-# 506 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 544 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'plusexpr)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'timesexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 44 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 48 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                    _1 @ [(new CompositeExpr(WellKnownSym.minus, [|maketimes(_3)|]) :> Expr)] 
                    )
-# 44 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 48 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'plusexpr));
-# 518 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 556 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'plusexpr)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'timesexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 45 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 49 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                 _1 @ [(new CompositeExpr(WellKnownSym.plusminus, [|maketimes(_3)|]) :> Expr)] 
                    )
-# 45 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 49 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'plusexpr));
-# 530 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 568 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'plusexpr)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'timesexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 46 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 50 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                 _1 @ [(new CompositeExpr(WellKnownSym.minusplus, [|maketimes(_3)|]) :> Expr)] 
                    )
-# 46 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 50 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'plusexpr));
-# 542 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 580 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'powerexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 48 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 52 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                              [_1] 
                    )
-# 48 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 52 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'timesexpr));
-# 553 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 591 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'timesexpr)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'powerexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 49 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 53 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                     _1 @ [_3] 
                    )
-# 49 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 53 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'timesexpr));
-# 565 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 603 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'timesexpr)) in
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'nonpfxpowerexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 50 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 54 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                     _1 @ [_2] 
                    )
-# 50 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 54 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'timesexpr));
-# 577 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 615 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'timesexpr)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'powerexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 51 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 55 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                      _1 @ [(new CompositeExpr(WellKnownSym.divide, [|_3|]) :> Expr)] 
                    )
-# 51 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 55 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'timesexpr));
-# 589 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 627 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'prefixexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 53 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 57 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                               _1 
                    )
-# 53 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 57 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'powerexpr));
-# 600 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 638 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'prefixexpr)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'powerexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 54 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 58 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                    new CompositeExpr(WellKnownSym.power, [|_1; _3|]) :> Expr 
                    )
-# 54 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 58 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'powerexpr));
-# 612 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 650 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'postfixexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 56 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 60 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                      _1 
                    )
-# 56 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 60 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'nonpfxpowerexpr));
-# 623 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 661 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'postfixexpr)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'nonpfxpowerexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 57 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 61 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                           new CompositeExpr(WellKnownSym.power, [|_1; _3|]) :> Expr 
                    )
-# 57 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 61 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'nonpfxpowerexpr));
-# 635 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 673 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'postfixexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 59 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 63 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                 _1 
                    )
-# 59 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 63 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'prefixexpr));
-# 646 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 684 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'prefixexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 60 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 64 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                           _2 
                    )
-# 60 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 64 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'prefixexpr));
-# 657 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 695 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+        (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
+            let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'prefixexpr)) in
+            Microsoft.FSharp.Core.Operators.box
+                (
+                   (
+# 65 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+                                           match _2 with :? DoubleNumber as dn -> new DoubleNumber(-dn.Num) :> Expr | _ -> new CompositeExpr(WellKnownSym.minus, [|_2|]) :> Expr 
+                   )
+# 65 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+                 : 'prefixexpr));
+# 706 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'primaryexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 62 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 67 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                  _1 
                    )
-# 62 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 67 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'postfixexpr));
-# 668 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 717 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'postfixexpr)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'arglist)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 63 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 68 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                       new CompositeExpr(_1, Array.of_list _3) :> Expr 
                    )
-# 63 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 68 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'postfixexpr));
-# 680 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 729 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'postfixexpr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 64 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 69 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                            new CompositeExpr(WellKnownSym.factorial, [|_1|]) :> Expr 
                    )
-# 64 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 69 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'postfixexpr));
-# 691 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 740 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'primaryexprnovb)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 66 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 71 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                      _1
                    )
-# 66 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 71 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'primaryexpr));
-# 702 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 751 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'primaryexprnovb)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 67 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 72 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                 new CompositeExpr(WellKnownSym.magnitude, [|_2|]) :> Expr 
                    )
-# 67 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 72 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'primaryexpr));
-# 713 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
-        (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'primaryexprnovb)) in
-            let _4 = (let data = parseState.GetInput(4) in (Microsoft.FSharp.Core.Operators.unbox data : 'primaryexprnovb)) in
-            Microsoft.FSharp.Core.Operators.box
-                (
-                   (
-# 68 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
-                                                                      new CompositeExpr(WellKnownSym.comma, [|_2;_4|]) :> Expr 
-                   )
-# 68 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
-                 : 'primaryexpr));
-# 725 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
-        (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'primaryexprnovb)) in
-            let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'primaryexprnovb)) in
-            let _5 = (let data = parseState.GetInput(5) in (Microsoft.FSharp.Core.Operators.unbox data : 'primaryexprnovb)) in
-            Microsoft.FSharp.Core.Operators.box
-                (
-                   (
-# 69 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
-                                                                                      new CompositeExpr(_1, [|_3;_5|]) :> Expr 
-                   )
-# 69 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
-                 : 'primaryexpr));
-# 738 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 762 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'sym)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 71 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 74 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                              _1 
                    )
-# 71 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 74 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'primaryexprnovb));
-# 749 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 773 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'number)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 72 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 75 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                  _1 
                    )
-# 72 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 75 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'primaryexprnovb));
-# 760 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 784 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : Expr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 73 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 76 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                      _2 
                    )
-# 73 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 76 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'primaryexprnovb));
-# 771 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 795 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'arglist)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 74 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 77 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                           new ArrayExpr(Array.of_list _2) :> Expr 
                    )
-# 74 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 77 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'primaryexprnovb));
-# 782 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 806 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'arrlist)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 75 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 78 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                           new ArrayExpr(_2) :> Expr 
                    )
-# 75 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 78 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'primaryexprnovb));
-# 793 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 817 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : string)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 76 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 79 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                        new ErrorMsgExpr(_2) :> Expr 
                    )
-# 76 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 79 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'primaryexprnovb));
-# 804 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 828 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 77 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 80 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                new NullExpr() :> Expr 
                    )
-# 77 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 80 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'primaryexprnovb));
-# 814 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
-        (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
-            let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'primaryexprnovb)) in
-            Microsoft.FSharp.Core.Operators.box
-                (
-                   (
-# 78 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
-                                                match _2 with :? DoubleNumber as dn -> new DoubleNumber(-dn.Num) :> Expr | _ -> new CompositeExpr(WellKnownSym.minus, [|_2|]) :> Expr 
-                   )
-# 78 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
-                 : 'primaryexprnovb));
-# 825 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 838 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'arglist)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 80 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 82 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                  Array2D.init 1 _2.Length (fun i j -> _2.[j]) 
                    )
-# 80 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 82 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'arrlist));
-# 836 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 849 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'arrlist)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'arglist)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 81 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 83 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                   Array2D.init (1 + Array2D.length1 _1) (Array2D.length2 _1) (fun i j -> if i < Array2D.length1 _1 then _1.[i,j] else _3.[j]) 
                    )
-# 81 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 83 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'arrlist));
-# 848 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 861 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 83 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 85 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                  [] 
                    )
-# 83 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 85 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'arglist));
-# 858 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 871 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Expr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 84 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 86 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                [_1] 
                    )
-# 84 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 86 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'arglist));
-# 869 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 882 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'arglist)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : Expr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 85 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 87 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                              _1 @ [_3] 
                    )
-# 85 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 87 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'arglist));
-# 881 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 894 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'lettersym)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 87 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 89 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                        _1 :> Expr 
                    )
-# 87 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 89 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'sym));
-# 892 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 905 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'groupedlettersym)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 88 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 90 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                            _1 :> Expr 
                    )
-# 88 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 90 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'sym));
-# 903 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 916 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'wordsym)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 89 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 91 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                   _1 :> Expr 
                    )
-# 89 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 91 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'sym));
-# 914 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 927 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'wellknownsym)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 90 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 92 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                        _1 :> Expr 
                    )
-# 90 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 92 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'sym));
-# 925 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 938 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : string)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 91 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 93 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                              if(_1.Length <> 1) then new WordSym(_1) :> Expr else new LetterSym(_1.[0]) :> Expr 
                    )
-# 91 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 93 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'sym));
-# 936 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 949 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'realnumber)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 93 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 95 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                            _1 :> Expr 
                    )
-# 93 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 95 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'number));
-# 947 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 960 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'complexnumber)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 94 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 96 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                         _1 :> Expr 
                    )
-# 94 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 96 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'number));
-# 958 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 971 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'doublenumber)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 96 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 98 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                  _1 :> RealNumber 
                    )
-# 96 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 98 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'realnumber));
-# 969 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 982 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'integernumber)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 97 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 99 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                         _1 :> RealNumber 
                    )
-# 97 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 99 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'realnumber));
-# 980 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 993 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : float)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 99 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 101 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                              new DoubleNumber(_1) 
                    )
-# 99 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 101 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'doublenumber));
-# 991 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 1004 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : string)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 101 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 103 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                new IntegerNumber(new BigInt(_1)) 
                    )
-# 101 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 103 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'integernumber));
-# 1002 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 1015 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : 'realnumber)) in
             let _4 = (let data = parseState.GetInput(4) in (Microsoft.FSharp.Core.Operators.unbox data : 'realnumber)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 103 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 105 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                                            new ComplexNumber(_2, _4) 
                    )
-# 103 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 105 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'complexnumber));
-# 1014 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 1027 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : string)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 105 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 107 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                         new LetterSym(_3.[0]) 
                    )
-# 105 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 107 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'lettersym));
-# 1025 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 1038 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : string)) in
             let _5 = (let data = parseState.GetInput(5) in (Microsoft.FSharp.Core.Operators.unbox data : Expr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 106 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 108 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                           let ls = new LetterSym(_3.[0]) in ls.Subscript <- _5; ls 
                    )
-# 106 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 108 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'lettersym));
-# 1037 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 1050 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'lettersymlist)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 108 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 110 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                                                  new GroupedLetterSym(Array.of_list _3) 
                    )
-# 108 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 110 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'groupedlettersym));
-# 1048 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 1061 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'lettersym)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 110 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 112 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                  [_1] 
                    )
-# 110 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 112 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'lettersymlist));
-# 1059 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 1072 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : 'lettersym)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : 'lettersymlist)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 111 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 113 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                         [_1] @ _3 
                    )
-# 111 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 113 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'lettersymlist));
-# 1071 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 1084 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : string)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 113 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 115 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                     new WordSym(_3) 
                    )
-# 113 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 115 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'wordsym));
-# 1082 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 1095 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : string)) in
             let _5 = (let data = parseState.GetInput(5) in (Microsoft.FSharp.Core.Operators.unbox data : Expr)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 114 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 116 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                                         let ws = new WordSym(_3) in ws.Subscript <- _5; ws 
                    )
-# 114 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 116 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'wordsym));
-# 1094 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 1107 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : string)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 116 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 118 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                                           new WellKnownSym(Enum.Parse(typeof<WKSID>, _1) :?> WKSID) 
                    )
-# 116 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
+# 118 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fsy"
                  : 'wellknownsym));
 |]
-# 1106 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
+# 1119 "C:\1-Production\MathApollo\Math-KnowledgeParser\ExprText\TextParser.fs"
 let tables () : Microsoft.FSharp.Text.Parsing.Tables<_> = 
   { reductions= _fsyacc_reductions ();
     endOfInputTag = _fsyacc_endOfInputTag;
