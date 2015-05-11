@@ -1,25 +1,4 @@
-﻿// /*******************************************************************************
-//  * Analytical Geometry Semantic Parsing 
-//  * <p>
-//  * Copyright (C) 2014  Bo Kang, Hao Hu
-//  * <p>
-//  * This program is free software; you can redistribute it and/or modify it under
-//  * the terms of the GNU General Public License as published by the Free Software
-//  * Foundation; either version 2 of the License, or any later version.
-//  * <p>
-//  * This program is distributed in the hope that it will be useful, but WITHOUT
-//  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-//  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-//  * details.
-//  * <p>
-//  * You should have received a copy of the GNU General Public License along with
-//  * this program; if not, write to the Free Software Foundation, Inc., 51
-//  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//  ******************************************************************************/
-
-using System.Text;
-
-namespace AGSemantic.KnowledgeBase
+﻿namespace AGSemantic.KnowledgeBase
 {
     using System;
    
@@ -83,16 +62,16 @@ namespace AGSemantic.KnowledgeBase
         public Point(string label, double xcoordinate, double ycoordinate)
             : base(ShapeType.Point, label)
         {
-            XCoordinate = Math.Round(xcoordinate,2);
-            YCoordinate = Math.Round(ycoordinate,2);
+            XCoordinate = Math.Round(xcoordinate,1);
+            YCoordinate = Math.Round(ycoordinate,1);
 
         }
 
         public Point(double xcoordinate, double ycoordinate)
             : this(null, xcoordinate, ycoordinate)
         {
-            XCoordinate = Math.Round(xcoordinate, 2);
-            YCoordinate = Math.Round(ycoordinate, 2);
+            XCoordinate = Math.Round(xcoordinate, 1);
+            YCoordinate = Math.Round(ycoordinate, 1);
         }
 
         #region Symbolic Format
@@ -1038,48 +1017,6 @@ namespace AGSemantic.KnowledgeBase
         public string FocalPoint2
         {
             get { return string.Format("FP2 = ({0},0)", SymFociC); }
-        }
-
-        #endregion
-    }
-
-    public sealed class Parabola : QuadraticCurve
-    {
-        #region Properties
-
-        public Point Vertex { get; set; }
-        public double FocalParameterP { get; set; }
-        public double DistanceFromVertexToFocusA { get; set; }
-
-        #endregion
-
-        #region constructor
-
-        public Parabola(string label, double a, double b, double d, double e, double f)
-            : base(label, ShapeType.Parabola, a, b, 0.0, d, e, f)
-        {
-        }
-
-        public Parabola(double a, double b , double d, double e, double f)
-            : this(null, a, b, d, e, f)
-        {
-        }
-
-        #endregion
-    }
-
-    public sealed class Hyperbola : QuadraticCurve
-    {
-        #region constructor
-
-        public Hyperbola(string label, double a, double b, double f)
-            : base(label, ShapeType.Hyperbola, a, b, 0.0, 0.0, 0.0, f)
-        {
-        }
-
-        public Hyperbola(double a, double b, double d, double e, double f)
-            : this(null, a, b, f)
-        {
         }
 
         #endregion

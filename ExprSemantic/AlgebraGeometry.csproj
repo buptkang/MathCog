@@ -47,10 +47,11 @@
   <ItemGroup>
     <Compile Include="AGKnowledgeDerivation.cs" />
     <Compile Include="AGKnowledgeHints.cs" />
+    <Compile Include="ExprPatternMatchVisitor.cs" />
     <Compile Include="KnowledgeBase\AGPropertyExprs.cs" />
     <Compile Include="KnowledgeQueryEngine\AGKnowledgePropertyCalculator.cs" />
     <Compile Include="KnowledgeQueryEngine\AGShapePropertySelector.cs" />
-    <Compile Include="KnowledgeRelation\AGRelationExprs.cs" />
+    <Compile Include="RelationExpr.cs" />
     <Compile Include="KnowledgeRelation\RelationFactory.cs" />
     <Compile Include="KnowledgeUnification\AGSubstitution.cs" />
     <Compile Include="KnowledgeUnification\AGTrsAtom.cs" />
@@ -58,16 +59,16 @@
     <Compile Include="KnowledgeUnification\AGTrsTermBase.cs" />
     <Compile Include="KnowledgeUnification\AGTrsVariable.cs" />
     <Compile Include="KnowledgeUnification\AGUnifier.cs" />
-    <Compile Include="KnowledgeUnification\BuiltInEngineAGExtensions.cs" />
+    <Compile Include="ExprPatternMatcher.cs" />
     <Compile Include="AGKnowlegeReasoner.cs" />
     <Compile Include="KnowledgeUnification\BuiltInEngine.cs" />
     <Compile Include="KnowledgeUnification\Engine.cs" />
-    <Compile Include="KnowledgeBase\AGShapes.cs" />
+    <Compile Include="Knowledge.cs" />
     <Compile Include="KnowledgeBase\AGShapeTypes.cs" />
-    <Compile Include="KnowledgeBase\AGShapeExprs.cs" />
+    <Compile Include="KnowledgeExpr.cs" />
     <Compile Include="AGUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="KnowledgeRelation\AGRelations.cs" />
+    <Compile Include="Knowledge.Relation.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ExprMathML\ExprMathML.fsproj">

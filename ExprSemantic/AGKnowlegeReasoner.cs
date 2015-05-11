@@ -35,13 +35,33 @@ namespace ExprSemantic
 
     public class AGKnowlegeReasoner
     {
-        public AGKnowlegeReasoner()
+        private static AGKnowlegeReasoner _instance;
+
+        public static AGKnowlegeReasoner Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new AGKnowlegeReasoner();
+                }
+                return _instance;
+            }
+        }
+
+        private AGKnowlegeReasoner()
         {
             Knowledge = new Dictionary<Expr, IKnowledgeExpr>();
             QueryProperties = new List<AGPropertyExpr>();
             CurrQueryMode = QueryMode.None;
             IsLastTrace = false;
         }
+
+
+
+
+
+
 
         public IDictionary<Expr, IKnowledgeExpr> Knowledge { get; set; }
         public KeyValuePair<Expr,IKnowledgeExpr> CurrKnowledge { get; set; }
@@ -423,6 +443,13 @@ namespace ExprSemantic
             CurrQuery = propertyExpr;
             CurrKnowledge = propertyExpr.Knowledge;
             IsLastTrace = false;
+        }
+
+
+        public bool IsAlgebraicKnowledgeEntity(Expr expr, out IKnowledgeExpr shape)
+        {
+            List<AGKnowledgeTracer> algebraTracer;
+            return AGUnifier.Instance.VerifyShapeKnowledge(expr, out shape, out algebraTracer);
         }
 
         /// <summary>

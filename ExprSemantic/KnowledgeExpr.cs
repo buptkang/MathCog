@@ -1,23 +1,4 @@
-﻿// /*******************************************************************************
-//  * Analytical Geometry Semantic Parsing 
-//  * <p>
-//  * Copyright (C) 2014  Bo Kang, Hao Hu
-//  * <p>
-//  * This program is free software; you can redistribute it and/or modify it under
-//  * the terms of the GNU General Public License as published by the Free Software
-//  * Foundation; either version 2 of the License, or any later version.
-//  * <p>
-//  * This program is distributed in the hope that it will be useful, but WITHOUT
-//  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-//  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-//  * details.
-//  * <p>
-//  * You should have received a copy of the GNU General Public License along with
-//  * this program; if not, write to the Free Software Foundation, Inc., 51
-//  * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//  ******************************************************************************/
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using ExprSemantic;
@@ -27,19 +8,13 @@ using ExprSemantic.KnowledgeUnification;
 namespace AGSemantic.KnowledgeBase
 {
     using starPadSDK.MathExpr;
-    using System;
 
     public abstract class IKnowledgeExpr
     {
-        //True:  geometry input
-        //False: algebra  input
-        public bool GeometryInput { get; set; }
         public Expr GeneralExpr { get; set; }
 
         public List<AGKnowledgeTracer> Tracers;
-
         private int _traceIndex = 0;
-
         public int TraceIndex
         {
             get{return _traceIndex;}
@@ -48,7 +23,6 @@ namespace AGSemantic.KnowledgeBase
                 _traceIndex = value; 
             }
         }
-
         public string RetrieveCurrWhyHint(Expr currExpr)
         {
             int index = Tracers.FindIndex(x => x.Source.Equals(currExpr));
@@ -68,7 +42,6 @@ namespace AGSemantic.KnowledgeBase
             }
             return null;
         }
-
         public string RetrieveCurrStrategyHint(Expr currExpr)
         {
             int index = Tracers.FindIndex(x => x.Source.Equals(currExpr));
@@ -89,12 +62,10 @@ namespace AGSemantic.KnowledgeBase
 
             return null;
         }
-
         public Expr RetrieveCurrExpr()
         {
             return Tracers[TraceIndex].Source;
         }
-
         public Expr RetrieveHow(Expr currExpr, out string ruleApplied, out bool isLastTrace)
         {
             isLastTrace = false;
@@ -128,6 +99,10 @@ namespace AGSemantic.KnowledgeBase
 
     public abstract class ShapeExpr : IKnowledgeExpr
     {
+        //True:  geometry input
+        //False: algebra  input
+        public bool GeometryInput { get; set; }
+
         protected ShapeExpr(Shape shape)
         {
             AGShape = shape;
@@ -663,21 +638,4 @@ namespace AGSemantic.KnowledgeBase
         #endregion
     }
 
-    public sealed class HyperbolaExpr : QuadraticCurveExpr
-    {
-        public HyperbolaExpr(Hyperbola shape, Expr expr)
-            : base(shape, expr)
-        {
-            
-        }
-    }
-
-    public sealed class ParabolaExpr : QuadraticCurveExpr
-    {
-        public ParabolaExpr(Parabola shape, Expr expr)
-            : base(shape, expr)
-        {
-            
-        }
-    }
 }
