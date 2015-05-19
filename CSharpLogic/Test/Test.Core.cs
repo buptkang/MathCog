@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -77,57 +78,117 @@ namespace CSharpLogic.Test
         }
 
         [Test]
-        public void TestEq()
-        {
-            /*
-             * x = var('x')
-            assert tuple(eq(x, 2)({})) == ({x: 2},)
-            assert tuple(eq(x, 2)({x: 3})) == ()
-             */
-            var eq = LogicSharp.Goal_Equal();
-
-            var variable = new Var('x');
-            var dict = new Dictionary<object, object>();
-
-            object obj = eq(variable, 2)(dict);
-            Assert.IsInstanceOf(typeof(bool), obj);
-            Assert.True((bool)obj);
-            Assert.True(dict.Count == 1);
-            Assert.True(dict.ContainsKey(variable));
-            Assert.True(dict[variable].Equals(2));
-
-            var dict2 = new Dictionary<object, object>();
-            dict2.Add(variable, 3);
-            obj = eq(variable, 2)(dict2);
-            Assert.False((bool)obj); 
-        }
-
-        [Test]
         public void TestLogicAny()
         {
             var x = new Var('x');
-            //Func<>
-/*            
-            assert len(tuple(lany(eq(x, 2), eq(x, 3))({}))) == 2
-            assert len(tuple(lany((eq, x, 2), (eq, x, 3))({}))) == 2
- */
-            var eq = LogicSharp.Goal_Equal();
-            Func<Dictionary<object, object>, bool> goal1 = eq(x, 2);
-            Func<Dictionary<object, object>, bool> goal2 = eq(x, 2);
+            var goal1 = new EqGoal(x, 2);
+            
+            var lst = new List<Goal>();
+            lst.Add(goal1);
+            var dict = new Dictionary<object, object>();
+            object result = LogicSharp.logic_Any(lst, dict);
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf(typeof(IEnumerable<KeyValuePair<object,object>>), result);
+            Assert.IsInstanceOf(typeof(Dictionary<object, object>), result);
+            var resultDict = result as Dictionary<object, object>;
+            Assert.IsTrue(resultDict.Count == 1);
+            Assert.True(dict.ContainsKey(x));
+
+            //assert len(tuple(lany(eq(x, 2), eq(x, 3))({}))) == 2
+            //assert len(tuple(lany((eq, x, 2), (eq, x, 3))({}))) == 2
+
+            var goal2 = new EqGoal(x, 3);
+            lst = new List<Goal>();
+            lst.Add(goal1);
+            lst.Add(goal2);
+            dict = new Dictionary<object, object>();
+            result = LogicSharp.logic_Any(lst, dict);
+            Assert.IsInstanceOf(typeof(IEnumerable<KeyValuePair<object, object>>), result);
+            Assert.IsInstanceOf(typeof(HashSet<KeyValuePair<object, object>>), result);
+            var myHashSet = result as HashSet<KeyValuePair<object, object>>;
+            Assert.NotNull(myHashSet);
+            Assert.True(myHashSet.Count == 2);
+     
+            //assert len(tuple(lany(eq(x, 2), eq(x, 3))({x:2}))) == 1
+            lst = new List<Goal>();
+            lst.Add(goal1);
+            lst.Add(goal2);
+            dict = new Dictionary<object, object>();
+            dict.Add(x,2);
+            result = LogicSharp.logic_Any(lst, dict);
+            Assert.IsNull(result);
         }
 
         [Test]
-        public void TestMemberof()
+        public void TestLogicAll()
         {
-            /*
-            * x = var('x')
-            assert set(run(5, x, membero(x, (1,2,3)),
-                membero(x, (2,3,4)))) == set((2,3))
-            assert run(5, x, membero(2, (1, x, 3))) == (2,)
+/*            x = var('x')
+            assert results(lall((eq, x, 2))) == ({x: 2},)
+            assert results(lall((eq, x, 2), (eq, x, 3))) == ()            */
+
+            var x = new Var('x');
+            var goal1 = new EqGoal(x, 2);
+            var goal2 = new EqGoal(x, 3);
+
+            var lst = new List<Goal>();
+            lst.Add(goal1);
+            lst.Add(goal2);
+            var dict = new Dictionary<object, object>();
+            object result = LogicSharp.logic_All(lst, dict);
+            Assert.Null(result);
+
+            /*assert results(lall((eq, x, 2), (eq, y, 3))) == ({x:2, y:3}) */
+            var y = new Var('y');
+            var goal3 = new EqGoal(y, 4);
+            lst = new List<Goal>();
+            lst.Add(goal1);
+            lst.Add(goal3);
+            dict = new Dictionary<object, object>();
+            result = LogicSharp.logic_All(lst, dict);
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf(typeof(Dictionary<object, object>), result);
+            var resultDict = result as Dictionary<object, object>;
+            Assert.IsTrue(resultDict.Count == 2);
+        }
+
+        [Test]
+        public void TestLogicConde()
+        {
+            /*            
+             * x = var('x')
+            assert results(conde([eq(x, 2)], [eq(x, 3)])) == ({x: 2}, {x: 3})
+            assert results(conde([eq(x, 2), eq(x, 3)])) == ()
             */
+            var x = new Var('x');
+            var goal1 = new EqGoal(x, 2);
+            var goal2 = new EqGoal(x, 3);
+            var lst = new List<Goal>();
+            lst.Add(goal1);
+            var lst2 = new List<Goal>();
+            lst2.Add(goal2);
+            var lslst = new List<List<Goal>>();
+            lslst.Add(lst);
+            lslst.Add(lst2);
 
+            var dict = new Dictionary<object, object>();
+            object result = LogicSharp.logic_Conde(lslst,dict);
+            Assert.IsInstanceOf(typeof(IEnumerable<KeyValuePair<object, object>>), result);
+            Assert.IsInstanceOf(typeof(HashSet<KeyValuePair<object, object>>), result);
+            var myHashSet = result as HashSet<KeyValuePair<object, object>>;
+            Assert.NotNull(myHashSet);
+            Assert.True(myHashSet.Count == 2);
 
-
+            lst = new List<Goal>();
+            lst.Add(goal1);
+            lst.Add(goal2);
+            lslst = new List<List<Goal>>();
+            lslst.Add(lst);
+            dict = new Dictionary<object, object>();
+            result = LogicSharp.logic_Conde(lslst, dict);
+            Assert.IsInstanceOf(typeof(IEnumerable<KeyValuePair<object, object>>), result);
+            Assert.IsInstanceOf(typeof(HashSet<KeyValuePair<object, object>>), result);
+            myHashSet = result as HashSet<KeyValuePair<object, object>>;
+            Assert.IsEmpty(myHashSet); 
         }
     }
 }

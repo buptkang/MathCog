@@ -3,12 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace CSharpLogic
 {
     public partial class LogicSharp
     {
+        public static Dictionary<TKey, TValue> CloneDictionaryCloningValues<TKey, TValue>
+        (Dictionary<TKey, TValue> original)
+        {
+            var ret = new Dictionary<TKey, TValue>(original.Count,
+                                                                    original.Comparer);
+            foreach (KeyValuePair<TKey, TValue> entry in original)
+            {
+                ret.Add(entry.Key, (TValue)entry.Value);
+            }
+            return ret;
+        }
 
+        public static IEnumerable<KeyValuePair<object, object>> DiffTwoDictionary(Dictionary<object, object> dicOne,
+            Dictionary<object, object> dicTwo)
+        {
+            return dicOne.Except(dicTwo).Concat(dicTwo.Except(dicOne));
+        }
+
+        public static IEnumerable<KeyValuePair<object,object>> Interleave(List<Goal> objs)
+        {
+            return null;
+        }
 
         public static object transitive_get(object key, Dictionary<object, object> d)
         {
@@ -99,6 +121,122 @@ namespace CSharpLogic
         public static Func<T1, T2, Func<T3, TResult>> Curry<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> function)
         {
             return (a, b) => c => function(a, b, c);
+        }
+
+
+        public static string PrintTuple(object obj)
+        {
+            if (obj is Tuple<object>)
+            {
+                var term = obj as Tuple<object>;
+                return term.ToString();
+            }
+            else if (obj is Tuple<object, object>)
+            {
+                var term = obj as Tuple<object, object>;
+                var builder = new StringBuilder();
+                builder.Append(term.Item1.ToString()).Append(",").Append(term.Item2.ToString());
+                return builder.ToString();
+            }
+            else if (obj is Tuple<object, object,object>)
+            {
+                var term = obj as Tuple<object, object, object>;
+                var builder = new StringBuilder();
+                builder.Append(term.Item1.ToString()).Append(",").Append(term.Item2.ToString()).Append(",").Append(term.Item3.ToString());
+                return builder.ToString();
+            }
+            else if (obj is Tuple<object, object, object, object>)
+            {
+                var term = obj as Tuple<object, object, object,object>;
+                var builder = new StringBuilder();
+                builder.Append(term.Item1.ToString()).Append(",").Append(term.Item2.ToString()).Append(",").Append(term.Item3.ToString()).Append(",").Append(term.Item4.ToString());
+                return builder.ToString();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static object Calculate(Func<Expression, Expression, BinaryExpression> func,
+            object x, object y)
+        {
+            double xDoubleVal;
+            double yDoubleVal;
+            bool isXDouble = LogicSharp.IsDouble(x, out xDoubleVal);
+            bool isYDouble = LogicSharp.IsDouble(y, out yDoubleVal);
+
+            if (isXDouble || isYDouble)
+            {
+                var xExpr = Expression.Constant(xDoubleVal);
+                var yExpr = Expression.Constant(yDoubleVal);
+                var rExpr = func(xExpr, yExpr);
+                var result = Expression.Lambda<Func<double>>(rExpr).Compile().Invoke();
+
+                int iResult;
+                if (LogicSharp.IsInt(result, out iResult))
+                {
+                    return iResult;
+                }
+                else
+                {
+                    return result;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+        public static bool IsInt(object expression, out int number)
+        {
+            if (expression == null)
+            {
+                number = 0;
+                return false;
+            }
+
+            return Int32.TryParse(Convert.ToString(expression,
+                System.Globalization.CultureInfo.InvariantCulture),
+                System.Globalization.NumberStyles.Any,
+                System.Globalization.NumberFormatInfo.InvariantInfo,
+                out number);
+        }
+
+        public static bool IsDouble(object expression, out double number)
+        {
+            if (expression == null)
+            {
+                number = 0.0;
+                return false;
+            }
+
+            return Double.TryParse(Convert.ToString(expression,
+                System.Globalization.CultureInfo.InvariantCulture),
+                System.Globalization.NumberStyles.Any,
+                System.Globalization.NumberFormatInfo.InvariantInfo,
+                out number);
+        }
+
+        public static bool IsNumeric(object obj)
+        {
+            int inum;
+            bool result = IsInt(obj, out inum);
+            if (result)
+            {
+                return true;
+            }
+
+            double dnum;
+            result = IsDouble(obj, out dnum);
+            if (result)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

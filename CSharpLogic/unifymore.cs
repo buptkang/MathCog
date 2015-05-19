@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace CSharpLogic
 {
-    public partial class Unifier
+    public partial class LogicSharp
     {
-        public static object Reify_Object(DyLogicObject logicObj, Dictionary<Var, object> s)
+        public static object Reify_Object(DyLogicObject logicObj, Dictionary<object, object> s)
         {
             var obj = Reify(logicObj.Properties, s) as Dictionary<object, object>;
             if (LogicSharp.equal_test(obj, logicObj.Properties))
@@ -34,6 +34,33 @@ namespace CSharpLogic
         public static object Unify_Object(DyLogicObject dy1, DyLogicObject dy2, Dictionary<object, object> s)
         {
             return Unify(dy1.Properties, dy2.Properties, s);
+        }
+    }
+
+    public static class DyLogicObjectExtension
+    {
+        public static void Reify(this DyLogicObject logicObj, Goal goal)
+        {
+            goal.Unify(logicObj.Properties);
+        }
+
+        public static void Reify(this DyLogicObject logicObj, IEnumerable<Goal> goals)
+        {
+            IEnumerable<KeyValuePair<object,object>> pairs = 
+                LogicSharp.logic_All(goals, logicObj.Properties);
+
+            if (pairs == null)
+            {
+                return;
+            }
+
+            foreach (KeyValuePair<object, object> pair in pairs)
+            {
+                if (!logicObj.Properties.ContainsKey(pair.Key))
+                {
+                    logicObj.Properties.Add(pair.Key,pair.Value);
+                }
+            }
         }
     }
 

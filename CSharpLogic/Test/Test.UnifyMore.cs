@@ -28,21 +28,21 @@ namespace CSharpLogic.Test
            foo2.b = 2;
 
            var dict = new Dictionary<object, object>();
-           bool result = Unifier.Unify_Object(foo, foo2, dict);
+           bool result = LogicSharp.Unify_Object(foo, foo2, dict);
            Assert.True(result);
            Assert.True(dict.Count == 0);
 
            dynamic foo3 = new DyLogicObject();
            foo3.a = 1;
            foo3.b = 3;
-           result = Unifier.Unify_Object(foo, foo3, dict);
+           result = LogicSharp.Unify_Object(foo, foo3, dict);
            Assert.False(result);
 
            dynamic foo4 = new DyLogicObject();
            foo4.a = 1;
            var variable = new Var(3);
            foo4.b = variable;
-           result = Unifier.Unify_Object(foo, foo4, dict);
+           result = LogicSharp.Unify_Object(foo, foo4, dict);
            Assert.True(result);
            Assert.True(dict.Count == 1);
            Assert.True(dict.ContainsKey(variable));
@@ -65,10 +65,10 @@ namespace CSharpLogic.Test
             var variable = new Var(3);
             foo.b = variable;
 
-            var dict = new Dictionary<Var, object>();
+            var dict = new Dictionary<object, object>();
             dict.Add(variable, 4);
 
-            dynamic obj = Unifier.Reify_Object(foo, dict);
+            dynamic obj = LogicSharp.Reify_Object(foo, dict);
             Assert.NotNull(obj);
             Assert.True(1.Equals(obj.a));
             Assert.True(4.Equals(obj.b));
@@ -77,9 +77,20 @@ namespace CSharpLogic.Test
             f.a = 1;
             f.b = 2;
 
-            dict = new Dictionary<Var, object>();
-            obj = Unifier.Reify_Object(f, dict);
+            dict = new Dictionary<object, object>();
+            obj = LogicSharp.Reify_Object(f, dict);
             Assert.True(obj == f);
-        } 
+        }
+
+        [Test]
+        public void test_reify_object2()
+        {
+            var foo = new DyLogicObject();
+            foo.Properties.Add("y",1);  
+            var goal = new EqGoal(new Var("x"), 2);
+            foo.Reify(goal);
+
+            Assert.True(foo.Properties.Count == 2);            
+        }
     }
 }
