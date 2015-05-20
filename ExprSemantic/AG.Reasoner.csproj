@@ -77,6 +77,10 @@
       <Project>{eff3e46c-89cb-4e15-84d3-bf7ce0d72b4b}</Project>
       <Name>Expr</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UndoFramework\UndoFramework.csproj">
+      <Project>{2da7292f-8a1a-4b58-85f7-374a09fd90b9}</Project>
+      <Name>UndoFramework</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
