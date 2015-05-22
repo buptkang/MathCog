@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C4F74BBB-98D6-462F-9D63-2590F646B9D3}</ProjectGuid>
+    <ProjectGuid>{B2421FE7-B924-49D9-B898-FB722C50CEDE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Expr.PatternMatch</RootNamespace>
-    <AssemblyName>Expr.PatternMatch</AssemblyName>
+    <RootNamespace>AlgebraGeometry.Expr</RootNamespace>
+    <AssemblyName>AlgebraGeometry.Expr</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -31,12 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\..\Math-Visual\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,23 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BuiltInEngine.cs" />
-    <Compile Include="Engine.cs" />
-    <Compile Include="ExprKnowledgeFactory.cs" />
-    <Compile Include="ExprKnowledgePatterns.cs" />
-    <Compile Include="ExprPatternMatch.cs" />
+    <Compile Include="AGPropertyExpr.cs" />
+    <Compile Include="AGShapeExpr.cs" />
+    <Compile Include="IKnowledgeExpr.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Test\Test.Factory.cs" />
-    <Compile Include="Test\Test.Pattern.cs" />
-    <Compile Include="Test\Test.Point.cs" />
-    <Compile Include="Utils.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\AlgebraGeometry.Expr\AlgebraGeometry.Expr.csproj">
-      <Project>{b2421fe7-b924-49d9-b898-fb722c50cede}</Project>
-      <Name>AlgebraGeometry.Expr</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AlgebraGeometry\AlgebraGeometry.csproj">
       <Project>{37ff5773-06ae-41c1-bb0f-b7fe22fc874b}</Project>
       <Name>AlgebraGeometry</Name>
@@ -69,21 +54,10 @@
       <Project>{b6ae1355-89f0-4ecb-83ac-b3b5118a6e4e}</Project>
       <Name>CSharpLogic</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ExprText\ExprText.fsproj">
-      <Project>{75819ff3-51e9-4230-9248-e15526726c3b}</Project>
-      <Name>ExprText</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Expr\Expr.csproj">
       <Project>{eff3e46c-89cb-4e15-84d3-bf7ce0d72b4b}</Project>
       <Name>Expr</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FunctionalCSharp\FunctionalCSharp.csproj">
-      <Project>{dc55ba21-eebf-4488-9aba-bea806ea9a07}</Project>
-      <Name>FunctionalCSharp</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

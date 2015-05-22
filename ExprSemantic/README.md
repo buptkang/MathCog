@@ -1,0 +1,1 @@
+﻿AG.Reasoner is the logic inference engine with the long term memory.

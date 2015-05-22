@@ -15,10 +15,11 @@ namespace ExprPatternMatchTest
         [Test]
         public void Test_Point()
         {
+/*
             object x = 3;
             object y = -3.9;
 
-            PointSymbol ps = ExprKnowledgeFactory.CreatePointSymbol(x, y);
+            Point ps = ExprKnowledgeFactory.CreatePointSymbol(x, y);
             Assert.NotNull(ps);
             Assert.True(ps.SymXCoordinate.Equals("3"));
             Assert.True(ps.SymYCoordinate.Equals("-3.9"));
@@ -47,7 +48,7 @@ namespace ExprPatternMatchTest
             pt = ps.Shape as Point;
             Assert.NotNull(pt);
             Assert.False(pt.Concrete);
-
+*/
             /*            
                        var dict  = new KeyValuePair<object, object>("m", 4);
                        var dict2 = new KeyValuePair<object, object>("n", 5);

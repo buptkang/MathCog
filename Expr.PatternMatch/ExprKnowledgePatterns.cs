@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AlgebraGeometry;
+using AlgebraGeometry.Expr;
 using CSharpLogic;
 using starPadSDK.MathExpr;
 
@@ -59,13 +60,15 @@ namespace ExprSemantic
                 if (expr1.IsLabel(out label) && expr2.IsNumeric(out number))
                 {
                     //coord = new KeyValuePair<object, object>(label, number);
-                    coord = new EqGoal(new Var(label), number);
+                    //var goal = new EqGoal();
+                    coord = new AGPropertyExpr(expr,new Var(label), number);
                     return true;
                 }
                 else if (expr1.IsNumeric(out number) && expr2.IsLabel(out label))
                 {
                     //coord = new KeyValuePair<object, object>(label,number);
-                    coord = new EqGoal(new Var(label), number);
+                    //coord = new EqGoal(new Var(label), number);\
+                    coord = new AGPropertyExpr(expr, new Var(label), number);
                     return true;
                 }
             }
@@ -213,11 +216,13 @@ namespace ExprSemantic
             {
                 if (hasLabel)
                 {
-                    point = ExprKnowledgeFactory.CreatePointSymbol(label,coord1, coord2);                    
+                    var temp = ExprKnowledgeFactory.CreatePointSymbol(label,coord1, coord2);
+                    point = new AGShapeExpr(expr, temp);
                 }
                 else
                 {
-                    point = ExprKnowledgeFactory.CreatePointSymbol(coord1, coord2);                    
+                    var temp = ExprKnowledgeFactory.CreatePointSymbol(coord1, coord2);
+                    point = new AGShapeExpr(expr, temp);
                 }
 
                 return true;
