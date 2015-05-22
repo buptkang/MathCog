@@ -6,35 +6,16 @@ using CSharpLogic;
 
 namespace AlgebraGeometry
 {
-    public class Point : Shape
+    public partial class Point : Shape
     {
-        public Var XCoordinate { get; set; }
-        public Var YCoordinate { get; set; }
+        public object XCoordinate { get; set; }
+        public object YCoordinate { get; set; }
 
         public Point(string label, object xcoordinate, object ycoordinate)
             : base(ShapeType.Point, label)
         {
-            var xCord = xcoordinate as Var;
-            if (xCord != null)
-            {
-                XCoordinate = xCord;                
-            }
-            else
-            {
-                XCoordinate = new Var('x');
-                Properties.Add(XCoordinate, xcoordinate);
-            }
-
-            var yCord = ycoordinate as Var;
-            if (yCord != null)
-            {
-                YCoordinate = yCord;
-            }
-            else
-            {
-                YCoordinate = new Var('y');
-                Properties.Add(YCoordinate, ycoordinate);
-            }
+            XCoordinate = xcoordinate;
+            YCoordinate = ycoordinate;
         }
 
         public Point(object xcoordinate, object ycoordinate)
@@ -64,11 +45,7 @@ namespace AlgebraGeometry
 
         public override bool Concrete
         {
-            get
-            {
-                return Properties.ContainsKey(XCoordinate) &&
-                Properties.ContainsKey(YCoordinate);
-            }
+            get { return !Var.ContainsVar(XCoordinate) && !Var.ContainsVar(YCoordinate); }
         }
 
         #region IEqutable

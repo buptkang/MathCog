@@ -63,5 +63,16 @@ namespace CSharpLogic.Test
             assert run(5, x, membero(2, (1, x, 3))) == (2,)
             */
         }
+
+        [Test]
+        public void test_reify_object2()
+        {
+            var foo = new DyLogicObject();
+            foo.Properties.Add("y", 1);
+            var goal = new EqGoal(new Var("x"), 2);
+            foo.Reify(goal);
+
+            Assert.True(foo.Properties.Count == 2);
+        }
     }
 }

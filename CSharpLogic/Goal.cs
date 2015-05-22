@@ -73,10 +73,62 @@ namespace CSharpLogic
             Functor = LogicSharp.Equal()(Lhs, Rhs);
         }
 
-        public override bool EarlySafe()
+       public override bool EarlySafe()
        {
            return !(Var.ContainsVar(Lhs) && Var.ContainsVar(Rhs));
        }
 
+        public override bool Equals(object obj)
+        {
+            var eqGoal = obj as EqGoal;
+            if (eqGoal != null)
+            {
+                return Lhs.Equals(eqGoal.Lhs) && Rhs.Equals(eqGoal.Rhs);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Lhs.GetHashCode() ^ this.Rhs.GetHashCode();
+        }
+    }
+
+    public static class EqGoalExtension
+    {
+        public static bool IsAssignment(this EqGoal goal)
+        {
+            //TODO
+            if (Var.IsVar(goal.Lhs) && LogicSharp.IsNumeric(goal.Rhs))
+            {
+                return true;
+            }
+            else if(Var.IsVar(goal.Rhs) && LogicSharp.IsNumeric(goal.Lhs))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static Dictionary<object, object> ToDict(this EqGoal goal)
+        {
+            object variable;
+            object value;
+            if (Var.IsVar(goal.Lhs))
+            {
+                variable = goal.Lhs;
+                value = goal.Rhs;
+            }
+            else
+            {
+                variable = goal.Rhs;
+                value = goal.Lhs;
+            }
+
+            var pair = new KeyValuePair<object, object>(variable, value);
+            var substitute = new Dictionary<object, object>();
+            substitute.Add(pair.Key, pair.Value);
+            return substitute;
+        }
     }
 }

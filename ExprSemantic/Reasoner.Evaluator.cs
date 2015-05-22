@@ -43,6 +43,24 @@ namespace ExprSemantic
             }
         }
 
+        private void UndoEvalPropogate(object obj)
+        {
+            if (_cache.Count == 0) return;
+
+            var shapeSym = obj as ShapeSymbol;
+            if (shapeSym != null)
+            {
+                return;
+            }
+
+            var term = obj as EqGoal;
+            if (term != null)
+            {
+                UnEvalTerm(term);
+                return;
+            }
+        }
+
         #region eval type checking
 
         /// <summary>
@@ -95,13 +113,45 @@ namespace ExprSemantic
             }
             else
             {
-                shapeSym.Shape.Reify(lst);
-                if(KnowledgeUpdated != null)
-                    KnowledgeUpdated(this, shapeSym);
+                var pt = shapeSym.Shape as Point;
+                if (pt != null)
+                {
+                    pt.Reify(lst);
+                    if (KnowledgeUpdated != null)
+                        KnowledgeUpdated(this, shapeSym);
+                }                
                 return true;
             }
         }
 
+        private bool UnEvalTerm(EqGoal term)
+        {
+            List<ShapeSymbol> lst = GetShapeFacts();
+            if (lst.Count == 0)
+            {
+                return false;
+            }
+            else
+            {
+                //TODO constraint solving
+                foreach (ShapeSymbol ss in lst)
+                {
+                    var shapeSym = ss as ShapeSymbol;
+                    Assert.NotNull(shapeSym);
+
+                    var pt = shapeSym.Shape as Point;
+                    if (pt != null)
+                    {
+                        pt.UnReify(term);
+                        if (KnowledgeUpdated != null)
+                            KnowledgeUpdated(this, shapeSym);
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+    
         private bool EvalTerm(EqGoal term)
         {
             List<ShapeSymbol> lst = GetShapeFacts();
@@ -112,7 +162,6 @@ namespace ExprSemantic
             else
             {
                 //TODO constraint solving
-                var dict = new Dictionary<string, object>();
                 foreach (ShapeSymbol ss in lst)
                 {
                     var shapeSym = ss as ShapeSymbol;
@@ -123,9 +172,13 @@ namespace ExprSemantic
                     }
                     else
                     {
-                        shapeSym.Shape.Reify(term);
-                        if(KnowledgeUpdated != null)
-                            KnowledgeUpdated(this, shapeSym);
+                        var pt = shapeSym.Shape as Point;
+                        if (pt != null)
+                        {
+                            pt.Reify(term);
+                            if(KnowledgeUpdated != null)
+                                KnowledgeUpdated(this, shapeSym);
+                        }                
                         return true;
                     }
                 }
@@ -185,7 +238,5 @@ namespace ExprSemantic
         }
 
         #endregion
-
-
     }
 }

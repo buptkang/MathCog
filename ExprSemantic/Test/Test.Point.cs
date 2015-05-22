@@ -16,18 +16,38 @@ namespace ExprSemanticTest
         [Test]
         public void Test1()
         {
-            //Batch Mode
             const string fact1 = "A(x,2)";
             Reasoner.Instance.Load(fact1);
+            var result = Reasoner.Instance.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 1);
+            var ps = result[0] as PointSymbol;
+            Assert.NotNull(ps);
+            Assert.False(ps.Shape.Concrete);
+            Assert.True(ps.Shape.CachedSymbols.Count == 0);
 
             const string fact2 = "x = 2.1";
             Reasoner.Instance.Load(fact2);
+            result = Reasoner.Instance.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 1);
+            ps = result[0] as PointSymbol;
+            Assert.NotNull(ps);
 
-            List<ShapeSymbol> shapes = Reasoner.Instance.TestGetShapeFacts();
-            Assert.True(shapes.Count == 1);
-            var ss = shapes[0] as PointSymbol;
-            Assert.NotNull(ss);
-            Assert.True(ss.ToString().Equals("A(2.1,2)")); 
+            Assert.False(ps.Shape.Concrete);
+            Assert.True(ps.Shape.CachedSymbols.Count == 1);
+            var pp = ps.Shape.CachedSymbols.ToList()[0];
+            Assert.IsInstanceOf(typeof(Point), pp);
+            var pSymbol = new PointSymbol((Point)pp);
+            Assert.True(pSymbol.ToString().Equals("A(2.1,2)"));
+
+            Reasoner.Instance.Unload(fact2);
+            result = Reasoner.Instance.TestGetShapeFacts();
+            ps = result[0] as PointSymbol;
+            Assert.NotNull(ps);
+            Assert.False(ps.Shape.Concrete);
+            Assert.True(ps.Shape.CachedSymbols.Count == 0);
+
         }
 
         public void Test1_1()

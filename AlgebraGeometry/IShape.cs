@@ -6,7 +6,7 @@ using CSharpLogic;
 
 namespace AlgebraGeometry
 {
-    public abstract class Shape : DyLogicObject, IEquatable<Shape>
+    public abstract partial class Shape : DyLogicObject, IEquatable<Shape>
     {
         public string Label { get; set; }
         public ShapeType ShapeType { get; set; }
@@ -22,6 +22,8 @@ namespace AlgebraGeometry
 
         protected Shape()
         {
+            CachedSymbols = new HashSet<Shape>();
+            CachedGoals = new HashSet<KeyValuePair<object,EqGoal>>();
             Coordinate = CoordinateSystemType.Cartesian;
             Repr = RepresentationType.Explicit;
         }

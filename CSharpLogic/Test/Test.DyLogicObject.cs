@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Runtime.Remoting;
 using System.Text;
 using System.Threading.Tasks;
+using CSharpLogic.Action;
 using NUnit.Framework;
+using GuiLabs.Undo;
 
 namespace CSharpLogic.Test
 {
     [TestFixture]
-    public class TestUnifyMore
+    public class TestDyLogicObject
     {
         [Test]
         public void test_unify_dyna_object()
@@ -50,8 +53,9 @@ namespace CSharpLogic.Test
         }
 
         [Test]
-        public void test_reify_object()
+        public void test_reify_object_dynamic()
         {
+            //dynamic approach
 /*            obj = reify_object(Foo(1, var(3)), {var(3): 4})
             assert obj.a == 1
             assert obj.b == 4
@@ -80,17 +84,6 @@ namespace CSharpLogic.Test
             dict = new Dictionary<object, object>();
             obj = LogicSharp.Reify_Object(f, dict);
             Assert.True(obj == f);
-        }
-
-        [Test]
-        public void test_reify_object2()
-        {
-            var foo = new DyLogicObject();
-            foo.Properties.Add("y",1);  
-            var goal = new EqGoal(new Var("x"), 2);
-            foo.Reify(goal);
-
-            Assert.True(foo.Properties.Count == 2);            
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Text = starPadSDK.MathExpr.Text;
+using GuiLabs.Undo;
 
 namespace ExprSemantic
 {
@@ -30,6 +31,7 @@ namespace ExprSemantic
 
         private Reasoner()
         {
+            ActionManager = new ActionManager();
             _cache = new ObservableCollection<KeyValuePair<string, object>>();
             _cache.CollectionChanged += _cache_CollectionChanged;
         }
@@ -60,6 +62,8 @@ namespace ExprSemantic
 
         private ObservableCollection<KeyValuePair<string, object>> _cache;
 
+        public ActionManager ActionManager { get; set; }
+
         #endregion
 
         #region Public Interface
@@ -69,7 +73,8 @@ namespace ExprSemantic
             starPadSDK.MathExpr.Expr expr = Text.Convert(fact);
             object result = ExprVisitor.Instance.Match(expr);
             EvalPropogate(result);
-            _cache.Add(new KeyValuePair<string, object>(fact, result));                               
+            var pair = new KeyValuePair<string, object>(fact, result);
+            _cache.Add(pair);                               
         }
 
         public void Load(IEnumerable<string> facts)
@@ -86,7 +91,7 @@ namespace ExprSemantic
             if (fact != null)
             {
                 var temp = (KeyValuePair<string, object>) fact;
-                //Undo Action 
+                UndoEvalPropogate(temp.Value);
                 _cache.Remove(temp);
             }
         }
