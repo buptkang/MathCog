@@ -78,6 +78,19 @@ namespace AlgebraGeometry
 
     public class PointSymbol : ShapeSymbol
     {
+        public override IEnumerable<ShapeSymbol> RetrieveGeneratedShapes()
+        {
+            if (Shape.Concrete) return null;
+            if (Shape.CachedSymbols.Count == 0) return null;
+            var lst = new List<PointSymbol>();
+            foreach (Shape s in Shape.CachedSymbols)
+            {
+                var pt = s as Point;
+                lst.Add(new PointSymbol(pt));
+            }
+            return lst;
+        }
+
         public PointSymbol(Point pt) : base(pt)
         {
 

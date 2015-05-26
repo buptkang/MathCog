@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AlgebraGeometry;
-using AlgebraGeometry.Expr;
 using CSharpLogic;
 using starPadSDK.MathExpr;
+
 
 namespace ExprSemantic
 {
@@ -28,12 +28,24 @@ namespace ExprSemantic
                 label = letter.Letter.ToString();
                 return true;
             }
+            else if (expr is WellKnownSym)
+            {
+                var comma = expr as WellKnownSym;
+                if (comma.Equals(WellKnownSym.comma))
+                {
+                    return false;
+                }
+            }
             else if (expr is WordSym)
             {
                 var word = expr as WordSym;
+                if (word.Word.Equals("comma"))
+                {
+                    return false;
+                }
                 label = word.Word;
                 return true;
-            }
+            }           
             return false;
         }
 
@@ -52,8 +64,8 @@ namespace ExprSemantic
                 compExpr.Head.Equals(WellKnownSym.equals) &&
                 compExpr.Args.Count() == 2)
             {
-                var expr1 = compExpr.Args[0] as Expr;
-                var expr2 = compExpr.Args[1] as Expr;
+                var expr1 = compExpr.Args[0] as starPadSDK.MathExpr.Expr;
+                var expr2 = compExpr.Args[1] as starPadSDK.MathExpr.Expr;
 
                 string label;
                 object number;
@@ -61,14 +73,15 @@ namespace ExprSemantic
                 {
                     //coord = new KeyValuePair<object, object>(label, number);
                     //var goal = new EqGoal();
-                    coord = new AGPropertyExpr(expr,new Var(label), number);
+                    //coord = new AGPropertyExpr(expr, new EqGoal(new Var(label), number));
+                    coord = new EqGoal(new Var(label), number);
                     return true;
                 }
                 else if (expr1.IsNumeric(out number) && expr2.IsLabel(out label))
                 {
                     //coord = new KeyValuePair<object, object>(label,number);
                     //coord = new EqGoal(new Var(label), number);\
-                    coord = new AGPropertyExpr(expr, new Var(label), number);
+                    coord = new EqGoal(new Var(label), number);
                     return true;
                 }
             }
@@ -131,7 +144,7 @@ namespace ExprSemantic
                 return true;
             }
 
-            Expr tempExpr;
+            starPadSDK.MathExpr.Expr tempExpr;
             if (IsNegativeTerm(expr, out tempExpr))
             {
                 if (tempExpr.IsNumeric(out number))
@@ -155,7 +168,7 @@ namespace ExprSemantic
             return false;
         }
 
-        public static bool IsNegativeTerm(this Expr expr, out Expr outputExpr)
+        public static bool IsNegativeTerm(this starPadSDK.MathExpr.Expr expr, out starPadSDK.MathExpr.Expr outputExpr)
         {
             outputExpr = null;
             var compositeExpr = expr as CompositeExpr;
@@ -179,7 +192,7 @@ namespace ExprSemantic
         /// <param name="expr"></param>
         /// <param name="point"></param>
         /// <returns></returns>
-        public static bool IsPoint(this Expr expr, out object point)
+        public static bool IsPoint(this starPadSDK.MathExpr.Expr expr, out object point)
         {
             point = null;
             string label;
@@ -194,7 +207,23 @@ namespace ExprSemantic
 
             if (!hasLabel)
             {
-                if (!composite.Head.Equals(WellKnownSym.comma))
+                var wordSymbol = composite.Head as WordSym;
+                var wellKnownSymbol = composite.Head as WellKnownSym;  
+                if (wordSymbol != null)
+                {
+                    if (!wordSymbol.Word.Equals("comma"))
+                    {
+                        return false;
+                    }
+                }
+                else if (wellKnownSymbol != null)
+                {
+                    if (!wellKnownSymbol.ID.Equals(WKSID.comma))
+                    {
+                        return false;
+                    }
+                }
+                else
                 {
                     return false;
                 }
@@ -217,12 +246,14 @@ namespace ExprSemantic
                 if (hasLabel)
                 {
                     var temp = ExprKnowledgeFactory.CreatePointSymbol(label,coord1, coord2);
-                    point = new AGShapeExpr(expr, temp);
+                    //point = new AGShapeExpr(expr, temp);
+                    point =  temp;
                 }
                 else
                 {
                     var temp = ExprKnowledgeFactory.CreatePointSymbol(coord1, coord2);
-                    point = new AGShapeExpr(expr, temp);
+                    //point = new AGShapeExpr(expr, temp);
+                    point = temp;
                 }
 
                 return true;

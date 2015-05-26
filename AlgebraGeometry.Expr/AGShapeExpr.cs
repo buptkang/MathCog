@@ -1,26 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using CSharpLogic;
-using starPadSDK.MathExpr;
-using AlgebraGeometry;
+﻿using System.Collections.Generic;
+using ExprGenerator;
 
 namespace AlgebraGeometry.Expr
 {
-    public class AGShapeExpr : ShapeSymbol, IKnowledgeExpr
+    public class AGShapeExpr : IKnowledge
     {
-        private starPadSDK.MathExpr.Expr _inputExpr;
-
-        public AGShapeExpr(starPadSDK.MathExpr.Expr expr, Shape shape)
-            :base(shape)
+        private ShapeSymbol _shapeSymbol;
+        public ShapeSymbol ShapeSymbol
         {
-            _inputExpr = expr;
+            get { return _shapeSymbol; }
+            set { _shapeSymbol = value; }
         }
 
-        public object GetInputObject()
+        public AGShapeExpr(starPadSDK.MathExpr.Expr expr, ShapeSymbol ss)
+            :base(expr)
         {
-            return _inputExpr;
+            _shapeSymbol = ss;
+        }
+
+        public override IEnumerable<IKnowledge> RetrieveGeneratedShapes()
+        {
+            IEnumerable<ShapeSymbol> symbols = 
+               _shapeSymbol.RetrieveGeneratedShapes();
+            var shapes = new List<AGShapeExpr>();
+            if (symbols != null)
+            {
+                foreach (ShapeSymbol symbol in symbols)
+                {
+                    starPadSDK.MathExpr.Expr expr = ExprG.Generate(symbol);
+                    var agShape = new AGShapeExpr(expr, symbol);
+                    shapes.Add(agShape);
+                }
+                return shapes;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

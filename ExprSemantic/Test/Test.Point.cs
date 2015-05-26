@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using AlgebraGeometry;
+using AlgebraGeometry.Expr;
 using ExprSemantic;
 using NUnit.Framework;
 using starPadSDK.MathExpr;
@@ -14,6 +15,53 @@ namespace ExprSemanticTest
     public class Test
     {
         [Test]
+        public void Test0()
+        {
+            const string fact1 = "(x,y)";
+            Reasoner.Instance.Load(fact1);
+            var result = Reasoner.Instance.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 1);
+            var ps = result[0] as AGShapeExpr;
+            Assert.NotNull(ps);
+            Assert.False(ps.ShapeSymbol.Shape.Concrete);
+            Assert.True(ps.ShapeSymbol.Shape.CachedSymbols.Count == 0);
+
+            const string fact2 = "x=2";
+            Reasoner.Instance.Load(fact2);
+            result = Reasoner.Instance.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 1);
+            ps = result[0] as AGShapeExpr;
+            Assert.NotNull(ps);
+            Assert.False(ps.ShapeSymbol.Shape.Concrete);
+            Assert.True(ps.ShapeSymbol.Shape.CachedSymbols.Count == 1);
+
+            const string fact3 = "y=1";
+            starPadSDK.MathExpr.Expr expr = Text.Convert(fact3);
+
+            Reasoner.Instance.Load(expr);
+            result = Reasoner.Instance.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 1);
+            ps = result[0] as AGShapeExpr;
+            Assert.NotNull(ps);
+            Assert.False(ps.ShapeSymbol.Shape.Concrete);
+            Assert.True(ps.ShapeSymbol.Shape.CachedSymbols.Count == 1);
+
+            Reasoner.Instance.Unload(expr);
+            result = Reasoner.Instance.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 1);
+            ps = result[0] as AGShapeExpr;
+            Assert.NotNull(ps);
+            Assert.False(ps.ShapeSymbol.Shape.Concrete);
+            Assert.True(ps.ShapeSymbol.Shape.CachedSymbols.Count == 0);
+        }
+
+
+
+        [Test]
         public void Test1()
         {
             const string fact1 = "A(x,2)";
@@ -21,11 +69,13 @@ namespace ExprSemanticTest
             var result = Reasoner.Instance.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
-            var ps = result[0] as PointSymbol;
+            var ps = result[0] as AGShapeExpr;
             Assert.NotNull(ps);
-            Assert.False(ps.Shape.Concrete);
-            Assert.True(ps.Shape.CachedSymbols.Count == 0);
+            Assert.False(ps.ShapeSymbol.Shape.Concrete);
+            Assert.True(ps.ShapeSymbol.Shape.CachedSymbols.Count == 0);
 
+            
+/*
             const string fact2 = "x = 2.1";
             Reasoner.Instance.Load(fact2);
             result = Reasoner.Instance.TestGetShapeFacts();
@@ -47,7 +97,7 @@ namespace ExprSemanticTest
             Assert.NotNull(ps);
             Assert.False(ps.Shape.Concrete);
             Assert.True(ps.Shape.CachedSymbols.Count == 0);
-
+*/
         }
 
         public void Test1_1()
@@ -75,8 +125,8 @@ namespace ExprSemanticTest
 
             const string fact2 = "x = 2.1";
             Reasoner.Instance.Load(fact2);
-
-            List<ShapeSymbol> shapes = Reasoner.Instance.TestGetShapeFacts();
+/*
+            //List<ShapeSymbol> shapes = Reasoner.Instance.TestGetShapeFacts();
             Assert.True(shapes.Count == 1);
             var ss = shapes[0] as PointSymbol;
             Assert.NotNull(ss);
@@ -89,7 +139,7 @@ namespace ExprSemanticTest
             ss = shapes[0] as PointSymbol;
             Assert.NotNull(ss);
             Assert.True(ss.ToString().Equals("A(x,2)"));
-
+*/
         }
 
 

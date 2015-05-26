@@ -10,7 +10,7 @@ namespace ExprSemantic
 {
     public static class ExprKnowledgeFactory
     {
-        public static Point CreatePointSymbol(object coord1, object coord2)
+        public static PointSymbol CreatePointSymbol(object coord1, object coord2)
         {
             object setCoord1 = null;
             object setCoord2 = null;
@@ -47,15 +47,15 @@ namespace ExprSemantic
             {
                 pt.AddYCoord(setCoord2);
             }
-            return pt;
+            return new PointSymbol(pt);
         }
 
-        public static Point CreatePointSymbol(string label, object coord1, object coord2)
+        public static PointSymbol CreatePointSymbol(string label, object coord1, object coord2)
         {
-            Point ps = CreatePointSymbol(coord1, coord2);
+            PointSymbol ps = CreatePointSymbol(coord1, coord2);
             if (ps != null)
             {
-                ps.Label = label;
+                ps.Shape.Label = label;
             }
             return ps;
         }

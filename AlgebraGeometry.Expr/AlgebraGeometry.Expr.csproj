@@ -54,6 +54,14 @@
       <Project>{b6ae1355-89f0-4ecb-83ac-b3b5118a6e4e}</Project>
       <Name>CSharpLogic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Expr.Generator\Expr.Generator.csproj">
+      <Project>{0646d21e-db97-480d-bdd3-f0a783f2bc84}</Project>
+      <Name>Expr.Generator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Expr.PatternMatch\Expr.PatternMatch.csproj">
+      <Project>{c4f74bbb-98d6-462f-9d63-2590f646b9d3}</Project>
+      <Name>Expr.PatternMatch</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Expr\Expr.csproj">
       <Project>{eff3e46c-89cb-4e15-84d3-bf7ce0d72b4b}</Project>
       <Name>Expr</Name>

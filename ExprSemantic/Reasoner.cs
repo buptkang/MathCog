@@ -4,8 +4,13 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Dynamic;
 using System.Linq;
+using System.Resources;
 using System.Runtime.InteropServices;
 using System.Text;
+using AlgebraGeometry;
+using AlgebraGeometry.Expr;
+using CSharpLogic;
+using starPadSDK.MathExpr;
 using Text = starPadSDK.MathExpr.Text;
 using GuiLabs.Undo;
 
@@ -32,35 +37,14 @@ namespace ExprSemantic
         private Reasoner()
         {
             ActionManager = new ActionManager();
-            _cache = new ObservableCollection<KeyValuePair<string, object>>();
-            _cache.CollectionChanged += _cache_CollectionChanged;
-        }
-
-        void _cache_CollectionChanged(object sender, 
-            System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (KeyValuePair<string, object> pair in e.NewItems)
-                {
-               
-                }
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Replace)
-            {
-                
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                
-            }
+            _cache = new ObservableCollection<KeyValuePair<object, object>>();
         }
 
         #endregion
 
         #region Properties
 
-        private ObservableCollection<KeyValuePair<string, object>> _cache;
+        private ObservableCollection<KeyValuePair<object, object>> _cache;
 
         public ActionManager ActionManager { get; set; }
 
@@ -68,13 +52,42 @@ namespace ExprSemantic
 
         #region Public Interface
 
-        public void Load(string fact)
+        /// <summary>
+        /// Sketch Input
+        /// </summary>
+        /// <param name="expr"></param>
+        public IKnowledge Load(Expr expr)
+        {
+            object rTemp = ExprVisitor.Instance.Match(expr);
+            if (rTemp == null) return null;
+
+            object result;
+            if (rTemp is ShapeSymbol)
+            {
+                var ss = rTemp as ShapeSymbol;
+                result = new AGShapeExpr(expr, ss);
+            }
+            else if (rTemp is EqGoal)
+            {
+                var eg = rTemp as EqGoal;
+                result = new AGPropertyExpr(expr, eg);
+            }
+            else
+            {
+                return null;
+            }
+
+            EvalPropogate(result);
+            var pair = new KeyValuePair<object, object>(expr, result);
+            _cache.Add(pair);
+            var k = result as IKnowledge;
+            return k ?? null;
+        }
+
+        public object Load(string fact)
         {
             starPadSDK.MathExpr.Expr expr = Text.Convert(fact);
-            object result = ExprVisitor.Instance.Match(expr);
-            EvalPropogate(result);
-            var pair = new KeyValuePair<string, object>(fact, result);
-            _cache.Add(pair);                               
+            return Load(expr);
         }
 
         public void Load(IEnumerable<string> facts)
@@ -85,12 +98,12 @@ namespace ExprSemantic
             }
         }
 
-        public void Unload(string key)
+        public void Unload(object key)
         {
             object fact = SearchFact(key);
             if (fact != null)
             {
-                var temp = (KeyValuePair<string, object>) fact;
+                var temp = (KeyValuePair<object, object>) fact;
                 UndoEvalPropogate(temp.Value);
                 _cache.Remove(temp);
             }
@@ -100,14 +113,6 @@ namespace ExprSemantic
         {
             return null;
         }
-
-        #endregion
-
-        #region Delegate for the interaction purpose
-
-        public delegate void UpdateKnowledgeHandler(object sender, object args);
-
-        public event UpdateKnowledgeHandler KnowledgeUpdated;
 
         #endregion
     }

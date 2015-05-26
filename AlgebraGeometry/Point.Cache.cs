@@ -97,6 +97,37 @@ namespace AlgebraGeometry
                 }
             }
         }
+
+        /// <summary>
+        /// for generated shapes
+        /// </summary>
+        /// <param name="goal"></param>
+        /// <param name="parent"></param>
+        public override void UndoGoal(EqGoal goal, object p)
+        {
+            var parent = p as Point;
+            if (parent == null) return;
+
+            string field = null;
+            foreach (KeyValuePair<object, EqGoal> eg in CachedGoals)
+            {
+                if (eg.Value.Equals(goal))
+                {
+                    field = eg.Key.ToString();
+                }
+            }
+
+            if (X.Equals(field))
+            {
+                this.XCoordinate = parent.XCoordinate;
+            }
+            else if (Y.Equals(field))
+            {
+                this.YCoordinate = parent.YCoordinate;
+            }
+
+            this.RemoveGoal(goal);
+        }
     }
 
     public static class PointExtension
@@ -116,34 +147,14 @@ namespace AlgebraGeometry
             if (!goal.IsAssignment()) return false;
             if (point.Concrete) return false;
 
-            var substitute = goal.ToDict();
+            object xResult = point.EvalGoal(point.XCoordinate, goal);
+            object yResult = point.EvalGoal(point.YCoordinate, goal);
 
-            object xResult = null;
-            if (Var.ContainsVar(point.XCoordinate))
-            {
-                xResult = LogicSharp.Reify(point.XCoordinate, substitute);
-            }
-            else
-            {
-                xResult = point.XCoordinate;
-            }
-
-            object yResult = null;
-            if (Var.ContainsVar(point.YCoordinate))
-            {
-                yResult = LogicSharp.Reify(point.YCoordinate, substitute);
-            }
-            else
-            {
-                yResult = point.YCoordinate;
-            }
-            
             //Atomic operation
             if (!point.XCoordinate.Equals(xResult))
             {
                 point.GenerateXCacheSymbol(xResult,goal);
-                return true;
-                
+                return true;                
             }
             else if (!point.YCoordinate.Equals(yResult))
             {
@@ -159,18 +170,36 @@ namespace AlgebraGeometry
         public static bool UnReify(this Point point, EqGoal goal)
         {
             if (!point.ContainGoal(goal)) return false;
-
-            var lst = new HashSet<Shape>();
-            foreach (var shape in point.CachedSymbols)
+            var updateLst = new HashSet<Shape>();
+            var unchangedLst = new HashSet<Shape>();
+            foreach (var shape in point.CachedSymbols.ToList())
             {
-                if (!shape.ContainGoal(goal))
+                var pt = shape as Point;
+                if (pt == null) continue;
+                if (pt.ContainGoal(goal))
                 {
-                    lst.Add(shape);
+                    pt.UndoGoal(goal, point);
+                    if (pt.CachedGoals.Count != 0)
+                    {
+                        updateLst.Add(pt);
+                    }
+                }
+                else
+                {
+                    unchangedLst.Add(shape);
                 }
             }
-            point.CachedSymbols = lst;
-            point.RemoveGoal(goal);
- 
+
+            if (unchangedLst.Count != 0)
+            {
+                point.CachedSymbols = unchangedLst;
+            }
+            else
+            {
+                point.CachedSymbols = updateLst;
+            }
+            
+            point.RemoveGoal(goal); 
             return true;
         }
 

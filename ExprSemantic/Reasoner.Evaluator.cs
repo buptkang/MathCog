@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using AlgebraGeometry;
+using AlgebraGeometry.Expr;
 using CSharpLogic;
 using NUnit.Framework;
 
@@ -20,6 +22,7 @@ namespace ExprSemantic
             if (_cache.Count == 0) return;
 
             bool result = false;
+/*
             var variable = obj as string;
             if (variable != null)
             {
@@ -27,15 +30,15 @@ namespace ExprSemantic
                 EvalVariable(variable, out dict);
                 return;
             }
-
-            var shapeSym = obj as ShapeSymbol;
+*/
+            var shapeSym = obj as AGShapeExpr;
             if (shapeSym != null)
             {
                 EvalShape(shapeSym);
                 return; 
             }
 
-            var term = obj as EqGoal;
+            var term = obj as AGPropertyExpr;
             if (term != null)
             {
                 EvalTerm(term);
@@ -47,13 +50,13 @@ namespace ExprSemantic
         {
             if (_cache.Count == 0) return;
 
-            var shapeSym = obj as ShapeSymbol;
+            var shapeSym = obj as AGShapeExpr;
             if (shapeSym != null)
             {
                 return;
             }
 
-            var term = obj as EqGoal;
+            var term = obj as AGPropertyExpr;
             if (term != null)
             {
                 UnEvalTerm(term);
@@ -62,7 +65,7 @@ namespace ExprSemantic
         }
 
         #region eval type checking
-
+/*
         /// <summary>
         /// input:  x=
         /// output: x = 3
@@ -93,20 +96,21 @@ namespace ExprSemantic
                 return dict.Count != 0;
             }
         }
-        
+*/ 
         /// <summary>
-        /// Check AlgebraGeometry.Test.Test.Point (Test2,Test3)
+        /// AlgebraGeometry.Test.Test.Point (Test2,Test3)
         /// </summary>
         /// <param name="shape"></param>
         /// <returns></returns>
-        private bool EvalShape(ShapeSymbol shapeSym)
+        private bool EvalShape(AGShapeExpr shapeExpr)
         {
+            ShapeSymbol shapeSym = shapeExpr.ShapeSymbol;
             if (shapeSym.Shape.Concrete)
             {
                 return false;
             }
 
-            List<EqGoal> lst = GetTermFacts();
+            List<AGPropertyExpr> lst = GetTermFacts();
             if (lst.Count == 0)
             {
                 return false;
@@ -116,17 +120,23 @@ namespace ExprSemantic
                 var pt = shapeSym.Shape as Point;
                 if (pt != null)
                 {
-                    pt.Reify(lst);
+                    foreach (AGPropertyExpr term in lst)
+                    {
+                        pt.Reify(term.Goal);
+                    }
+                    #region Interaction
                     if (KnowledgeUpdated != null)
-                        KnowledgeUpdated(this, shapeSym);
+                        KnowledgeUpdated(this, shapeExpr);
+                    #endregion
                 }                
                 return true;
             }
         }
 
-        private bool UnEvalTerm(EqGoal term)
+        private bool UnEvalTerm(AGPropertyExpr prop)
         {
-            List<ShapeSymbol> lst = GetShapeFacts();
+            EqGoal term = prop.Goal;
+            List<AGShapeExpr> lst = GetShapeFacts();
             if (lst.Count == 0)
             {
                 return false;
@@ -134,17 +144,17 @@ namespace ExprSemantic
             else
             {
                 //TODO constraint solving
-                foreach (ShapeSymbol ss in lst)
+                foreach (AGShapeExpr ss in lst)
                 {
-                    var shapeSym = ss as ShapeSymbol;
-                    Assert.NotNull(shapeSym);
-
-                    var pt = shapeSym.Shape as Point;
+                    var shapeExpr = ss as AGShapeExpr;
+                    var pt = shapeExpr.ShapeSymbol.Shape as Point;
                     if (pt != null)
                     {
                         pt.UnReify(term);
+                        #region Interaction
                         if (KnowledgeUpdated != null)
-                            KnowledgeUpdated(this, shapeSym);
+                            KnowledgeUpdated(this, ss);
+                        #endregion
                     }
                     return true;
                 }
@@ -152,9 +162,10 @@ namespace ExprSemantic
             return false;
         }
     
-        private bool EvalTerm(EqGoal term)
+        private bool EvalTerm(AGPropertyExpr prop)
         {
-            List<ShapeSymbol> lst = GetShapeFacts();
+            EqGoal term = prop.Goal;
+            List<AGShapeExpr> lst = GetShapeFacts();
             if (lst.Count == 0)
             {
                 return false;
@@ -162,22 +173,23 @@ namespace ExprSemantic
             else
             {
                 //TODO constraint solving
-                foreach (ShapeSymbol ss in lst)
+                foreach (AGShapeExpr ss in lst)
                 {
-                    var shapeSym = ss as ShapeSymbol;
-                    Assert.NotNull(shapeSym);
-                    if (shapeSym.Shape.Concrete)
+                    var shapeExpr = ss as AGShapeExpr;                   
+                    if (shapeExpr.ShapeSymbol.Shape.Concrete)
                     {
                         continue;
                     }
                     else
                     {
-                        var pt = shapeSym.Shape as Point;
+                        var pt = shapeExpr.ShapeSymbol.Shape as Point;
                         if (pt != null)
                         {
                             pt.Reify(term);
-                            if(KnowledgeUpdated != null)
-                                KnowledgeUpdated(this, shapeSym);
+                            #region Interaction
+                            if (KnowledgeUpdated != null)
+                                KnowledgeUpdated(this, shapeExpr);
+                            #endregion
                         }                
                         return true;
                     }
@@ -190,12 +202,12 @@ namespace ExprSemantic
 
         #region cache utilities
 
-        private List<EqGoal> GetTermFacts()
+        private List<AGPropertyExpr> GetTermFacts()
         {
-            var lst = new List<EqGoal>();
-            foreach (KeyValuePair<string, object> pair in _cache)
+            var lst = new List<AGPropertyExpr>();
+            foreach (KeyValuePair<object, object> pair in _cache)
             {
-                var temp = pair.Value as EqGoal;
+                var temp = pair.Value as AGPropertyExpr;
                 if (temp != null)
                 {
                     lst.Add(temp);
@@ -204,12 +216,12 @@ namespace ExprSemantic
             return lst;     
         }
 
-        private List<ShapeSymbol> GetShapeFacts()
+        private List<AGShapeExpr> GetShapeFacts()
         {
-            var lst = new List<ShapeSymbol>();
-            foreach (KeyValuePair<string, object> pair in _cache)
+            var lst = new List<AGShapeExpr>();
+            foreach (KeyValuePair<object, object> pair in _cache)
             {
-                var temp = pair.Value as ShapeSymbol;
+                var temp = pair.Value as AGShapeExpr;
                 if (temp != null)
                 {
                     lst.Add(temp);
@@ -218,9 +230,9 @@ namespace ExprSemantic
             return lst;
         }
 
-        private object SearchFact(string key)
+        private object SearchFact(object key)
         {
-            foreach (KeyValuePair<string, object> pair in _cache)
+            foreach (KeyValuePair<object, object> pair in _cache)
             {
                 if (key.Equals(pair.Key))
                     return pair;
@@ -232,7 +244,7 @@ namespace ExprSemantic
 
         #region Test Purpose
 
-        public List<ShapeSymbol> TestGetShapeFacts()
+        public List<AGShapeExpr> TestGetShapeFacts()
         {
             return GetShapeFacts();
         }

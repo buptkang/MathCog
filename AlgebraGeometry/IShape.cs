@@ -75,6 +75,8 @@ namespace AlgebraGeometry
         protected ShapeSymbol(Shape _shape)
         {
             Shape = _shape;
-        } 
+        }
+
+        public abstract IEnumerable<ShapeSymbol> RetrieveGeneratedShapes();
     }
 }

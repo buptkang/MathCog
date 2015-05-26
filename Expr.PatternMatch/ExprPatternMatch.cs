@@ -33,7 +33,7 @@ namespace ExprSemantic
 
         #endregion
 
-        public object Match(Expr exp)
+        public object Match(starPadSDK.MathExpr.Expr exp)
         {
             object obj;
             bool result = exp.IsPoint(out obj);

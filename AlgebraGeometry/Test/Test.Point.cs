@@ -157,6 +157,43 @@ namespace AlgebraGeometry.Test
         }
 
         [Test]
+        public void Test_Unreify_00()
+        {
+            //true positive
+            var x = new Var('x');
+            var y = new Var('y');
+            var point = new Point(x, y);
+            var eqGoal = new EqGoal(x, 1); // x=1               
+            bool result = point.Reify(eqGoal);
+            Assert.True(result);
+            Assert.False(point.Concrete);
+            Assert.True(point.CachedGoals.Count == 1);
+            Assert.True(point.CachedSymbols.Count == 1);
+
+            var eqGoal2 = new EqGoal(y, 2); // y=2               
+            result = point.Reify(eqGoal2);
+            Assert.True(result);
+            Assert.False(point.Concrete);
+            Assert.True(point.CachedGoals.Count == 2);
+            Assert.True(point.CachedSymbols.Count == 1);
+
+            result = point.UnReify(eqGoal); // undo x=1
+            Assert.True(result);
+            Assert.False(point.Concrete);
+            Assert.True(point.CachedGoals.Count == 1);
+            Assert.True(point.CachedSymbols.Count == 1);
+            var gp = point.CachedSymbols.ToList()[0] as Point;
+            Assert.True(gp.XCoordinate.Equals(x));
+            Assert.True(gp.YCoordinate.Equals(2));
+
+            result = point.UnReify(eqGoal2); // undo y = 2
+            Assert.True(result);
+            Assert.False(point.Concrete);
+            Assert.True(point.CachedGoals.Count == 0);
+            Assert.True(point.CachedSymbols.Count == 0);
+        }
+
+        [Test]
         public void Test_Unreify_1()
         {
             //true positive
@@ -281,7 +318,7 @@ namespace AlgebraGeometry.Test
            * (2,2)
            * (3,2)
            * next input:
-           * unreify y = 1
+           * unreify x = 2
            *****/
            result = point.UnReify(eqGoal1);
            Assert.True(result);

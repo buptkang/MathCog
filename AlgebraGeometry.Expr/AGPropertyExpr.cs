@@ -10,19 +10,25 @@ namespace AlgebraGeometry.Expr
     /// <summary>
     /// such as S= 5.0, m = 4;
     /// </summary>
-    public class AGPropertyExpr : EqGoal, IKnowledgeExpr 
+    public class AGPropertyExpr : IKnowledge
     {
-        private starPadSDK.MathExpr.Expr _inputExpr;
-
-        public AGPropertyExpr(starPadSDK.MathExpr.Expr expr, object lhs, object rhs)
-            :base(lhs, rhs)
+        private EqGoal _goal;
+        public EqGoal Goal
         {
-            _inputExpr = expr;
+            get { return _goal; }
+            set { _goal = value; }
         }
 
-        public object GetInputObject()
+        public AGPropertyExpr(starPadSDK.MathExpr.Expr expr, EqGoal goal)
+            :base(expr)
         {
-            return _inputExpr;
+            _goal = goal;
         }
+
+        public override IEnumerable<IKnowledge> RetrieveGeneratedShapes()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

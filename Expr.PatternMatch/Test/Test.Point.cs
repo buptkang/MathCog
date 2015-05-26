@@ -33,7 +33,7 @@ namespace ExprPatternMatchTest
         public void Test2()
         {
             string txt = "A(x,2)";
-            Expr expr = Text.Convert(txt);
+            starPadSDK.MathExpr.Expr expr = Text.Convert(txt);
             object result = ExprVisitor.Instance.Match(expr);
             var ps = result as PointSymbol;
             Assert.NotNull(ps);
@@ -52,7 +52,7 @@ namespace ExprPatternMatchTest
         public void Test3()
         {
             string txt = "(-3.0,y)";
-            Expr expr = Text.Convert(txt);
+            starPadSDK.MathExpr.Expr expr = Text.Convert(txt);
             object result = ExprVisitor.Instance.Match(expr);
             var ps = result as PointSymbol;
             Assert.NotNull(ps);
