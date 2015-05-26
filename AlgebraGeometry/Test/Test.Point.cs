@@ -22,6 +22,14 @@ namespace AlgebraGeometry.Test
             Assert.True(point.Concrete);
         }
 
+        [Test]
+        public void Test_check1()
+        {
+            var pt = new Point(1, 1);
+            Assert.True(pt.XCoordinate.Equals(1));
+            Assert.True(pt.YCoordinate.Equals(1));
+        }
+
         #endregion
 
         #region Point Numerics

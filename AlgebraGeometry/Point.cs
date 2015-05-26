@@ -8,14 +8,40 @@ namespace AlgebraGeometry
 {
     public partial class Point : Shape
     {
-        public object XCoordinate { get; set; }
-        public object YCoordinate { get; set; }
+        private object _xCoord;
+        private object _yCoord;
+
+        public object XCoordinate
+        {
+            get
+            {
+                return _xCoord;
+            }
+            set
+            {
+                _xCoord = value;
+                NotifyPropertyChanged("XCoordinate");
+            }
+        }
+
+        public object YCoordinate
+        {
+            get
+            {
+                return _yCoord;
+            }
+            set
+            {
+                _yCoord = value;
+                NotifyPropertyChanged("YCoordinate");
+            }
+        }
 
         public Point(string label, object xcoordinate, object ycoordinate)
             : base(ShapeType.Point, label)
         {
-            XCoordinate = xcoordinate;
-            YCoordinate = ycoordinate;
+            _xCoord = xcoordinate;
+            _yCoord = ycoordinate;
         }
 
         public Point(object xcoordinate, object ycoordinate)

@@ -17,15 +17,15 @@ namespace ExprPatternMatchTest
         [Test]
         public void Test1()
         {
-            string txt = "(2,3)";
+            string txt = "(1,1)";
             starPadSDK.MathExpr.Expr expr = Text.Convert(txt);
             object result = ExprVisitor.Instance.Match(expr);
 
             Assert.IsInstanceOf<PointSymbol>(result);
             var ps = result as PointSymbol;
             Assert.NotNull(ps);
-            Assert.True(ps.SymXCoordinate.Equals("2"));
-            Assert.True(ps.SymYCoordinate.Equals("3"));
+            Assert.True(ps.SymXCoordinate.Equals("1"));
+            Assert.True(ps.SymYCoordinate.Equals("1"));
             Assert.Null(ps.Shape.Label);
         }
 

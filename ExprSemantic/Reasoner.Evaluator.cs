@@ -156,7 +156,6 @@ namespace ExprSemantic
                             KnowledgeUpdated(this, ss);
                         #endregion
                     }
-                    return true;
                 }
             }
             return false;
@@ -191,7 +190,6 @@ namespace ExprSemantic
                                 KnowledgeUpdated(this, shapeExpr);
                             #endregion
                         }                
-                        return true;
                     }
                 }
                 return false;

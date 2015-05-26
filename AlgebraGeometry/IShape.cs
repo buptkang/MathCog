@@ -3,15 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CSharpLogic;
+using System.ComponentModel;
 
 namespace AlgebraGeometry
 {
-    public abstract partial class Shape : DyLogicObject, IEquatable<Shape>
+    public abstract partial class Shape : DyLogicObject,
+        IEquatable<Shape>, INotifyPropertyChanged
     {
         public string Label { get; set; }
         public ShapeType ShapeType { get; set; }
         public CoordinateSystemType Coordinate { get; set; }
         public RepresentationType Repr { get; set; }
+
+        #region Interaction Purpuse
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // This method is called by the Set accessor of each property. 
+        // The CallerMemberName attribute that is applied to the optional propertyName 
+        // parameter causes the property name of the caller to be substituted as an argument. 
+        protected void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+        #endregion
 
         protected Shape(ShapeType shapeType, string label)
             : this()

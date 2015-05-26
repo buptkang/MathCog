@@ -15,6 +15,22 @@ namespace ExprSemanticTest
     public class Test
     {
         [Test]
+        public void Test0_1()
+        {
+            const string fact1 = "(1,1)";
+            Reasoner.Instance.Load(fact1);
+            var result = Reasoner.Instance.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 1);
+            var ps = result[0] as AGShapeExpr;
+            Assert.NotNull(ps);
+            var pt = ps.ShapeSymbol.Shape as Point;
+            Assert.NotNull(pt);
+            Assert.True(pt.Concrete);
+            Assert.True(ps.ShapeSymbol.Shape.CachedSymbols.Count == 0);
+        }
+
+        [Test]
         public void Test0()
         {
             const string fact1 = "(x,y)";
@@ -56,7 +72,40 @@ namespace ExprSemanticTest
             ps = result[0] as AGShapeExpr;
             Assert.NotNull(ps);
             Assert.False(ps.ShapeSymbol.Shape.Concrete);
+            Assert.True(ps.ShapeSymbol.Shape.CachedSymbols.Count == 1);
+        }
+
+        [Test]
+        public void Test0_3()
+        {
+            const string fact1 = "(2,y)";
+            Reasoner.Instance.Load(fact1);
+            var result = Reasoner.Instance.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 1);
+            var ps = result[0] as AGShapeExpr;
+            Assert.NotNull(ps);
+            Assert.False(ps.ShapeSymbol.Shape.Concrete);
             Assert.True(ps.ShapeSymbol.Shape.CachedSymbols.Count == 0);
+
+            const string fact2 = "(3,y)";
+            Reasoner.Instance.Load(fact2);
+            result = Reasoner.Instance.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 2);
+
+            const string fact3 = "y=1";
+            Reasoner.Instance.Load(fact3);
+            result = Reasoner.Instance.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 2);
+            var lst = result as List<AGShapeExpr>;
+            Assert.NotNull(lst);
+            foreach (AGShapeExpr se in lst)
+            {
+               Assert.False(se.ShapeSymbol.Shape.Concrete);
+               Assert.True(se.ShapeSymbol.Shape.CachedSymbols.Count == 1);
+            }
         }
 
 

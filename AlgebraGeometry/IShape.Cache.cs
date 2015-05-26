@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using CSharpLogic;
 
 namespace AlgebraGeometry
 {
-    public abstract partial class Shape : DyLogicObject, IEquatable<Shape>
+    public abstract partial class Shape : DyLogicObject, 
+                    IEquatable<Shape>, INotifyPropertyChanged
     {
         //Cached symbols for non-concrete objects
         public HashSet<Shape> CachedSymbols { get; set; }
