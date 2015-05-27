@@ -38,6 +38,7 @@ namespace ExprSemantic
         {
             ActionManager = new ActionManager();
             _cache = new ObservableCollection<KeyValuePair<object, object>>();
+            _preCache = new Dictionary<object, object>();
         }
 
         #endregion
@@ -45,6 +46,8 @@ namespace ExprSemantic
         #region Properties
 
         private ObservableCollection<KeyValuePair<object, object>> _cache;
+
+        private Dictionary<object, object> _preCache; 
 
         public ActionManager ActionManager { get; set; }
 
@@ -87,7 +90,17 @@ namespace ExprSemantic
         public object Load(string fact)
         {
             starPadSDK.MathExpr.Expr expr = Text.Convert(fact);
-            return Load(expr);
+
+            object result = Load(expr);
+            if (result != null)
+            {
+                _preCache.Add(fact, expr);
+                return result;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public void Load(IEnumerable<string> facts)
@@ -98,7 +111,19 @@ namespace ExprSemantic
             }
         }
 
-        public void Unload(object key)
+        public void Unload(string fact)
+        {
+            if (_preCache.ContainsKey(fact))
+            {
+                var expr = _preCache[fact] as Expr;
+                if (expr != null)
+                {
+                    Unload(expr);    
+                }                
+            }
+        }
+
+        public void Unload(Expr key)
         {
             object fact = SearchFact(key);
             if (fact != null)

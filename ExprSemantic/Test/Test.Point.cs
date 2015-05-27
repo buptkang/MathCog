@@ -76,6 +76,41 @@ namespace ExprSemanticTest
         }
 
         [Test]
+        public void Test0_2()
+        {
+            const string fact1 = "(x,y)";
+            Reasoner.Instance.Load(fact1);
+            var result = Reasoner.Instance.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 1);
+            var ps = result[0] as AGShapeExpr;
+            Assert.NotNull(ps);
+            Assert.False(ps.ShapeSymbol.Shape.Concrete);
+            Assert.True(ps.ShapeSymbol.Shape.CachedSymbols.Count == 0);
+
+            const string fact2 = "x=2";
+            Reasoner.Instance.Load(fact2);
+            result = Reasoner.Instance.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 1);
+            ps = result[0] as AGShapeExpr;
+            Assert.NotNull(ps);
+            Assert.False(ps.ShapeSymbol.Shape.Concrete);
+            Assert.True(ps.ShapeSymbol.Shape.CachedSymbols.Count == 1);
+
+
+            Reasoner.Instance.Unload(fact2);
+            result = Reasoner.Instance.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 1);
+            ps = result[0] as AGShapeExpr;
+            Assert.NotNull(ps);
+            Assert.False(ps.ShapeSymbol.Shape.Concrete);
+            Assert.True(ps.ShapeSymbol.Shape.CachedSymbols.Count == 0);
+ 
+        }
+
+        [Test]
         public void Test0_3()
         {
             const string fact1 = "(2,y)";
