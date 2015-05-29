@@ -39,7 +39,7 @@ namespace ExprSemantic
             else if (expr is WordSym)
             {
                 var word = expr as WordSym;
-                if (word.Word.Equals("comma"))
+                if (word.Word.Equals("comma") || word.Word.Equals(""))
                 {
                     return false;
                 }
@@ -211,10 +211,15 @@ namespace ExprSemantic
                 var wellKnownSymbol = composite.Head as WellKnownSym;  
                 if (wordSymbol != null)
                 {
+                    if (wordSymbol.Word.Equals(""))
+                    {
+                        return IsPoint(composite.Args[0], out point);
+                    }
+
                     if (!wordSymbol.Word.Equals("comma"))
                     {
                         return false;
-                    }
+                    }                    
                 }
                 else if (wellKnownSymbol != null)
                 {

@@ -42,6 +42,17 @@ namespace AlgebraGeometry
         {
             _xCoord = xcoordinate;
             _yCoord = ycoordinate;
+
+            double d; 
+            if (LogicSharp.IsDouble(xcoordinate, out d))
+            {
+                _xCoord = Math.Round(d, 1);
+            }
+
+            if (LogicSharp.IsDouble(ycoordinate, out d))
+            {
+                _yCoord = Math.Round(d, 1);
+            }
         }
 
         public Point(object xcoordinate, object ycoordinate)

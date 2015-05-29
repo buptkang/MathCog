@@ -32,6 +32,18 @@ namespace AlgebraGeometry.Test
 
         #endregion
 
+        #region Point Rounding Test
+
+        [Test]
+        public void Test_Point_Rounding_1()
+        {
+            var point = new Point(2.01111212, 3.12121211);
+            Assert.True(point.XCoordinate.Equals(2.0));
+            Assert.True(point.YCoordinate.Equals(3.1));
+        }
+       
+        #endregion
+
         #region Point Numerics
 
         [Test]

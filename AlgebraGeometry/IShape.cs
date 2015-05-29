@@ -89,7 +89,7 @@ namespace AlgebraGeometry
     {
         public Shape Shape { get; set; }
 
-        protected ShapeSymbol(Shape _shape)
+        public ShapeSymbol(Shape _shape)
         {
             Shape = _shape;
         }
