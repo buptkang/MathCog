@@ -261,9 +261,10 @@ namespace ExprSemanticTest
             Reasoner.Instance.Load(fact);
             Reasoner.Instance.Load(query);
 
-
+/*
             Tuple<object, Tracer> result
                 = Reasoner.Instance.Answer(query);
+ */ 
         }
     }
 }

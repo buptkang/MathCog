@@ -1,23 +1,32 @@
-﻿using starPadSDK.MathExpr;
+﻿using NUnit.Framework;
+using starPadSDK.MathExpr;
+using System.Collections.Generic;
 
 namespace ExprSemantic
 {
-    public class Tracer
-    {
-        public string WhyHints { get; set; }
-        public string StrategyHints { get; set; }
+    public class TraceStep
+    {        
         public string AppliedRule { get; set; }
 
-        public Expr Source { get; set; }
-        public Expr Target { get; set; }
+        public Expr TraceExpr { get; set; }
 
-        public Tracer(Expr source, Expr target, string whyHint, string strategyHint, string appliedRule)
+        public TraceStep(Expr target, string appliedRule)
         {
-            StrategyHints = strategyHint;
-            WhyHints = whyHint;
             AppliedRule = appliedRule;
-            Source = source;
-            Target = target;
+            TraceExpr = target;
         }
+    }
+
+    public class Trace
+    {
+        public List<TraceStep> Steps { get; set; }
+
+        public Trace(List<TraceStep> steps)
+        {
+            Steps = steps;
+        }
+
+        //TODO
+        public string StrategyHint { get; set; } 
     }
 }

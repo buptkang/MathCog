@@ -49,6 +49,7 @@
     <Compile Include="ExprKnowledgeFactory.cs" />
     <Compile Include="ExprKnowledgePatterns.cs" />
     <Compile Include="ExprPatternMatch.cs" />
+    <Compile Include="ExprQueryPatterns.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test\Test.Factory.cs" />
     <Compile Include="Test\Test.Pattern.cs" />

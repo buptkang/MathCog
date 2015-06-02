@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -52,6 +53,36 @@ namespace CSharpLogic.Test
             result = goal.Unify(substitutions);
             Assert.False(result);
         }
+
+        [Test]
+        public void TEstEqGoal2()
+        {
+            /*
+             * x + 1 = 2
+             */
+            var x = new Var('x');
+            var lhs = new Term(Expression.Add, new Tuple<object, object>(x, 1));
+            var goal = EqGoal.GenerateGoal(lhs, 2);
+            var substitutions = new Dictionary<object, object>();
+            bool result = goal.Unify(substitutions);
+            Assert.True(result);
+            Assert.True(substitutions.Count == 1);
+            Assert.True(substitutions.ContainsKey(x));
+            Assert.True(substitutions[x].Equals(1));
+            Assert.True(goal.Traces.Count == 2);
+
+            /* x + 1 = 2 + 1*/
+            var rhs = new Term(Expression.Add, new Tuple<object, object>(2, 1));
+            goal = EqGoal.GenerateGoal(lhs, rhs);
+            substitutions = new Dictionary<object, object>();
+            result = goal.Unify(substitutions);
+            Assert.True(result);
+            Assert.True(substitutions.Count == 1);
+            Assert.True(substitutions.ContainsKey(x));
+            Assert.True(substitutions[x].Equals(2));
+            Assert.True(goal.Traces.Count == 3);
+        }
+
 
         [Test]
         public void TestMemberof()

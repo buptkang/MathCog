@@ -53,7 +53,7 @@ namespace ExprSemantic
 
         #endregion
 
-        #region Public Interface
+        #region Evaluation Public Interface
 
         /// <summary>
         /// Sketch Input
@@ -134,11 +134,16 @@ namespace ExprSemantic
             }
         }
 
+        #endregion
+
+        #region Querying Public Interface
+
+/*        
         public Tuple<object, Tracer> Answer(string fact)
         {
             return null;
         }
-
+*/
         #endregion
     }
 }

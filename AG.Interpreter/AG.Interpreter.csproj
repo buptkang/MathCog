@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <HintPath>..\..\Math-Visual\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -42,19 +45,45 @@
   <ItemGroup>
     <Compile Include="IInterpreter.cs" />
     <Compile Include="Interpreter.cs" />
+    <Compile Include="Interpreter.Interaction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryMode.cs" />
+    <Compile Include="QueryTrace.cs" />
+    <Compile Include="Test\QueryTest.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Test\" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AlgebraGeometry.Expr\AlgebraGeometry.Expr.csproj">
+      <Project>{b2421fe7-b924-49d9-b898-fb722c50cede}</Project>
+      <Name>AlgebraGeometry.Expr</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AlgebraGeometry\AlgebraGeometry.csproj">
+      <Project>{37ff5773-06ae-41c1-bb0f-b7fe22fc874b}</Project>
+      <Name>AlgebraGeometry</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CSharpLogic\CSharpLogic.csproj">
+      <Project>{b6ae1355-89f0-4ecb-83ac-b3b5118a6e4e}</Project>
+      <Name>CSharpLogic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Expr.Generator\Expr.Generator.csproj">
+      <Project>{0646d21e-db97-480d-bdd3-f0a783f2bc84}</Project>
+      <Name>Expr.Generator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Expr.PatternMatch\Expr.PatternMatch.csproj">
+      <Project>{c4f74bbb-98d6-462f-9d63-2590f646b9d3}</Project>
+      <Name>Expr.PatternMatch</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ExprSemantic\AG.Reasoner.csproj">
       <Project>{71ed2833-ddd7-43d4-8bdf-23fbb83d000c}</Project>
       <Name>AG.Reasoner</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Expr\Expr.csproj">
+      <Project>{eff3e46c-89cb-4e15-84d3-bf7ce0d72b4b}</Project>
+      <Name>Expr</Name>
     </ProjectReference>
     <ProjectReference Include="..\UndoFramework\UndoFramework.csproj">
       <Project>{2da7292f-8a1a-4b58-85f7-374a09fd90b9}</Project>

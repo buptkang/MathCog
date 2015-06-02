@@ -188,6 +188,8 @@ namespace CSharpLogic
                 return null;
             }
         }
+        
+        
         public static bool IsInt(object expression, out int number)
         {
             if (expression == null)
@@ -238,5 +240,14 @@ namespace CSharpLogic
                 return false;
             }
         }
+
+
+        #region Stack Operation
+
+        
+
+
+        #endregion
+
     }
 }

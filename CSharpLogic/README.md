@@ -6,3 +6,4 @@
 5. DyLogicObject.cs: 
 6. Goal.cs
 7. Core.cs
+8. Arith.cs

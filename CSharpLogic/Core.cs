@@ -175,11 +175,6 @@ namespace CSharpLogic
             }
         }
 
-        public static object Run(Var variable, Goal goal)
-        {
-            return null;
-        }
-
         public static object Run(Var variable, Goal goal, DyLogicObject obj)
         {
             if (goal.Unify(obj.Properties))
@@ -190,6 +185,11 @@ namespace CSharpLogic
             {
                 return null;
             }
+        }
+
+        public static object Run(Var variable, EqGoal goal)
+        {
+            return null;
         }
 
         public static object Run(Tuple<Var, Var> tuple, IEnumerable<Goal> goals)

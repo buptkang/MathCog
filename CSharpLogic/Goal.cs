@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CSharpLogic
 {
-    public abstract class Goal
+    public abstract class Goal : DyLogicObject
     {
         public abstract bool EarlySafe();
 
@@ -31,6 +33,122 @@ namespace CSharpLogic
            Rhs = rhs;
            var eq = LogicSharp.Equal();
            Functor = eq(Lhs, Rhs);
+       }
+
+       public static Goal GenerateGoal(object lhs, object rhs)
+       {
+           #region Term pre-evaluation
+
+           var lTerm = lhs as Term;
+           var lSteps = new List<TraceStep>();
+           object lhsEval = null;
+           if (lTerm != null)
+           {
+               lhsEval = lTerm.Eval();
+               if (!lhsEval.Equals(lhs))
+               {
+                   lSteps.AddRange(lTerm.Traces);
+               }
+           }
+           if (lhsEval == null)
+           {
+               lhsEval = lhs;
+           }
+
+           var rTerm = rhs as Term;
+           var rSteps = new List<TraceStep>();
+           object rhsEval = null;
+           if (rTerm != null)
+           {
+               rhsEval = rTerm.Eval();
+               if (!rhsEval.Equals(rhs))
+               {
+                   rSteps.AddRange(rTerm.Traces);
+               }
+           }
+           if (rhsEval == null)
+           {
+               rhsEval = rhs;
+           }
+
+           #endregion
+
+           #region lhs and rhs evaluation
+
+           Goal goal = null;
+
+           var llTerm = lhsEval as Term;
+           var rrTerm = rhsEval as Term;
+           if (llTerm != null && LogicSharp.IsNumeric(rhsEval))
+           {
+               var tuple = llTerm.Args as Tuple<object, object>;
+               if(tuple == null) throw new Exception("Args cannot be null");
+               if (llTerm.Op == Expression.Add)
+               {
+                   var addOp = new BinOp(Expression.Add, Expression.Subtract);
+                   goal = addOp.GenerateGoal(tuple, rhsEval);    
+               }
+               else if (llTerm.Op == Expression.Subtract)
+               {
+                   var subOp = new BinOp(Expression.Subtract, Expression.Add);
+                   goal = subOp.GenerateGoal(tuple, rhsEval);
+               }
+               else if (llTerm.Op == Expression.Multiply)
+               {
+                   var mulOp = new BinOp(Expression.Multiply, Expression.Divide);
+                   goal = mulOp.GenerateGoal(tuple, rhsEval);
+               }
+               else if (llTerm.Op == Expression.Divide)
+               {
+                   var divOp = new BinOp(Expression.Divide, Expression.Multiply);
+                   goal = divOp.GenerateGoal(tuple, rhsEval);
+               }
+           }
+           else if (LogicSharp.IsNumeric(lhsEval) && rrTerm != null)
+           {
+               var tuple = rrTerm.Args as Tuple<object, object>;
+               if (tuple == null) throw new Exception("Args cannot be null");
+               if (rrTerm.Op == Expression.Add)
+               {
+                   var addOp = new BinOp(Expression.Add, Expression.Subtract);
+                   goal = addOp.GenerateGoal(tuple, lhsEval);
+               }
+               else if (rrTerm.Op == Expression.Subtract)
+               {
+                   var subOp = new BinOp(Expression.Subtract, Expression.Add);
+                   goal = subOp.GenerateGoal(tuple, lhsEval);
+               }
+               else if (rrTerm.Op == Expression.Multiply)
+               {
+                   var mulOp = new BinOp(Expression.Multiply, Expression.Divide);
+                   goal = mulOp.GenerateGoal(tuple, lhsEval);
+               }
+               else if (rrTerm.Op == Expression.Divide)
+               {
+                   var divOp = new BinOp(Expression.Divide, Expression.Multiply);
+                   goal = divOp.GenerateGoal(tuple, lhsEval);
+               }
+           }
+
+           #endregion
+
+           #region Goal construction
+
+           if (goal != null)
+           {
+               goal.Traces = lSteps.Concat(rSteps)
+                                   .Concat(goal.Traces)
+                                   .ToList();
+           }
+           else
+           {
+               goal = new EqGoal(lhs, rhs);
+               goal.Traces = lSteps.Concat(rSteps).ToList();
+           }
+
+           #endregion
+
+           return goal;
        }
 
        public override bool Reify(Dictionary<object, object> substitutions)
@@ -64,11 +182,27 @@ namespace CSharpLogic
             var rTerm = Rhs as Term;
             if (lTerm != null)
             {
-                Lhs = lTerm.Eval();
+                var obj = lTerm.Eval();
+                if (!obj.Equals(Lhs))
+                {
+                    foreach (var step in lTerm.Traces)
+                    {
+                        Traces.Add(step); 
+                    }
+                    Lhs = obj;
+                }
             }
             if (rTerm != null)
             {
-                Rhs = rTerm.Eval();
+                var obj = rTerm.Eval();
+                if (!obj.Equals(Rhs))
+                {
+                    foreach (var step in rTerm.Traces)
+                    {
+                        Traces.Add(step);
+                    }
+                    Rhs = obj;
+                }
             }
             Functor = LogicSharp.Equal()(Lhs, Rhs);
         }
@@ -131,4 +265,5 @@ namespace CSharpLogic
             return substitute;
         }
     }
+
 }

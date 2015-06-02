@@ -10,6 +10,13 @@ namespace CSharpLogic
 {
     public class DyLogicObject : DynamicObject
     {
+        public List<TraceStep> Traces = new List<TraceStep>();
+
+        public int TraceCount
+        {
+            get { return Traces.Count; }
+        }
+
         public Dictionary<object, object> Properties 
             = new Dictionary<object, object>();
 

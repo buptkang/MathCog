@@ -18,6 +18,7 @@ namespace CSharpLogic.Test
             bool result = goal.Unify(dict);
             Assert.True(result);
             Assert.True(dict.Count == 0);
+            Assert.True(goal.Traces.Count == 1);
 
             goal = LogicSharp.Add(1, 2, 4) as EqGoal;
             Assert.NotNull(goal);

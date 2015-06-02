@@ -14,6 +14,7 @@ namespace ExprSemantic
         public delegate void UpdateKnowledgeHandler(object sender, object args);
 
         public event UpdateKnowledgeHandler KnowledgeUpdated;
+
         #endregion
     }
 }

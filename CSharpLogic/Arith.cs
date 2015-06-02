@@ -1,7 +1,9 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace CSharpLogic
@@ -12,7 +14,7 @@ namespace CSharpLogic
         public static Goal Add(object x, object y, object z)
         {
             var addOp = new BinOp(Expression.Add, Expression.Subtract);
-            return addOp.GenerateGoal(x,y,z);
+            return addOp.GenerateGoal(new Tuple<object, object>(x,y), z);
         }
 
         // x - y = z
@@ -25,7 +27,7 @@ namespace CSharpLogic
         public static Goal Mul(object x, object y, object z)
         {
             var mul = new BinOp(Expression.Multiply, Expression.Divide);
-            return mul.GenerateGoal(x,y,z);
+            return mul.GenerateGoal(new Tuple<object, object>(x,y),z);
         }
 
         // z = x/y
@@ -48,22 +50,48 @@ namespace CSharpLogic
             RevOp = _revOp;
         }
 
-        public Goal GenerateGoal(object x, object y, object z)
+        public Goal GenerateGoal(Tuple<object,object> tuple, object z)
         {
-            if (Var.IsNotVar(x) && Var.IsNotVar(y))
+            object x = tuple.Item1;
+            object y = tuple.Item2;
+
+            if (LogicSharp.IsNumeric(x) && LogicSharp.IsNumeric(y))
             {
                 var obj = LogicSharp.Calculate(Op,x,y);
-                return new EqGoal(obj, z);
+
+                string rule = ArithRule.CalcRule(Op.Method.Name, x, y, obj);
+                var step = new TraceStep(new Tuple<object,object>(x,y), obj, rule);
+
+                var goal = new EqGoal(obj, z);
+                goal.Traces.Add(step);
+                return goal;
             }
-            else if(Var.IsNotVar(y) && Var.IsNotVar(z) && RevOp != null)
-            {
+            else if (LogicSharp.IsNumeric(y) && LogicSharp.IsNumeric(z) && RevOp != null)
+            {                
+                string rule = RewriteRule.MoveTerm(y, tuple, z);
+                var step1 = new TraceStep(tuple, new Tuple<object, object>(z, y), rule);
                 var obj = LogicSharp.Calculate(RevOp, z, y);
-                return new EqGoal(x, obj);
+                rule = ArithRule.CalcRule(RevOp.Method.Name, z, y, obj);
+                var step2 = new TraceStep(new Tuple<object, object>(z, y), obj, rule); 
+
+                var goal = new EqGoal(x, obj);
+                goal.Traces.Add(step1);
+                goal.Traces.Add(step2);
+                return goal;
             }
-            else if(Var.IsNotVar(x) && Var.IsNotVar(z) && RevOp != null)
+            else if (LogicSharp.IsNumeric(x) && LogicSharp.IsNumeric(z) && RevOp != null)
             {
+                string rule = RewriteRule.MoveTerm(x, tuple, z);
+                var step1 = new TraceStep(tuple, new Tuple<object, object>(z, x), rule);
+
                 var obj = LogicSharp.Calculate(RevOp, z, x);
-                return new EqGoal(y, obj);
+                rule = ArithRule.CalcRule(RevOp.Method.Name, z, x, obj);
+                var step2 = new TraceStep(new Tuple<object, object>(z, x), obj, rule);
+
+                var goal = new EqGoal(x, obj);
+                goal.Traces.Add(step1);
+                goal.Traces.Add(step2);
+                return goal;
             }
             else if(Var.IsVar(x) && Var.IsVar(y))
             {
@@ -87,5 +115,74 @@ namespace CSharpLogic
             }
         }
 
+        public TraceStep DoNumericCalcStep(Func<Expression, Expression, BinaryExpression> Op,
+            object x, object y)
+        {
+            if (!LogicSharp.IsNumeric(x) || !LogicSharp.IsNumeric(y)) return null;
+
+            var obj = LogicSharp.Calculate(Op, x, y);
+            string rule = ArithRule.CalcRule(Op.Method.Name, x, y, obj);
+            return new TraceStep(new Tuple<object, object>(x, y), obj, rule);
+        }
+
+        public TraceStep GenerateBasic(object x, object y, object z)
+        {
+            if (LogicSharp.IsNumeric(x) && LogicSharp.IsNumeric(y))
+            {
+                return DoNumericCalcStep(Op, x, y);
+            }
+            else if (LogicSharp.IsNumeric(y) && LogicSharp.IsNumeric(z) && RevOp != null)
+            {
+                return DoNumericCalcStep(RevOp, z, y);
+            }
+            else if (LogicSharp.IsNumeric(x) && LogicSharp.IsNumeric(z) && RevOp != null)
+            {
+                return DoNumericCalcStep(RevOp, z, x);
+            }
+            return null;
+        }
+
+        public TraceStep GenerateTerm(Term t)
+        {
+            return null;
+        }
+
+        public Goal GenerateGoal2(object x, object y, object z)
+        {
+            var xTerm = x as Term;
+            if (xTerm != null)
+            {
+                xTerm.Eval();
+            }
+            /*
+            TraceStep step = GenerateBasic(x, y, z);
+            if (step != null)
+            {
+                //simply calculation
+                var goal = new EqGoal(, step.Target);
+                goal.Traces.Push(step);
+                return goal;
+            }
+            */
+            return null;
+
+        }
+
+    
+    }
+
+    public class Arithmetic
+    {
+
+
+
+
+        //x+1-2 = 2+4
+
+        public static void Generate(object x, object y, object z)
+        {
+            //Basic Step
+                        
+        }
     }
 }
