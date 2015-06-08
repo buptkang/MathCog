@@ -11,7 +11,25 @@ namespace AlgebraGeometry.Test
     [TestFixture]
     public partial class TestPoint
     {
-        #region Reification
+        #region Point Reification (Substitution)
+
+        [Test]
+        public void Test_Sub_1()
+        {
+            var x = new Var('x');
+            var y = new Var('y');
+            var point = new Point(x, y);
+            var goal1 = new EqGoal(x, -3);
+            var goal2 = new EqGoal(y, -4);
+            point.Reify(goal1);
+            point.Reify(goal2);
+            Assert.True(point.CachedGoals.Count == 2);
+            Assert.True(point.CachedSymbols.Count == 1);
+        }
+
+        #endregion
+
+        #region Reification (substitution)
 
         [Test]
         public void Test_reify_0()
@@ -31,7 +49,7 @@ namespace AlgebraGeometry.Test
             var gPoint = point.CachedSymbols.ToList()[0] as Point;
             Assert.NotNull(gPoint);
             Assert.False(gPoint.Concrete);
-            Assert.True(1.Equals(gPoint.XCoordinate));
+            Assert.True(1.0.Equals(gPoint.XCoordinate));
             Assert.True(y.Equals(gPoint.YCoordinate));
             Assert.True(gPoint.CachedGoals.Count == 1);
 
@@ -198,7 +216,7 @@ namespace AlgebraGeometry.Test
             var gPoint = point.CachedSymbols.ToList()[0] as Point;
             Assert.NotNull(gPoint);
             Assert.False(gPoint.Concrete);
-            Assert.True(1.Equals(gPoint.XCoordinate));
+            Assert.True(1.0.Equals(gPoint.XCoordinate));
             Assert.True(y.Equals(gPoint.YCoordinate));
             Assert.True(gPoint.CachedGoals.Count == 1);
 
@@ -315,57 +333,6 @@ namespace AlgebraGeometry.Test
         }
 
         #endregion
-
-        #region Query
-
-        [Test]
-        public void QueryTest1()
-        {
-            var point = new Point(2.0, 3.0);
-            var x = new Var('x');
-            var y = new Var('y');
-            object result = AGLogic.Infer(x, point);
-            Assert.IsTrue(2.0.Equals(result));
-
-            var m = new Var('t');
-            result = LogicSharp.Run(m, point);
-            Assert.Null(result);
-
-            result = AGLogic.Infer(y, point);
-            Assert.IsTrue(3.0.Equals(result));
-        }
-
-        [Test]
-        public void QueryTest2()
-        {            
-            var x = new Var('x');
-            var goal = new EqGoal(x, 4.0);
-
-            object result = AGLogic.Infer(x, goal);
-            Assert.NotNull(result);
-            Assert.True(result.Equals(4.0));
-        }
-
-        public void QueryTest3()
-        {
-
-
-
-
-
-
-            /*
-             *             var y = new Var('y');
-                        goal = new EqGoal(y, 3.0);
-                        result = LogicSharp.Run(y, goal, point);
-                        Assert.True(3.0.Equals(result));
-             */
-        }
-
-
-
-        #endregion
-
 
     }
 }

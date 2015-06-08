@@ -7,6 +7,7 @@ using NUnit.Framework;
 
 namespace CSharpLogic.Action
 {
+    /*
     public class ReifyLogicObjectsAction : AbstractAction
     {
         private List<DyLogicObject> _oldObjs;
@@ -35,4 +36,5 @@ namespace CSharpLogic.Action
             _newObjs = null;
         }
     }
+     */
 }

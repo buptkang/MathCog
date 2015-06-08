@@ -36,6 +36,7 @@ relexpr : relnexpr {$1}
 	| sym LP relnexpr COMMA relnexpr RP { new CompositeExpr($1, [|$3;$5|]) :> Expr }
 
 relnexpr : plusexpr { makeplus $1 }
+    | relnexpr EQ {new CompositeExpr(WellKnownSym.equals, [|$1|]) :> Expr }
 	| relnexpr EQ relnexpr { new CompositeExpr(WellKnownSym.equals, [|$1; $3|]) :> Expr }
 	| relnexpr LT relnexpr { new CompositeExpr(WellKnownSym.lessthan, [|$1; $3|]) :> Expr }
 	| relnexpr GT relnexpr { new CompositeExpr(WellKnownSym.greaterthan, [|$1; $3|]) :> Expr }

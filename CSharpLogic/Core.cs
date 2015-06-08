@@ -189,6 +189,8 @@ namespace CSharpLogic
 
         public static object Run(Var variable, EqGoal goal)
         {
+            if (variable.Equals(goal.Lhs)) return goal.Rhs;
+            if (variable.Equals(goal.Rhs)) return goal.Lhs;
             return null;
         }
 

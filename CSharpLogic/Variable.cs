@@ -38,7 +38,7 @@ namespace CSharpLogic
             if (obj is Var)
             {
                 var mVar = obj as Var;
-                return mVar._token.Equals(this._token);
+                return mVar.ToString().Equals(this.ToString());
             }
             else
             {

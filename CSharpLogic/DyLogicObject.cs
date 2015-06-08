@@ -45,11 +45,6 @@ namespace CSharpLogic
 
     public static class DyLogicObjectExtension
     {
-        public static DyLogicObject Reify(this DyLogicObject logicObj, Dictionary<object, object> dict)
-        {
-            throw new Exception("dynamic dispatch");
-        }
-
         public static void Reify(this DyLogicObject logicObj, Goal goal)
         {
             goal.Unify(logicObj.Properties);

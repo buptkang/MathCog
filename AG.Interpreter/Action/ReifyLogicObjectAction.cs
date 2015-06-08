@@ -6,6 +6,7 @@ using GuiLabs.Undo;
 
 namespace CSharpLogic.Action
 {
+    /*
     public class ReifyLogicObjectAction : AbstractAction
     {
         private DyLogicObject _oldObj;
@@ -36,4 +37,5 @@ namespace CSharpLogic.Action
             _newObj = null;
         }
     }
+     */ 
 }

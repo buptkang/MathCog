@@ -35,11 +35,61 @@ namespace CSharpLogic
         public override string ToString()
         {
             var builder = new StringBuilder();
-            builder.Append(Op);
-            builder.Append(LogicSharp.PrintTuple(Args));
+            var tuple = Args as Tuple<object, object>;
+            if(tuple == null) throw new Exception("cannot be null");
+
+            var lTerm = tuple.Item1;
+            var rTerm = tuple.Item2;
+            if (lTerm is Term)
+            {
+                builder.Append('(');
+                builder.Append(lTerm.ToString());
+                builder.Append(')');
+            }
+            else
+            {
+                builder.Append(lTerm.ToString()); 
+            }
+            
+            if (Op.Method.Name.Equals("Add"))
+            {
+                builder.Append('+');
+            }
+            else if (Op.Method.Name.Equals("Substract"))
+            {
+                builder.Append('-');
+            }
+            else if (Op.Method.Name.Equals("Multiply"))
+            {
+                builder.Append('*');
+            }
+            else if (Op.Method.Name.Equals("Divide"))
+            {
+                builder.Append('/');
+            }
+            if (rTerm is Term)
+            {
+                builder.Append('(');
+                builder.Append(rTerm.ToString());
+                builder.Append(')');
+            }
+            else
+            {
+                builder.Append(rTerm.ToString());
+            }
             return builder.ToString();
         }
 
+        /// <summary>
+        /// Evaluation with calculation functionality, it does not 
+        /// take care of term rewriting.
+        /// 
+        /// Terms should follow the below rules:
+        /// tp: "x" , "2", "2+2",  "2+3-1", "2+2*2", "x+(1+2)", "x + y + 3"
+        /// tp: "x^2+x+2+1" 
+        /// fn: "(x+1)+2" or "1+x+2", "x+x"
+        /// </summary>
+        /// <returns></returns>
         public object Eval()
         {
             var tuple = Args as Tuple<object, object>;
@@ -47,7 +97,7 @@ namespace CSharpLogic
             {
                 #region Recursive Eval
 
-                var item1Tuple = tuple.Item1 as Term;                
+                var item1Tuple = tuple.Item1 as Term;
                 object arg1UpdatedTerm = null;
                 bool item1Update = false;
                 if (item1Tuple != null)
@@ -66,11 +116,22 @@ namespace CSharpLogic
                 }
 
                 object item1 = null;
-                if(item1Update)
+                if (item1Update)
                 {
-                    foreach (var ts in item1Tuple.Traces)
+                    object recurHead = arg1UpdatedTerm;
+                    for (int i = item1Tuple.Traces.Count - 1; i >= 0; i--)
                     {
-                        Traces.Add(ts);
+                        var ts = item1Tuple.Traces[i];
+                        if (ts.Target.Equals(recurHead))
+                        {
+                            var oldTerm = new Term(Op,
+                               new Tuple<object, object>(ts.Source, tuple.Item2));
+                            var newTerm = new Term(Op,
+                               new Tuple<object, object>(ts.Target, tuple.Item2));
+                            var newStep = new TraceStep(oldTerm, newTerm, ts.Rule);
+                            Traces.Insert(0, newStep);
+                            recurHead = ts.Source;
+                        }
                     }
                     item1 = arg1UpdatedTerm;
                 }
@@ -82,9 +143,20 @@ namespace CSharpLogic
                 object item2 = null;
                 if (item2Update)
                 {
-                    foreach (var ts in item2Tuple.Traces)
+                    object recurHead = arg2UpdatedTerm;
+                    for (int i = item2Tuple.Traces.Count - 1; i >= 0; i--)
                     {
-                        Traces.Add(ts);
+                        var ts = item2Tuple.Traces[i];
+                        if (ts.Target.Equals(recurHead))
+                        {
+                            var oldTerm = new Term(Op,
+                               new Tuple<object, object>(tuple.Item1,ts.Source));
+                            var newTerm = new Term(Op,
+                               new Tuple<object, object>(tuple.Item1,ts.Target));
+                            var newStep = new TraceStep(oldTerm, newTerm, ts.Rule);
+                            Traces.Insert(0, newStep);
+                            recurHead = ts.Source;
+                        }
                     }
                     item2 = arg2UpdatedTerm;
                 }
@@ -93,127 +165,28 @@ namespace CSharpLogic
                     item2 = tuple.Item2;
                 }
 
-                Args = new Tuple<object, object>(item1, item2);
-                tuple = Args as Tuple<object, object>;
+                //Args = new Tuple<object, object>(item1, item2);
+                //tuple = Args as Tuple<object, object>;
+                tuple = new Tuple<object, object>(item1, item2); 
+
                 #endregion
 
-                #region Numeric Eval
-                //if (!Var.ContainsVar(tuple.Item1) && !Var.ContainsVar(tuple.Item2))
                 if (LogicSharp.IsNumeric(tuple.Item1) && LogicSharp.IsNumeric(tuple.Item2))
                 {
                     var obj = LogicSharp.Calculate(Op, tuple.Item1, tuple.Item2);
                     string rule = ArithRule.CalcRule(Op.Method.Name, tuple.Item1, tuple.Item2, obj);
-                    var newStep = new TraceStep(new Tuple<object, object>(tuple.Item1, tuple.Item2), obj, rule);
+                    var newStep = new TraceStep(this, obj, rule);
                     Traces.Add(newStep);
                     return obj;
                 }
-                #endregion
-
-                #region Variable Eval
-
-                if (Var.IsVar(tuple.Item1) && Var.IsVar(tuple.Item2))
-                {
-                    var variable1 = tuple.Item1 as Var;
-                    var variable2 = tuple.Item2 as Var;
-
-                    if (variable1 == null || variable2 == null) return this;
-
-                    if (variable1.ToString().Equals(variable2.ToString()))
-                    {
-                        //Identity Rule for the same variable
-                        string appliedRule;
-                        var newTerm = Rewrite.RewriteSameVariable(Op, variable1, out appliedRule);                        
-                        var newStep = new TraceStep(new Tuple<object, object>(tuple.Item1, tuple.Item2), newTerm, appliedRule);
-                        Traces.Add(newStep);
-
-                        var nTerm = newTerm as Term;
-                        if (nTerm != null)
-                        {
-                            foreach (var step in Traces)
-                            {
-                                nTerm.Traces.Add(step); 
-                            }
-                        }
-                        return newTerm;
-                    }
-                    else
-                    {
-                        return this;
-                    }
-                }
                 else
-                {
-/*
-                    if (Var.IsVar(tuple.Item1))
-                    {
-                        var variable1 = tuple.Item1 as Var;
-                        //Make commutative rule
-                        string rule = RewriteRule.ApplyCommutativeOnTerm(tuple.Item1, tuple.Item2);
-                        Args = new Tuple<object, object>(tuple.Item2, tuple.Item1);
-                        return this;
-                    }
- */ 
+                {                   
+                    return new Term(Op, tuple);
                 }
-
-                #endregion
-
-                #region Term Eval
-/*
-                var term1 = tuple.Item1 as Term;
-                var term2 = tuple.Item2 as Term;
-
-                if (term1 != null && term2 != null)
-                {
-                    var args1 = term1.Args as Tuple<object, object>;
-                    var args2 = term2.Args as Tuple<object, object>;
-                    if(args1 == null || args2 == null) return this;
-                    var variable1 = args1.Item2 as Var;
-                    var variable2 = args2.Item2 as Var;
-                    if (variable1 == null || variable2 == null) return this;
-
-                    if (variable1.ToString().Equals(variable2.ToString())
-                        && term1.Op.Equals(term2.Op))
-                    {
-                        #region Distributive Law
-
-                        var param1 = args1.Item1;
-                        var param2 = args2.Item1;
-                        var newParamTerm = new Term(Op, new Tuple<object, object>(param1, param2));
-                        Stack<TraceStep> internalSteps = null;
-                        object internalTerm = null;
-                        internalTerm = newParamTerm.UpdateTerm(out internalSteps);
-                       
-                        string appliedRule = RewriteRule.ApplyDistributiveLaw(term1, term2);
-                        TraceStep newTraceStep;
-                        if (internalTerm != null)
-                        {
-                            while (internalSteps.Count != 0)
-                            {
-                                Traces.Push(internalSteps.Pop());
-                            }
-                            newTraceStep = new TraceStep(this, internalTerm, appliedRule);
-                            Traces.Push(newTraceStep);
-
-                            Op = term1.Op;
-                            Args = new Tuple<object, object>(internalTerm, variable1);
-                        }
-                        else
-                        {
-                            newTraceStep = new TraceStep(this, newParamTerm, appliedRule);
-                            Traces.Push(newTraceStep);
-                            Op = term1.Op;
-                            Args = new Tuple<object, object>(newParamTerm, variable1);
-
-                        }
-
-                        #endregion
-                    }
-                }
-*/
-                #endregion
             }
             return this;
         }
+
     }
 
     public static class TermExtention

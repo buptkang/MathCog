@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -124,6 +124,7 @@ namespace ExprSemantic
                     {
                         pt.Reify(term.Goal);
                     }
+
                     #region Interaction
                     if (KnowledgeUpdated != null)
                         KnowledgeUpdated(this, shapeExpr);
@@ -161,39 +162,32 @@ namespace ExprSemantic
             return false;
         }
     
-        private bool EvalTerm(AGPropertyExpr prop)
+        private void EvalTerm(AGPropertyExpr prop)
         {
-            EqGoal term = prop.Goal;
+            EqGoal goal = prop.Goal;
             List<AGShapeExpr> lst = GetShapeFacts();
-            if (lst.Count == 0)
+            if (lst.Count == 0) return; // No shape to eval
+
+            //TODO constraint solving
+            foreach (AGShapeExpr ss in lst)
             {
-                return false;
-            }
-            else
-            {
-                //TODO constraint solving
-                foreach (AGShapeExpr ss in lst)
+                var shapeExpr = ss as AGShapeExpr;
+                if (shapeExpr.ShapeSymbol.Shape.Concrete) continue; 
+
+                var pt = shapeExpr.ShapeSymbol.Shape as Point;
+                if (pt != null)
                 {
-                    var shapeExpr = ss as AGShapeExpr;                   
-                    if (shapeExpr.ShapeSymbol.Shape.Concrete)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        var pt = shapeExpr.ShapeSymbol.Shape as Point;
-                        if (pt != null)
-                        {
-                            pt.Reify(term);
-                            #region Interaction
-                            if (KnowledgeUpdated != null)
-                                KnowledgeUpdated(this, shapeExpr);
-                            #endregion
-                        }                
-                    }
+                    pt.Reify(goal);
+
+                    #region Interaction
+
+                    if (KnowledgeUpdated != null)
+                        KnowledgeUpdated(this, shapeExpr);
+
+                    #endregion
                 }
-                return false;
             }
+            return;
         }
 
         #endregion
@@ -245,6 +239,11 @@ namespace ExprSemantic
         public List<AGShapeExpr> TestGetShapeFacts()
         {
             return GetShapeFacts();
+        }
+
+        public List<AGPropertyExpr> TestGetProperties()
+        {
+            return GetTermFacts();
         }
 
         #endregion

@@ -44,72 +44,41 @@ namespace AlgebraGeometry.Test
        
         #endregion
 
-        #region Point Query
+        #region Point Reify and DynamicObject Reify
     
         [Test]
-        public void Test2()
+        public void Test_PassByValue()
+        {
+            var x = new Var('x');
+            var point = new Point(x, 3);
+            var goal = new EqGoal(x, 2.0);
+            point.Reify(goal);
+            Assert.False(point.Concrete);
+            Assert.True(point.CachedSymbols.Count == 1);
+            Assert.True(point.CachedGoals.Count == 1);
+
+            var gShape = point.CachedSymbols.ToList()[0];
+            Assert.NotNull(gShape);
+            Assert.True(gShape.Traces.Count == 1);
+            var ts = gShape.Traces[0] as TraceStep;
+            Assert.NotNull(ts);
+            Assert.True(ts.Source.Equals(point));
+            Shape expectPt = new Point(2.0, 3.0);
+            Assert.IsInstanceOf(typeof(Point), ts.Target);
+            var tPt = ts.Target as Point;
+            Assert.NotNull(tPt);
+            Assert.True(tPt.Equals(expectPt));
+        }
+
+        [Test]
+        public void Test_PassByReference()
         {
             var x = new Var('x');
             var point = new Point(x, 3);
             Goal goal = new EqGoal(x, 2.0);
             point.Reify(goal);
-            Assert.True(point.Concrete);
-            Assert.True(2.0.Equals(point.Properties[point.XCoordinate]));
-            Assert.True(3.Equals(point.Properties[point.YCoordinate]));
-        }
-
-        [Test]
-        public void Test2_1()
-        {
-            var x = new Var('x');
-            var point = new Point(x, 3);
-            Goal goal = new EqGoal(x, 2.0);
-            point.Reify(goal);
-            Assert.True(point.Concrete);
-            Assert.True(2.0.Equals(point.Properties[point.XCoordinate]));
-            Assert.True(3.Equals(point.Properties[point.YCoordinate]));
-
-            //point.UnReify(goal);
-            Assert.False(point.Concrete);
-            Assert.False(point.Properties.ContainsKey(point.XCoordinate));
-            Assert.True(3.Equals(point.Properties[point.YCoordinate]));
-        }
-
-        [Test]
-        public void Test3()
-        {
-            var x = new Var('x');
-            var y = new Var('y');
-            var point = new Point(x, y);
-            Goal goal1 = new EqGoal(x, -3);
-            Goal goal2 = new EqGoal(y, -4);
-
-            var lst = new List<Goal>();
-            lst.Add(goal1);
-            lst.Add(goal2);
-
-            point.Reify(lst);
-            Assert.True(point.Concrete);
-            Assert.True(point.Properties[point.XCoordinate].Equals(-3));
-            Assert.True(point.Properties[point.YCoordinate].Equals(-4));
-        }
-
-        [Test]
-        public void Test4()
-        {
-            var x = new Var('x');
-            var y = new Var('y');
-            var point = new Point(x, y);
-            Goal goal1 = new EqGoal(x, -3);
-            Goal goal2 = new EqGoal(y, -4);
-            Goal goal3 = new EqGoal(x, 2);
-            var lst = new List<Goal>()
-            {
-                goal1, goal2,goal3
-            };
-
-            point.Reify(lst);
-            Assert.False(point.Concrete);
+            Assert.True(point.Properties.ContainsKey(x));
+            Assert.True(point.Properties[x].Equals(2.0));
         }
 
         #endregion

@@ -190,5 +190,20 @@ namespace CSharpLogic.Test
             myHashSet = result as HashSet<KeyValuePair<object, object>>;
             Assert.IsEmpty(myHashSet); 
         }
+
+        #region User Execution 
+
+        [Test]
+        public void TestRun()
+        {
+            var x = new Var('x');
+            var goal = new EqGoal(x, 3);
+
+            object result = LogicSharp.Run(x, goal);
+            Assert.NotNull(result);
+            Assert.True(result.Equals(3));
+        }
+
+        #endregion 
     }
 }

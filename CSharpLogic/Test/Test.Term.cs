@@ -27,23 +27,18 @@ namespace CSharpLogic.Test
         }
 
         [Test]
-        public void Test_Eval_0()
+        public void Test_Term_Eval()
         {
-            // 1 + x
             var x = new Var('x');
-            var term = new Term(Expression.Add, new Tuple<object, object>(1, x));
-            object result = term.Eval();
-            Assert.True(result.Equals(term));
-            Assert.True(term.Traces.Count == 0);
 
-            //1+2
-            term = new Term(Expression.Subtract, new Tuple<object, object>(1, 2));
-            result = term.Eval();
+            //1-2 -> -1
+            var term = new Term(Expression.Subtract, new Tuple<object, object>(1, 2));
+            object result = term.Eval();
             Assert.NotNull(result);
             Assert.True(result.Equals(-1));
             Assert.True(term.Traces.Count == 1);
 
-            // 1+2-1
+            // 1+2-1 -> 2
             var term1 = new Term(Expression.Add, new Tuple<object, object>(1, 2));
             term = new Term(Expression.Subtract, new Tuple<object,object>(term1, 1));
             result = term.Eval();
@@ -51,44 +46,40 @@ namespace CSharpLogic.Test
             Assert.True(result.Equals(2));
             Assert.True(term.Traces.Count == 2);
 
-            //x - x
-            term = new Term(Expression.Subtract, new Tuple<object, object>(x, x));
+            //1-2*3
+            term1 = new Term(Expression.Multiply, new Tuple<object,object>(2,3));
+            term = new Term(Expression.Subtract, new Tuple<object,object>(1,term1));
             result = term.Eval();
             Assert.NotNull(result);
-            Assert.True(result.Equals(0));
-            Assert.True(term.Traces.Count == 1);
+            Assert.True(result.Equals(-5));
+            Assert.True(term.Traces.Count == 2);
 
-            //x + x
-            term = new Term(Expression.Add, new Tuple<object, object>(x, x));
+            //x- 2*5
+            term1 = new Term(Expression.Multiply, new Tuple<object, object>(2, 5));
+            term = new Term(Expression.Subtract, new Tuple<object, object>(x, term1));
             result = term.Eval();
-            Assert.NotNull(result);
             Assert.IsInstanceOf(typeof(Term), result);
-            var gTerm = result as Term;
-            Assert.NotNull(gTerm);
-            Assert.True(gTerm.Op.Method.Name.Equals("Multiply"));
-            var gTuple = gTerm.Args as Tuple<object, object>;
-            Assert.NotNull(gTuple);
-            Assert.True(gTuple.Item1.Equals(2));
-            Assert.True(gTuple.Item2.Equals(x));
+            var rTerm = result as Term;
+            Assert.NotNull(rTerm);
+            var tuple = rTerm.Args as Tuple<object, object>;
+            Assert.NotNull(tuple);
+            Assert.True(tuple.Item1.Equals(x));
+            Assert.True(tuple.Item2.Equals(10));
             Assert.True(term.Traces.Count == 1);
-            Assert.True(gTerm.Traces.Count == 1);
-        }
 
-        [Test]
-        public void Test_Eval_Recursive()
-        {
-            //x+x-y
-
-            //x+y-x
-
-            //x + (x-3)
-
-            //2x + x
-            //add(mul(2,x),x) 
-
-            //distributive law
-            //identity law
-        }
-    
+            //x - (2*2 + 3)
+            term1 = new Term(Expression.Multiply, new Tuple<object, object>(2, 2));
+            var term2 = new Term(Expression.Add, new Tuple<object, object>(term1, 3));
+            term = new Term(Expression.Subtract, new Tuple<object,object>(x, term2));
+            result = term.Eval();
+            Assert.IsInstanceOf(typeof(Term), result);
+            rTerm = result as Term;
+            Assert.NotNull(rTerm);
+            tuple = rTerm.Args as Tuple<object, object>;
+            Assert.NotNull(tuple);
+            Assert.True(tuple.Item1.Equals(x));
+            Assert.True(tuple.Item2.Equals(7));
+            Assert.True(term.Traces.Count == 2);
+        }    
     }
 }

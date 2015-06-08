@@ -43,7 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AGLogic.cs" />
     <Compile Include="AGShapeTypes.cs" />
     <Compile Include="IRelation.cs" />
     <Compile Include="IShape.Cache.cs" />

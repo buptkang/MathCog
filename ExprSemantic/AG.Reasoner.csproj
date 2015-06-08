@@ -45,10 +45,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Instructions\AGInstructions.cs" />
+    <Compile Include="QueryInterpreter.cs" />
+    <Compile Include="QueryResult.cs" />
     <Compile Include="Reasoner.cs" />
     <Compile Include="Reasoner.Evaluator.cs" />
     <Compile Include="Reasoner.Interaction.cs" />
-    <Compile Include="Trace.cs" />
+    <Compile Include="Reasoner.Query.cs" />
+    <Compile Include="Test\Test.Query.cs" />
+    <Compile Include="Test\Test.Property.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test\Test.Point.cs" />
   </ItemGroup>

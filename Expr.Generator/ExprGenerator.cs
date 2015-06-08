@@ -1,4 +1,7 @@
-﻿using AlgebraGeometry;
+﻿using System;
+using System.Diagnostics;
+using System.Linq.Expressions;
+using AlgebraGeometry;
 using CSharpLogic;
 using starPadSDK.MathExpr;
 
@@ -6,6 +9,38 @@ namespace ExprGenerator
 {
     public static class ExprG
     {
+        public static Expr Generate(object obj)
+        {
+            var ss = obj as ShapeSymbol;
+            if (ss != null) return Generate(ss);
+
+            var eqGoal = obj as EqGoal;
+            if (eqGoal != null) return Generate(eqGoal);
+
+            var term = obj as Term;
+            if (term != null) return Generate(term);
+
+            var variable = obj as Var;
+            if (variable != null)
+            {
+                return new WordSym(variable.Token.ToString());
+            }
+
+            int integer;
+            if (LogicSharp.IsInt(obj, out integer))
+            {
+                return new IntegerNumber(integer.ToString());
+            }
+
+            double dNumber;
+            if (LogicSharp.IsDouble(obj, out dNumber))
+            {
+                return new DoubleNumber(dNumber);
+            }
+
+            return null;
+        }
+
         public static Expr Generate(ShapeSymbol ss)
         {
             if (ss is PointSymbol)
@@ -17,6 +52,48 @@ namespace ExprGenerator
             {
                 return null;
             }
+        }
+
+        public static Expr Generate(EqGoal goal)
+        {
+            var head = WellKnownSym.equals;
+            var lhs = Generate(goal.Lhs);
+            var rhs = Generate(goal.Rhs);
+            Debug.Assert(lhs!=null && rhs != null);
+            return new CompositeExpr(head, new Expr[] { lhs, rhs });
+        }
+
+        public static Expr Generate(Term term)
+        {
+            if (term.Op.Method.Name.Equals("Add"))
+            {
+                var head = WellKnownSym.plus;
+                var tuple = term.Args as Tuple<object, object>;
+                Debug.Assert(tuple!=null);
+                var arg1 = Generate(tuple.Item1);
+                var arg2 = Generate(tuple.Item2);
+                return new CompositeExpr(head, new Expr[] {arg1, arg2});
+            }
+            else if (term.Op.Method.Name.Equals("Subtract"))
+            {
+                var head = WellKnownSym.minus;
+                var tuple = term.Args as Tuple<object, object>;
+                Debug.Assert(tuple != null);
+                var arg1 = Generate(tuple.Item1);
+                var arg2 = Generate(tuple.Item2);
+                return new CompositeExpr(head, new Expr[] { arg1, arg2 });
+            }
+            else if (term.Op.Method.Name.Equals("Multiply"))
+            {
+                var head = WellKnownSym.times;
+                var tuple = term.Args as Tuple<object, object>;
+                Debug.Assert(tuple != null);
+                var arg1 = Generate(tuple.Item1);
+                var arg2 = Generate(tuple.Item2);
+                return new CompositeExpr(head, new Expr[] { arg1, arg2 });
+            }
+            //TODO
+            return null;
         }
     }
 

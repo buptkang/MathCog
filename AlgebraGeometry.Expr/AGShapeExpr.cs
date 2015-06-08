@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ExprGenerator;
+using CSharpLogic;
 
 namespace AlgebraGeometry.Expr
 {
@@ -16,9 +17,10 @@ namespace AlgebraGeometry.Expr
             :base(expr)
         {
             _shapeSymbol = ss;
+            GenerateTrace(ss.Shape);
         }
 
-        public override IEnumerable<IKnowledge> RetrieveGeneratedShapes()
+        public IEnumerable<IKnowledge> RetrieveGeneratedShapes()
         {
             IEnumerable<ShapeSymbol> symbols = 
                _shapeSymbol.RetrieveGeneratedShapes();

@@ -15,7 +15,6 @@ namespace ExprPatternMatchTest
         [Test]
         public void Test_Point()
         {
-
             object x = 3;
             object y = -3.9;
 

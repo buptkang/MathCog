@@ -9,8 +9,6 @@ namespace AG.Interpreter
     //Trace with ActionManager
     public interface IInterpreter
     {
-
-
         //void RetrieveCurrWhyHint();
         //void RetrieveCurrStrategyHint();
         //void RetrieveHow();

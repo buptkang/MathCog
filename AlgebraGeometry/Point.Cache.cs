@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using CSharpLogic;
@@ -22,6 +23,18 @@ namespace AlgebraGeometry
                 var gPoint = new Point(Label, obj, YCoordinate);
                 gPoint.CachedGoals.Add(new KeyValuePair<object, EqGoal>(X, goal));
                 CachedSymbols.Add(gPoint);
+
+                //Transform goal trace
+                for (int i = goal.Traces.Count - 1; i >= 0; i--)
+                {
+                    gPoint.Traces.Insert(0, goal.Traces[i]);
+                }              
+
+                //Substitution trace
+                var ts = new TraceStep(new PointSymbol(this), 
+                    new PointSymbol(gPoint), 
+                    SubstitutionRule.ApplySubstitute(this, goal));
+                gPoint.Traces.Insert(0,ts);
             }
             else
             {
@@ -33,9 +46,22 @@ namespace AlgebraGeometry
                         var xResult = LogicSharp.Reify(pt.XCoordinate, goal.ToDict());
                         if (!pt.XCoordinate.Equals(xResult))
                         {
+                            var gPt = new Point(pt.Label, pt.XCoordinate, pt.YCoordinate);
+
                             //substitute
                             pt.XCoordinate = xResult;
                             pt.CachedGoals.Add(new KeyValuePair<object, EqGoal>(X,goal));
+
+                            //transform goal trace
+                            for (int i = goal.Traces.Count - 1; i >= 0; i--)
+                            {
+                                pt.Traces.Insert(0, goal.Traces[i]);
+                            }    
+
+                            var ts = new TraceStep(new PointSymbol(pt), 
+                                new PointSymbol(gPt), 
+                                SubstitutionRule.ApplySubstitute(pt, goal));
+                            pt.Traces.Insert(0,ts);
                         }
                         else
                         {
@@ -50,6 +76,24 @@ namespace AlgebraGeometry
                                 }
                             } 
                             CachedSymbols.Add(gPoint);
+
+                            //substitute
+                            //Add traces from pt to gPoint
+                            for (int i = pt.Traces.Count - 1; i >= 0; i--)
+                            {
+                                gPoint.Traces.Insert(0, pt.Traces[i]);
+                            }
+
+                            //transform goal trace
+                            for (int i = goal.Traces.Count - 1; i >= 0; i--)
+                            {
+                                gPoint.Traces.Insert(0, goal.Traces[i]);
+                            } 
+
+                            var ts = new TraceStep(new PointSymbol(pt), 
+                                new PointSymbol(gPoint), 
+                                SubstitutionRule.ApplySubstitute(pt, goal));
+                            gPoint.Traces.Insert(0,ts);
                         }
                     }
                 }                
@@ -64,6 +108,17 @@ namespace AlgebraGeometry
                 var gPoint = new Point(Label, XCoordinate, obj);
                 gPoint.CachedGoals.Add(new KeyValuePair<object, EqGoal>(Y, goal));
                 CachedSymbols.Add(gPoint);
+
+                //transform goal trace
+                for (int i = goal.Traces.Count - 1; i >= 0; i--)
+                {
+                    gPoint.Traces.Insert(0, goal.Traces[i]);
+                } 
+
+                //Substitution trace
+                var ts = new TraceStep(new PointSymbol(this), 
+                    new PointSymbol(gPoint), SubstitutionRule.ApplySubstitute(this, goal));
+                gPoint.Traces.Insert(0, ts);
             }
             else
             {
@@ -75,9 +130,22 @@ namespace AlgebraGeometry
                         var yResult = LogicSharp.Reify(pt.YCoordinate, goal.ToDict());
                         if (!pt.YCoordinate.Equals(yResult))
                         {
+                            var gPt = new Point(pt.Label, pt.XCoordinate, pt.YCoordinate);
+
                             //substitute
                             pt.YCoordinate = yResult;
                             pt.CachedGoals.Add(new KeyValuePair<object, EqGoal>(Y,goal));
+
+                            //transform goal trace
+                            for (int i = goal.Traces.Count - 1; i >= 0; i--)
+                            {
+                                pt.Traces.Insert(0, goal.Traces[i]);
+                            } 
+
+                            var ts = new TraceStep(new PointSymbol(pt), 
+                                new PointSymbol(gPt), 
+                                SubstitutionRule.ApplySubstitute(pt, goal));
+                            pt.Traces.Insert(0, ts);
                         }
                         else
                         {
@@ -92,6 +160,24 @@ namespace AlgebraGeometry
                                 }
                             } 
                             CachedSymbols.Add(gPoint);
+
+                            //substitute
+                            //Add traces from pt to gPoint
+                            for (int i = pt.Traces.Count - 1; i >= 0; i--)
+                            {
+                                gPoint.Traces.Insert(0, pt.Traces[i]);
+                            }
+
+                            //transform goal trace
+                            for (int i = goal.Traces.Count - 1; i >= 0; i--)
+                            {
+                                gPoint.Traces.Insert(0, goal.Traces[i]);
+                            } 
+
+                            var ts = new TraceStep(new PointSymbol(pt), 
+                                new PointSymbol(gPoint), 
+                                SubstitutionRule.ApplySubstitute(pt, goal));
+                            gPoint.Traces.Insert(0, ts);
                         }
                     }
                 }
@@ -144,11 +230,29 @@ namespace AlgebraGeometry
 
         public static bool Reify(this Point point, EqGoal goal)
         {
-            if (!goal.IsAssignment()) return false;
+            //pre-processing of goal
+            EqGoal tempGoal;
+            if (goal.TraceCount != 0)
+            {
+                var trace = goal.Traces[0];
+                Debug.Assert(trace.Target != null);
+                var traceGoal = trace.Target as EqGoal;
+                Debug.Assert(traceGoal != null);
+                tempGoal = traceGoal;
+            }
+            else
+            {
+                tempGoal = goal;
+            }
+
+            bool cond1 = Var.IsVar(tempGoal.Lhs) && LogicSharp.IsNumeric(tempGoal.Rhs);
+            bool cond2 = Var.IsVar(tempGoal.Rhs) && LogicSharp.IsNumeric(tempGoal.Lhs);
+            Debug.Assert(cond1 || cond2);
+
             if (point.Concrete) return false;
 
-            object xResult = point.EvalGoal(point.XCoordinate, goal);
-            object yResult = point.EvalGoal(point.YCoordinate, goal);
+            object xResult = point.EvalGoal(point.XCoordinate, tempGoal);
+            object yResult = point.EvalGoal(point.YCoordinate, tempGoal);
 
             //Atomic operation
             if (!point.XCoordinate.Equals(xResult))
@@ -200,19 +304,6 @@ namespace AlgebraGeometry
             }
             
             point.RemoveGoal(goal); 
-            return true;
-        }
-
-        public static bool Reify(this Point point, IEnumerable<EqGoal> goals)
-        {
-            foreach (EqGoal goal in goals)
-            {
-                if (!point.Reify(goal))
-                {
-                    //TODO transaction need to trace back
-                    return false;
-                }
-            }
             return true;
         }
     }

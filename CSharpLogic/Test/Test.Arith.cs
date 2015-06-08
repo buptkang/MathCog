@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using System.Linq.Expressions;
 
 namespace CSharpLogic.Test
 {
@@ -182,6 +183,7 @@ namespace CSharpLogic.Test
             Assert.True(result.ContainsKey(variable2));
             Assert.True(result[variable1].Equals(2));
             Assert.True(result[variable2].Equals(4));
-        }    
+        }
+
     }
 }

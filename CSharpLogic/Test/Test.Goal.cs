@@ -11,58 +11,104 @@ namespace CSharpLogic.Test
     [TestFixture]
     public class TestGoal
     {
-        [Test]
-        public void TestEqGoal_EarlySafe()
-        {
-//            x, y = var('x'), var('y')
-//            assert earlysafe((eq, 2, 2))
-//            assert earlysafe((eq, 2, 3))
-//            assert earlysafe((membero, x, (1,2,3)))
-//            assert not earlysafe((membero, x, y))
+        #region Goal and Expression Conversion
 
-            var x = new Var('x');
-            var y = new Var('y');
+        [Test]
+        public void TestEqGoal_Expression0()
+        {
+            var term = new Term(Expression.Add, new Tuple<object, object>(1, 1));
+            var eqGoal = new EqGoal(term);
+            Assert.True(eqGoal.IsExpression);
+        }
+
+        [Test]
+        public void TestEqGoal_Expression1()
+        {
+            //1+1
+            var term = new Term(Expression.Add, new Tuple<object, object>(1, 1));
+            var eqGoal = new EqGoal(term);
+            Assert.True(eqGoal.Traces.Count == 1);
+            Assert.True(eqGoal.Lhs.Equals(2));
+
+            //1+1+1
+            var internalTerm = new Term(Expression.Add, new Tuple<object, object>(1, 1));
+            term = new Term(Expression.Add, new Tuple<object, object>(internalTerm, 1));
+            eqGoal = new EqGoal(term);
+            Assert.True(eqGoal.Traces.Count == 2);
+            Assert.True(eqGoal.Lhs.Equals(3));
+        }
+
+        #endregion
+
+        #region Goal Basic
+
+        [Test]
+        public void TestEqGoal0()
+        {
+            //2=2
             var eqGoal = new EqGoal(2, 2);
+            var substitutions = new Dictionary<object, object>();
+            bool result = eqGoal.Unify(substitutions);
+            Assert.True(result);
+            Assert.True(substitutions.Count == 0);
+
+            //3=4
+            eqGoal = new EqGoal(3, 4);
+            substitutions = new Dictionary<object, object>();
+            result = eqGoal.Unify(substitutions);
+            Assert.False(result);
+
+            //3=5-2
+            var rhs = new Term(Expression.Subtract, new Tuple<object, object>(5, 2));
+            eqGoal = new EqGoal(3, rhs);
+            substitutions = new Dictionary<object, object>();
+            result = eqGoal.Unify(substitutions);
+            Assert.True(result);
+            Assert.True(eqGoal.Traces.Count == 1);
+
+            //x = 2
+            var x = new Var('x');
+            eqGoal = new EqGoal(x, 3);
+            substitutions = new Dictionary<object, object>();
+            result = eqGoal.Unify(substitutions);
+            Assert.True(result);
+            Assert.True(eqGoal.Traces.Count == 0);
+            Assert.True(substitutions.Count == 1);
+            Assert.True(substitutions.ContainsKey(x));
+            Assert.True(substitutions[x].Equals(3));
             Assert.True(eqGoal.EarlySafe());
-            eqGoal = new EqGoal(2,x);
-            Assert.True(eqGoal.EarlySafe());
-            eqGoal = new EqGoal(y, x);
+
+            //x = x
+            eqGoal = new EqGoal(x, x);
+            substitutions = new Dictionary<object, object>();
+            result = eqGoal.Unify(substitutions);
+            Assert.True(result);
+            Assert.True(eqGoal.Traces.Count == 0);
+            Assert.True(substitutions.Count == 0);
+
+            //x = y
+            var y = new Var('y'); 
+            eqGoal = new EqGoal(x, y);
+            substitutions = new Dictionary<object, object>();
+            result = eqGoal.Unify(substitutions);
+            Assert.True(result);
+            Assert.True(eqGoal.Traces.Count == 0);
+            Assert.True(substitutions.Count == 1);
             Assert.False(eqGoal.EarlySafe());
         }
 
-        [Test]
-        public void TestEqGoal()
-        {
-            /*
-             * x = var('x')
-              assert tuple(eq(x, 2)({})) == ({x: 2},)
-              assert tuple(eq(x, 2)({x: 3})) == ()
-            */
-            var x = new Var('x');
-            var goal = new EqGoal(x, 2);            
-            var substitutions = new Dictionary<object, object>();
+        #endregion
 
-            bool result = goal.Unify(substitutions);
-            Assert.True(result);
-            Assert.True(substitutions.Count == 1);
-            Assert.True(substitutions.ContainsKey(x));
-            Assert.True(substitutions[x].Equals(2));
-
-            substitutions = new Dictionary<object, object>();
-            substitutions.Add(x, 3);
-            result = goal.Unify(substitutions);
-            Assert.False(result);
-        }
+        #region Goal Evaluation
 
         [Test]
-        public void TEstEqGoal2()
+        public void TestEqGoal_Eval0()
         {
-            /*
-             * x + 1 = 2
-             */
+            //x + 1 = 2
             var x = new Var('x');
             var lhs = new Term(Expression.Add, new Tuple<object, object>(x, 1));
-            var goal = EqGoal.GenerateGoal(lhs, 2);
+            var goal = new EqGoal(lhs, 2);           
+            Assert.True(goal.TraceCount == 0);
             var substitutions = new Dictionary<object, object>();
             bool result = goal.Unify(substitutions);
             Assert.True(result);
@@ -71,29 +117,43 @@ namespace CSharpLogic.Test
             Assert.True(substitutions[x].Equals(1));
             Assert.True(goal.Traces.Count == 2);
 
-            /* x + 1 = 2 + 1*/
-            var rhs = new Term(Expression.Add, new Tuple<object, object>(2, 1));
-            goal = EqGoal.GenerateGoal(lhs, rhs);
+            //////////////////////////////////////////////////
+
+            /*
+             * x + 1 - 3 = 2
+             */
+            
+            var internLsh = new Term(Expression.Subtract, new Tuple<object,object>(1, 3));
+            lhs = new Term(Expression.Add, new Tuple<object, object>(x,internLsh));
+            goal = new EqGoal(lhs, 2);
             substitutions = new Dictionary<object, object>();
             result = goal.Unify(substitutions);
             Assert.True(result);
             Assert.True(substitutions.Count == 1);
             Assert.True(substitutions.ContainsKey(x));
-            Assert.True(substitutions[x].Equals(2));
+            Assert.True(substitutions[x].Equals(4));
             Assert.True(goal.Traces.Count == 3);
+
+            ///////////////////////////////////////////////////
+            
+            // x + 1 - 5　＝　2+1
+            internLsh = new Term(Expression.Subtract, new Tuple<object, object>(1, 5));
+            lhs = new Term(Expression.Add, new Tuple<object, object>(x, internLsh));
+
+            var rhs = new Term(Expression.Add, new Tuple<object, object>(2, 1));
+            goal = new EqGoal(lhs, rhs);
+            substitutions = new Dictionary<object, object>();
+            result = goal.Unify(substitutions);
+            Assert.True(result);
+            Assert.True(substitutions.Count == 1);
+            Assert.True(substitutions.ContainsKey(x));
+            Assert.True(substitutions[x].Equals(7));
+            Assert.True(goal.Traces.Count == 4);
         }
 
+        #endregion
 
-        [Test]
-        public void TestMemberof()
-        {
-            /*
-            * x = var('x')
-            assert set(run(5, x, membero(x, (1,2,3)),
-                membero(x, (2,3,4)))) == set((2,3))
-            assert run(5, x, membero(2, (1, x, 3))) == (2,)
-            */
-        }
+        #region Reification
 
         [Test]
         public void test_reify_object2()
@@ -105,5 +165,7 @@ namespace CSharpLogic.Test
 
             Assert.True(foo.Properties.Count == 2);
         }
+
+        #endregion 
     }
 }

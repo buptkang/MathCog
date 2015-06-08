@@ -80,7 +80,9 @@ namespace ExprSemantic
                 return null;
             }
 
+            //Search Algorithm
             EvalPropogate(result);
+
             var pair = new KeyValuePair<object, object>(expr, result);
             _cache.Add(pair);
             var k = result as IKnowledge;
@@ -136,14 +138,5 @@ namespace ExprSemantic
 
         #endregion
 
-        #region Querying Public Interface
-
-/*        
-        public Tuple<object, Tracer> Answer(string fact)
-        {
-            return null;
-        }
-*/
-        #endregion
     }
 }

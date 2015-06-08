@@ -67,9 +67,11 @@ namespace CSharpLogic
                 return goal;
             }
             else if (LogicSharp.IsNumeric(y) && LogicSharp.IsNumeric(z) && RevOp != null)
-            {                
-                string rule = RewriteRule.MoveTerm(y, tuple, z);
+            {
+                string rule = null;//RewriteRule.MoveTerm(y, tuple, z);
                 var step1 = new TraceStep(tuple, new Tuple<object, object>(z, y), rule);
+                
+                
                 var obj = LogicSharp.Calculate(RevOp, z, y);
                 rule = ArithRule.CalcRule(RevOp.Method.Name, z, y, obj);
                 var step2 = new TraceStep(new Tuple<object, object>(z, y), obj, rule); 
@@ -81,7 +83,7 @@ namespace CSharpLogic
             }
             else if (LogicSharp.IsNumeric(x) && LogicSharp.IsNumeric(z) && RevOp != null)
             {
-                string rule = RewriteRule.MoveTerm(x, tuple, z);
+                string rule = null;//RewriteRule.MoveTerm(x, tuple, z);
                 var step1 = new TraceStep(tuple, new Tuple<object, object>(z, x), rule);
 
                 var obj = LogicSharp.Calculate(RevOp, z, x);
@@ -165,24 +167,6 @@ namespace CSharpLogic
             }
             */
             return null;
-
-        }
-
-    
-    }
-
-    public class Arithmetic
-    {
-
-
-
-
-        //x+1-2 = 2+4
-
-        public static void Generate(object x, object y, object z)
-        {
-            //Basic Step
-                        
         }
     }
 }

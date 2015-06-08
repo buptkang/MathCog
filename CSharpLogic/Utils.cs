@@ -158,6 +158,13 @@ namespace CSharpLogic
             }
         }
 
+        public static object CalTerm(Term term)
+        {
+            var tuple = term.Args as Tuple<object, object>;
+            if(tuple == null) throw new Exception("Cannot be null");
+            return Calculate(term.Op, tuple.Item1, tuple.Item2);
+        }
+
         public static object Calculate(Func<Expression, Expression, BinaryExpression> func,
             object x, object y)
         {
@@ -242,9 +249,31 @@ namespace CSharpLogic
         }
 
 
-        #region Stack Operation
+        #region Arithmetic Operator
 
-        
+        public static Func<Expression, Expression, BinaryExpression> ReverseOp(Func<Expression, Expression, BinaryExpression> op)
+        {
+            if (op.Method.Name.Equals("Add"))
+            {
+                return Expression.Subtract;
+            }
+            else if (op.Method.Name.Equals("Subtract"))
+            {
+                return Expression.Add;
+            }
+            else if (op.Method.Name.Equals("Multiply"))
+            {
+                return Expression.Divide;
+            }
+            else if (op.Method.Name.Equals("Divide"))
+            {
+                return Expression.Multiply;
+            }
+            else
+            {
+                return null;
+            }
+        }
 
 
         #endregion

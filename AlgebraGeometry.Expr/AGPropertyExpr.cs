@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CSharpLogic;
+using ExprGenerator;
 using starPadSDK.MathExpr;
+using ExprSemantic;
 
 namespace AlgebraGeometry.Expr
 {
     /// <summary>
-    /// such as S= 5.0, m = 4;
+    /// such as S= 5.0, m = 4, x=2+1
     /// </summary>
     public class AGPropertyExpr : IKnowledge
     {
@@ -23,12 +25,7 @@ namespace AlgebraGeometry.Expr
             :base(expr)
         {
             _goal = goal;
+            GenerateTrace(_goal);
         }
-
-        public override IEnumerable<IKnowledge> RetrieveGeneratedShapes()
-        {
-            throw new NotImplementedException();
-        }
-
     }
 }

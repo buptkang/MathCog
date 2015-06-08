@@ -2,12 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using NUnit.Framework;
 
-namespace CSharpLogic.Test
+namespace AG.Interpreter.Test
 {
-    public class TestAction
+    [TestFixture]
+    public class QueryTraceAction
     {
-       
+        [Test]
+        public void UndoRedo()
+        {
+            //
+        }
+
         public void test_reify_object_static()
         {
             //static approach
@@ -25,7 +32,7 @@ namespace CSharpLogic.Test
             Assert.NotNull(result2);
             Assert.True(result2.Properties.Count == 2);
             Assert.True(result2.Properties[variable].Equals(4));
- */ 
+ */
             /*
                         //negative case
                         foo = new DyLogicObject();
@@ -38,6 +45,7 @@ namespace CSharpLogic.Test
                         Assert.True(result.Equals(foo));
              */
         }
+
 /*
         [Test]
         public void test_reify_object_action()
@@ -59,7 +67,7 @@ namespace CSharpLogic.Test
             am.Redo();
             Assert.True(action.CurrObj.Properties[variable].Equals(4));
         }
- */ 
+ */
         /*
                 [Test]
                 public void test_reify_objects_action()
@@ -76,7 +84,6 @@ namespace CSharpLogic.Test
                     dict.Add(variable, 4);
 
                 }
-         */ 
-
+         */
     }
 }
