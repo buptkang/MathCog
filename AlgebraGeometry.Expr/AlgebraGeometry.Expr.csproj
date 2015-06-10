@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AGPropertyExpr.cs" />
+    <Compile Include="AGQueryExpr.cs" />
     <Compile Include="AGShapeExpr.cs" />
     <Compile Include="IKnowledgeExpr.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

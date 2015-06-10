@@ -15,10 +15,5 @@ namespace ExprSemantic
         public const string ShowTraceFromProperty =
             "Simplify the given equation, draw 'down-arrow' to see details.";
 
-
-
-
-
-
     }
 }

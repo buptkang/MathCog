@@ -42,6 +42,7 @@ namespace AG.Interpreter
             _preQueryCache = new Dictionary<object, object>();
         }
 
+        //Key: Expr; Value: AGQueryExpr
         private ObservableCollection<KeyValuePair<object, object>> _queryCache;
         private Dictionary<object, object> _preQueryCache; 
 
@@ -49,10 +50,10 @@ namespace AG.Interpreter
 
         #region Load and Unload Query
 
-        public bool LoadQuery(Expr expr)
+        public object LoadQuery(Expr expr)
         {
             object rTemp = ExprVisitor.Instance.MatchQuery(expr);
-            if (rTemp == null) return false;
+            if (rTemp == null) return null;
 
             var kv = (KeyValuePair<string, object>)rTemp;
 
@@ -61,9 +62,12 @@ namespace AG.Interpreter
                 Debug.Assert(kv.Value is Var);
                 object queryResult;
                 _memory.Answer(kv.Value, out queryResult);
-                var newKv = new KeyValuePair<object, object>(expr, queryResult);
+
+                object obj = Eval(expr, queryResult);
+                var newKv = new KeyValuePair<object, object>(expr, obj);
                 _queryCache.Add(newKv);
-                return true;
+
+                return obj;
             }
             else if ("Term".Equals(kv.Key))
             {
@@ -73,39 +77,32 @@ namespace AG.Interpreter
             }
 
             throw new Exception("TODO");
-            return true;
         }
 
-        public bool LoadQuery(string fact)
+        public object LoadQuery(string fact)
         {
-            starPadSDK.MathExpr.Expr expr = Text.Convert(fact);
-            bool result = LoadQuery(expr);
-            if (result)
-            {
-                _preQueryCache.Add(fact, expr);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            Expr expr = Text.Convert(fact);
+            object obj = LoadQuery(expr);
+            if (obj == null) return null;
+            _preQueryCache.Add(fact, expr);
+            return obj;
         }
 
-        public bool UnLoadQuery(object obj)
+        public bool UnLoadQuery(string obj)
         {
             if (_preQueryCache.ContainsKey(obj))
             {
                 var expr = _preQueryCache[obj] as Expr;
                 if (expr != null)
                 {
-                    UnloadQuery(expr);
+                    UnLoadQuery(expr);
                 }
                 return true;
             }
             return false;
         }
 
-        public bool UnloadQuery(Expr expr)
+        public bool UnLoadQuery(Expr expr)
         {
             object query = SearchQuery(expr);
             if (query != null)
@@ -122,25 +119,37 @@ namespace AG.Interpreter
 
         #region Load and Unload
 
-        public void Load(string str)
+        public object Load(string str)
         {
-            bool result = LoadQuery(str);
+            object result = LoadQuery(str);
+            if (result == null) return _memory.Load(str);
+            else return result;
+        }
+
+        public object Load(Expr expr)
+        {
+            object result = LoadQuery(expr);
+            if (result == null) return _memory.Load(expr);
+            else return result;
+        }
+
+        public void UnLoad(string str)
+        {
+            bool result = UnLoadQuery(str);
             if (!result)
             {
-                _memory.Load(str);
+                _memory.Unload(str);
             }
         }
 
-        public void Load(Expr expr)
+        public void UnLoad(Expr expr)
         {
-            bool result = LoadQuery(expr);
+            bool result = UnLoadQuery(expr);
             if (!result)
             {
-                _memory.Load(expr);
+                _memory.Unload(expr);
             }
-        }
- 
-
+        } 
 
         #endregion 
     }

@@ -160,23 +160,57 @@ namespace ExprSemantic
             property = null;
             if (!(expr is CompositeExpr)) return false;
             var composite = expr as CompositeExpr;
-            if (!(composite.Head.Equals(WellKnownSym.equals) && composite.Args.Length == 1)) return false;
+            if (!composite.Head.Equals(WellKnownSym.equals)) return false;
 
-            Expr expr1 = composite.Args[0];
-
-            object obj;
-            bool result = expr1.IsLabel(out obj);
-            if (result)
+            if (composite.Args.Length == 1)
             {
-                property = new KeyValuePair<string, object>("Label", new Var(obj));
-                return true;
+                Expr expr1 = composite.Args[0];
+
+                object obj;
+                bool result = expr1.IsLabel(out obj);
+                if (result)
+                {
+                    property = new KeyValuePair<string, object>("Label", new Var(obj));
+                    return true;
+                }
+
+                result = expr1.IsExpression(out obj);
+                if (result)
+                {
+                    property = new KeyValuePair<string, object>("Term", obj);
+                    return true;
+                }
+
+                return false;                
             }
-
-            result = expr1.IsExpression(out obj);
-            if (result)
+            else if (composite.Args.Length == 2)
             {
-                property = new KeyValuePair<string, object>("Term", obj);
-                return true;
+                Expr expr1 = composite.Args[0];
+                Expr expr2 = composite.Args[1];
+
+                if(expr2 is ErrorExpr)
+                {                    
+                    object obj;
+                    bool result = expr1.IsLabel(out obj);
+                    if (result)
+                    {
+                        property = new KeyValuePair<string, object>("Label", new Var(obj));
+                        return true;
+                    }
+
+                    result = expr1.IsExpression(out obj);
+                    if (result)
+                    {
+                        property = new KeyValuePair<string, object>("Term", obj);
+                        return true;
+                    }
+
+                    throw new Exception("TODO");
+                }
+                else
+                {
+                    return false;
+                }
             }
 
             return false;

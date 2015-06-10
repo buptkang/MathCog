@@ -27,8 +27,8 @@ namespace AG.Interpreter.Test
             Reasoner.Instance.Load(fact);
 
             const string variable = "Y";
-            bool result = Interpreter.Instance.LoadQuery(variable);
-            Assert.True(result);
+            object obj = Interpreter.Instance.LoadQuery(variable);
+            Assert.Null(obj);
 
             object output =
                 Interpreter.Instance.SearchCurrentQueryResult(variable);
@@ -57,8 +57,8 @@ namespace AG.Interpreter.Test
             Reasoner.Instance.Load(fact);
 
             const string variable = "Y";
-            bool result = Interpreter.Instance.LoadQuery(variable);
-            Assert.True(result);
+            object obj = Interpreter.Instance.LoadQuery(variable);
+            Assert.NotNull(obj);
 
             object output =
                Interpreter.Instance.SearchCurrentQueryResult(variable);
@@ -66,8 +66,8 @@ namespace AG.Interpreter.Test
 
             const string fact1 = "y=1";
             Reasoner.Instance.Load(fact1);
-            result = Interpreter.Instance.LoadQuery(variable);
-            Assert.True(result);
+            obj = Interpreter.Instance.LoadQuery(variable);
+            Assert.NotNull(obj);
             output = Interpreter.Instance.SearchCurrentQueryResult(variable);
             Assert.NotNull(output);
             Assert.True(output.Equals(1));
@@ -128,8 +128,8 @@ namespace AG.Interpreter.Test
             Reasoner.Instance.Load(fact2);
 
             const string variable = "Y";
-            bool result = Interpreter.Instance.LoadQuery(variable);
-            Assert.True(result);
+            object result = Interpreter.Instance.LoadQuery(variable);
+            Assert.NotNull(result);
 
             object output =
                 Interpreter.Instance.SearchCurrentQueryResult(variable);

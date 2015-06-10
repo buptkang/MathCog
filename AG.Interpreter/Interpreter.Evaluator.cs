@@ -3,12 +3,69 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using AlgebraGeometry.Expr;
+using ExprSemantic;
 using starPadSDK.MathExpr;
 
 namespace AG.Interpreter
 {
     public partial class Interpreter : IInterpreter
     {
+        public object Eval(Expr expr, object input)
+        {
+            if (input == null) return null;
+
+            var str = input as string;
+            if(str != null)
+            {
+                //query failed with instruction.
+                var qe = new AGQueryExpr(expr)
+                {
+                   QuerySuccess = false,
+                   Instruction = str
+                };
+                return qe;
+            }
+
+            var lst = input as List<object>;
+            Debug.Assert(lst != null);
+
+            if (lst.Count == 1)
+            {
+                object temp = lst[0] as QueryResult;
+
+                #region property eval
+
+                var propQuery = temp as PropertyQueryResult;
+                if(propQuery != null)
+                {
+                    AGQueryExpr agQuery;
+                    if (propQuery.QuerySuccess) 
+                    {
+                        agQuery = new AGQueryExpr(propQuery.Answer);
+                        agQuery.QuerySuccess = true;
+                        agQuery.Instruction = agQuery.Instruction;
+                        agQuery.KnowledgeTrace = propQuery.Trace;
+                    }
+                    else
+                    {
+                        agQuery = new AGQueryExpr(expr);
+                        agQuery.QuerySuccess = false;
+                        agQuery.Instruction = agQuery.Instruction;                       
+                    }
+                    return agQuery;
+                }
+
+                #endregion
+            }
+            else
+            {
+                throw new Exception("TODO");
+            }
+
+            return null;
+        }
+
         private object SearchQuery(object key)
         {
             foreach (KeyValuePair<object, object> pair in _queryCache)

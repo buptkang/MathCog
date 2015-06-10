@@ -10,3 +10,5 @@ Trace Index:
 
 TODO:
 Look at Test.Query.cs: TestProp5()
+
+Interpreter.Evaluator.cs: Eval method

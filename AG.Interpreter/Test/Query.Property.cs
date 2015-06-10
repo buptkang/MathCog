@@ -34,13 +34,8 @@ namespace AG.Interpreter.Test
 
             object output = Interpreter.Instance.SearchCurrentQueryResult(query);
             Assert.NotNull(output);
-            Assert.IsInstanceOf(typeof(List<object>), output);
-            var lst = output as List<object>;
-            Assert.NotNull(lst);
-            Assert.True(lst.Count == 1);
-            var queryResult = lst[0] as PropertyQueryResult;
+            var queryResult = output as AGQueryExpr;
             Assert.NotNull(queryResult);
-
             Interpreter.Instance.UnLoadQuery(query);
             number = Interpreter.Instance.GetNumberOfQueries();
             Assert.True(number == 0);
