@@ -20,11 +20,13 @@ namespace CSharpLogic.Test
             var term2 = new Term(Expression.Add, new Tuple<object, object>(1, x));
 
             var dict = new Dictionary<object, object>();
-            bool result = term1.Unify(term2, dict);
+            bool result = LogicSharp.Unify(term1,term2, dict);
 
             Assert.True(result);
             Assert.True(dict.Count == 1); 
         }
+
+        #region Arithmetic Eval
 
         [Test]
         public void Test_Term_Eval()
@@ -80,6 +82,33 @@ namespace CSharpLogic.Test
             Assert.True(tuple.Item1.Equals(x));
             Assert.True(tuple.Item2.Equals(7));
             Assert.True(term.Traces.Count == 2);
-        }    
+        }
+
+        #endregion
+
+        #region Utility Test
+
+        [Test]
+        public void Test_print()
+        {
+            var variable = new Var('x');
+            var term = new Term(Expression.Multiply, new Tuple<object, object>(1, variable));
+
+            Assert.True(term.ToString().Equals("(1*x)"));
+        }
+
+        [Test]
+        public void Test_containVar()
+        {
+            var variable = new Var('x');
+            var term = new Term(Expression.Add, new Tuple<object,object>(variable, 2));
+            Assert.True(term.ContainsVar(variable));
+
+            var term2 = new Term(Expression.Add, new Tuple<object, object>(term, 1.0));
+            Assert.True(term2.ContainsVar(variable));
+
+        }
+
+        #endregion
     }
 }

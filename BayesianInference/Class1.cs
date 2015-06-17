@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlgebraExpression.Test
+namespace BayesianInference
 {
-    public class TestGoalEvaluator
+    public class Class1
     {
-        //2 = x +1 (not allowed)
     }
 }

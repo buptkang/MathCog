@@ -38,18 +38,12 @@ namespace CSharpLogic
             var tuple = Args as Tuple<object, object>;
             if(tuple == null) throw new Exception("cannot be null");
 
+            builder.Append('(');
+
             var lTerm = tuple.Item1;
             var rTerm = tuple.Item2;
-            if (lTerm is Term)
-            {
-                builder.Append('(');
-                builder.Append(lTerm.ToString());
-                builder.Append(')');
-            }
-            else
-            {
-                builder.Append(lTerm.ToString()); 
-            }
+          
+            builder.Append(lTerm.ToString());
             
             if (Op.Method.Name.Equals("Add"))
             {
@@ -67,16 +61,9 @@ namespace CSharpLogic
             {
                 builder.Append('/');
             }
-            if (rTerm is Term)
-            {
-                builder.Append('(');
-                builder.Append(rTerm.ToString());
-                builder.Append(')');
-            }
-            else
-            {
-                builder.Append(rTerm.ToString());
-            }
+                
+            builder.Append(rTerm.ToString());
+            builder.Append(')');
             return builder.ToString();
         }
 
@@ -187,6 +174,52 @@ namespace CSharpLogic
             return this;
         }
 
+        public bool ContainsVar(Var variable)
+        {
+            var tuple1 = Args as Tuple<object>;
+            if (tuple1 != null)
+            {
+                var term1 = tuple1.Item1 as Term;
+                if (term1 != null) return term1.ContainsVar(variable);
+                var variable1 = tuple1.Item1 as Var;
+                if (variable1 != null) return variable1.Equals(variable);
+                return false; //constant
+            }
+
+            var tuple2 = Args as Tuple<object, object>;
+            if (tuple2 != null)
+            {
+                bool result;
+                var term1 = tuple2.Item1 as Term;
+                if (term1 != null)
+                {
+                    result = term1.ContainsVar(variable);
+                    if (result) return true;
+                }
+                var variable1 = tuple2.Item1 as Var;
+                if (variable1 != null)
+                {
+                    result = variable1.Equals(variable);
+                    if (result) return true;
+                }
+
+                var term2 = tuple2.Item2 as Term;
+                if (term2 != null)
+                {
+                    result = term2.ContainsVar(variable);
+                    if (result) return true;
+                }
+                var variable2 = tuple2.Item2 as Var;
+                if (variable2 != null)
+                {
+                    result = variable.Equals(variable2);
+                    if (result) return true;
+                }
+                return false;
+            }
+
+            throw new Exception("Add tuple3, tuple4...");            
+        }
     }
 
     public static class TermExtention
@@ -195,17 +228,6 @@ namespace CSharpLogic
         {
             var gArgs = LogicSharp.Reify(term.Args, s);
             return new Term(term.Op, gArgs);
-        }
-
-        public static bool Unify(this Term term, Term otherTerm, Dictionary<object, object> s)
-        {
-            bool opUnifiable = LogicSharp.Unify(term.Op, otherTerm.Op, s);
-
-            if (opUnifiable)
-            {
-                return LogicSharp.Unify(term.Args, otherTerm.Args, s);
-            }
-            return false;
-        }
+        }   
     }
 }

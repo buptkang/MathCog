@@ -7,6 +7,7 @@ Test.Expression
 Test.Goal
 
 Test.Point
+Test.Line
 )
 
 Test.Factory: Expr 

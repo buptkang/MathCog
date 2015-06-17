@@ -5,14 +5,8 @@ using System.Text;
 
 namespace AlgebraGeometry
 {
-    public class TwoPoints : Relation
+    public class LineRule
     {
 
-
-
-        public override int GetNumberOfEntities()
-        {
-            return 0;
-        }
     }
 }

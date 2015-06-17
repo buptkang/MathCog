@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AlgebraGeometry;
 using FunctionalCSharp;
 using FunctionalCSharp.DiscriminatedUnions;
 using starPadSDK.MathExpr;
@@ -35,24 +36,29 @@ namespace ExprSemantic
 
         public object Match(starPadSDK.MathExpr.Expr exp)
         {
+            var dict = new Dictionary<PatternEnum, object>();
             object obj;
+
             bool result = exp.IsNumeric(out obj);
-            if (result) return obj;
+            if (result) dict.Add(PatternEnum.Numeric, obj);
 
             result = exp.IsLabel(out obj);
-            if (result) return obj;
+            if (result) dict.Add(PatternEnum.Label, obj);
 
             result = exp.IsExpression(out obj); //Term
-            if (result) return obj;
-
-            result = exp.IsGoal(out obj);
-            //result = exp.IsTerm(out obj); //Goal
-            if (result) return obj;
+            if (result) dict.Add(PatternEnum.Expression, obj);
 
             result = exp.IsPoint(out obj);
-            if (result) return obj;
+            if (result) dict.Add(PatternEnum.Point, obj);
 
-            return null;
+            LineSymbol ls;
+            result = exp.IsLine(out ls);
+            if (result) dict.Add(PatternEnum.Line, ls);
+       
+            result = exp.IsGoal(out obj);
+            if (result) dict.Add(PatternEnum.Goal, obj);
+
+            return dict;
         }
 
         public object MatchQuery(starPadSDK.MathExpr.Expr exp)
@@ -64,5 +70,15 @@ namespace ExprSemantic
 
             return null;
         }
+    }
+
+    public enum PatternEnum
+    {
+        Numeric,
+        Label,
+        Expression,
+        Point,
+        Line,
+        Goal
     }
 }

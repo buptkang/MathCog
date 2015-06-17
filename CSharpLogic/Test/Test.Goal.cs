@@ -108,14 +108,18 @@ namespace CSharpLogic.Test
             var x = new Var('x');
             var lhs = new Term(Expression.Add, new Tuple<object, object>(x, 1));
             var goal = new EqGoal(lhs, 2);           
-            Assert.True(goal.TraceCount == 0);
+            Assert.True(goal.TraceCount == 2);
+            var ts = goal.Traces[0] as TraceStep;
+            var latest = ts.Target as EqGoal;
+            Assert.NotNull(latest);
+            Assert.True(latest.ToString().Equals("x=1"));
+
             var substitutions = new Dictionary<object, object>();
             bool result = goal.Unify(substitutions);
             Assert.True(result);
             Assert.True(substitutions.Count == 1);
             Assert.True(substitutions.ContainsKey(x));
             Assert.True(substitutions[x].Equals(1));
-            Assert.True(goal.Traces.Count == 2);
 
             //////////////////////////////////////////////////
 
@@ -126,29 +130,38 @@ namespace CSharpLogic.Test
             var internLsh = new Term(Expression.Subtract, new Tuple<object,object>(1, 3));
             lhs = new Term(Expression.Add, new Tuple<object, object>(x,internLsh));
             goal = new EqGoal(lhs, 2);
+            Assert.True(goal.Traces.Count == 3);
+            ts = goal.Traces[0] as TraceStep;
+            latest = ts.Target as EqGoal;
+            Assert.NotNull(latest);
+            Assert.True(latest.ToString().Equals("x=4"));
+
             substitutions = new Dictionary<object, object>();
             result = goal.Unify(substitutions);
             Assert.True(result);
             Assert.True(substitutions.Count == 1);
             Assert.True(substitutions.ContainsKey(x));
             Assert.True(substitutions[x].Equals(4));
-            Assert.True(goal.Traces.Count == 3);
-
+           
             ///////////////////////////////////////////////////
             
             // x + 1 - 5　＝　2+1
             internLsh = new Term(Expression.Subtract, new Tuple<object, object>(1, 5));
             lhs = new Term(Expression.Add, new Tuple<object, object>(x, internLsh));
-
             var rhs = new Term(Expression.Add, new Tuple<object, object>(2, 1));
             goal = new EqGoal(lhs, rhs);
+            Assert.True(goal.Traces.Count == 4);
+            ts = goal.Traces[0] as TraceStep;
+            latest = ts.Target as EqGoal;
+            Assert.NotNull(latest);
+            Assert.True(latest.ToString().Equals("x=7"));
+
             substitutions = new Dictionary<object, object>();
             result = goal.Unify(substitutions);
             Assert.True(result);
             Assert.True(substitutions.Count == 1);
             Assert.True(substitutions.ContainsKey(x));
-            Assert.True(substitutions[x].Equals(7));
-            Assert.True(goal.Traces.Count == 4);
+            Assert.True(substitutions[x].Equals(7));           
         }
 
         #endregion

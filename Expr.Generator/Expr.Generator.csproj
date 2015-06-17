@@ -49,9 +49,9 @@
     <Compile Include="Test\Test.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AlgebraGeometry\AlgebraGeometry.csproj">
+    <ProjectReference Include="..\AlgebraGeometry\Geometry.Logic.csproj">
       <Project>{37ff5773-06ae-41c1-bb0f-b7fe22fc874b}</Project>
-      <Name>AlgebraGeometry</Name>
+      <Name>Geometry.Logic</Name>
     </ProjectReference>
     <ProjectReference Include="..\CSharpLogic\CSharpLogic.csproj">
       <Project>{b6ae1355-89f0-4ecb-83ac-b3b5118a6e4e}</Project>

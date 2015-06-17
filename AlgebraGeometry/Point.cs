@@ -60,6 +60,8 @@ namespace AlgebraGeometry
         { 
         }
 
+        #region Pass by reference experiment, not used in the upper level
+
         public bool AddXCoord(object x)
         {
             if (LogicSharp.IsNumeric(x))
@@ -79,6 +81,8 @@ namespace AlgebraGeometry
             }
             return false;
         }
+
+        #endregion 
 
         public override bool Concrete
         {

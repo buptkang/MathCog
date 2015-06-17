@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Text;
 using AlgebraGeometry;
@@ -21,16 +22,6 @@ namespace ExprSemantic
         {
             if (_cache.Count == 0) return;
 
-            bool result = false;
-/*
-            var variable = obj as string;
-            if (variable != null)
-            {
-                object dict;
-                EvalVariable(variable, out dict);
-                return;
-            }
-*/
             var shapeSym = obj as AGShapeExpr;
             if (shapeSym != null)
             {
@@ -64,8 +55,115 @@ namespace ExprSemantic
             }
         }
 
+        #region multiple candidates filtering search algo
+
+        private IKnowledge SearchBySemantic(List<object> objs)
+        {
+            if (_cache.Count == 0)
+            {
+                foreach (object obj in objs)
+                {
+                    var ishape = obj as AGShapeExpr;
+                    if (ishape != null) return ishape;
+                }
+                throw new Exception("Cannot reach here");
+            }
+
+           
+            foreach (object obj in objs)
+            {
+                var iproperty = obj as AGPropertyExpr;
+                if (iproperty != null) return iproperty;
+            }
+
+            //TODO
+            throw new Exception("Cannot reach here");
+
+            //Rule: If cached Shape contains the var, then it must be the goal.            
+            foreach (KeyValuePair<object, object> pair in _cache)
+            {
+                var ishape = pair.Value as AGShapeExpr;
+                if (ishape != null)
+                {
+                    //the current shape contains the var, 
+                    //which current obj has.
+                                        
+                }
+            }
+
+        }
+
+        [Obsolete]
+        private void ExtractVariables(object obj)
+        {
+            var shapeSym = obj as AGShapeExpr;
+            if (shapeSym != null)
+            {
+                var shape = shapeSym.ShapeSymbol.Shape;
+
+                if (shape.Label != null)
+                {
+                    var labelVar = new Var(shape.Label);
+                    if (!_globalVarCache.Contains(labelVar))
+                    {
+                        _globalVarCache.Add(labelVar);
+                    }
+                }
+
+                var point = shape as Point;
+                if (point != null)
+                {
+                    if (point.XCoordinate is Var && !_globalVarCache.Contains(point.XCoordinate))
+                    {
+                        _globalVarCache.Add((Var)point.XCoordinate);
+                    }
+
+                    if (point.YCoordinate is Var && !_globalVarCache.Contains(point.YCoordinate))
+                    {
+                        _globalVarCache.Add((Var)point.YCoordinate);
+                    }
+                }
+
+                var line = shape as Line;
+                if (line != null)
+                {
+                    if (line.A is Var && !_globalVarCache.Contains(line.A))
+                    {
+                        _globalVarCache.Add((Var)line.A);                        
+                    }
+
+                    if (line.B is Var && !_globalVarCache.Contains(line.B))
+                    {
+                        _globalVarCache.Add((Var)line.B);
+                    }
+
+                    if (line.C is Var && !_globalVarCache.Contains(line.C))
+                    {
+                        _globalVarCache.Add((Var)line.C);
+                    }
+                }
+                return;
+            }
+
+            var term = obj as AGPropertyExpr;
+            if (term != null)
+            {
+                Dictionary<object, object> dict = term.Goal.ToDict();
+                foreach (KeyValuePair<object, object> pair in dict)
+                { 
+                    if (pair.Key is Var && _globalVarCache.Contains(pair.Key))
+                    {
+                        _globalVarCache.Add((Var)pair.Key);
+                    }
+                }
+                return;
+            }
+        }
+
+        #endregion
+
         #region eval type checking
-/*
+        /*
         /// <summary>
         /// input:  x=
         /// output: x = 3
@@ -129,7 +227,22 @@ namespace ExprSemantic
                     if (KnowledgeUpdated != null)
                         KnowledgeUpdated(this, shapeExpr);
                     #endregion
-                }                
+                }
+
+                var line = shapeSym.Shape as Line;
+                if (line != null)
+                {
+                    foreach (AGPropertyExpr term in lst)
+                    {
+                        line.Reify(term.Goal);
+                    }
+
+                    #region Interaction
+                    if (KnowledgeUpdated != null)
+                        KnowledgeUpdated(this, shapeExpr);
+                    #endregion
+                }
+
                 return true;
             }
         }
@@ -157,6 +270,16 @@ namespace ExprSemantic
                             KnowledgeUpdated(this, ss);
                         #endregion
                     }
+
+                    var line = shapeExpr.ShapeSymbol.Shape as Line;
+                    if (line != null)
+                    {
+                        line.UnReify(term);
+                        #region Interaction
+                        if (KnowledgeUpdated != null)
+                            KnowledgeUpdated(this, ss);
+                        #endregion
+                    }
                 }
             }
             return false;
@@ -178,6 +301,19 @@ namespace ExprSemantic
                 if (pt != null)
                 {
                     pt.Reify(goal);
+
+                    #region Interaction
+
+                    if (KnowledgeUpdated != null)
+                        KnowledgeUpdated(this, shapeExpr);
+
+                    #endregion
+                }
+
+                var line = shapeExpr.ShapeSymbol.Shape as Line;
+                if (line != null)
+                {
+                    line.Reify(goal);
 
                     #region Interaction
 
@@ -220,16 +356,6 @@ namespace ExprSemantic
                 }
             }
             return lst;
-        }
-
-        private object SearchFact(object key)
-        {
-            foreach (KeyValuePair<object, object> pair in _cache)
-            {
-                if (key.Equals(pair.Key))
-                    return pair;
-            }
-            return null;
         }
 
         #endregion

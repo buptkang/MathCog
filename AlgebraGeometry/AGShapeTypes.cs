@@ -14,11 +14,10 @@
     {
         Point = 0,
         Line = 1,
-        QuadraticCurve = 2,
+        Segment = 2,
         Circle = 3,
-        Ellipse = 4,
-        Parabola = 5,
-        Hyperbola = 6,
+        PointLine = 4,
+        TwoLines = 5,
         None = -1       
     }
 }

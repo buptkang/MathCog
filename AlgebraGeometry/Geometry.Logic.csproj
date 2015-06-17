@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DE443F57-B773-4E3E-ADE0-8F6AC5695256}</ProjectGuid>
+    <ProjectGuid>{37FF5773-06AE-41C1-BB0F-B7FE22FC874B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AlgebraExpression</RootNamespace>
-    <AssemblyName>AlgebraExpression</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>AlgebraGeometry</RootNamespace>
+    <AssemblyName>AlgebraGeometry</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,12 +43,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GoalEvaluator.cs" />
-    <Compile Include="TermEvaluator.cs" />
+    <Compile Include="Acronym.cs" />
+    <Compile Include="AGShapeTypes.cs" />
+    <Compile Include="IShape.Cache.cs" />
+    <Compile Include="IShape.cs" />
+    <Compile Include="Line.Cache.cs" />
+    <Compile Include="Line.cs" />
+    <Compile Include="Point.Cache.cs" />
+    <Compile Include="Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Test\Test.cs" />
-    <Compile Include="Test\Test.GoalEvaluator.cs" />
-    <Compile Include="Test\Test.TermEvaluator.cs" />
+    <Compile Include="RelationLogic\RelationLogic.cs" />
+    <Compile Include="RelationGraph\GraphEdge.cs" />
+    <Compile Include="RelationGraph\GraphGoalNode.cs" />
+    <Compile Include="RelationGraph\Graph.cs" />
+    <Compile Include="RelationGraph\Graph.Interaction.cs" />
+    <Compile Include="RelationGraph\Graph.Search.cs" />
+    <Compile Include="RelationGraph\GraphNode.cs" />
+    <Compile Include="RelationGraph\GraphShapeNode.cs" />
+    <Compile Include="RelationLogic\RelationFactory.cs" />
+    <Compile Include="Rules\Line.Rule.cs" />
+    <Compile Include="Test\TestRelationLogic\Test.Evaluator.cs" />
+    <Compile Include="Test\Test.Line.cs" />
+    <Compile Include="Test\Test.Point.cs" />
+    <Compile Include="Test\TestRelationGraph\Test.Point.cs" />
+    <Compile Include="Test\TestRelationGraph\Test.Line.cs" />
+    <Content Include="RelationLogic\RelationTODO.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CSharpLogic\CSharpLogic.csproj">
@@ -55,10 +78,7 @@
       <Name>CSharpLogic</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="README.md" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

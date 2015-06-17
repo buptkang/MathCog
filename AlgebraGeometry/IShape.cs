@@ -10,6 +10,8 @@ namespace AlgebraGeometry
     public abstract partial class Shape : DyLogicObject,
         IEquatable<Shape>, INotifyPropertyChanged
     {
+        public bool RelationStatus { get; set; } //need to be re-evaled through graph
+
         public string Label { get; set; }
         public ShapeType ShapeType { get; set; }
         public CoordinateSystemType Coordinate { get; set; }
@@ -33,8 +35,8 @@ namespace AlgebraGeometry
         protected Shape(ShapeType shapeType, string label)
             : this()
         {
-            this.Label = label;
-            this.ShapeType = shapeType;
+            Label = label;
+            ShapeType = shapeType;
         }
 
         protected Shape()

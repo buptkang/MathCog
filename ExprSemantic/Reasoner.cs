@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Resources;
@@ -10,6 +11,7 @@ using System.Text;
 using AlgebraGeometry;
 using AlgebraGeometry.Expr;
 using CSharpLogic;
+using NUnit.Framework;
 using starPadSDK.MathExpr;
 using Text = starPadSDK.MathExpr.Text;
 using GuiLabs.Undo;
@@ -39,6 +41,7 @@ namespace ExprSemantic
             ActionManager = new ActionManager();
             _cache = new ObservableCollection<KeyValuePair<object, object>>();
             _preCache = new Dictionary<object, object>();
+            _globalVarCache = new List<Var>();
         }
 
         #endregion
@@ -46,8 +49,8 @@ namespace ExprSemantic
         #region Properties
 
         private ObservableCollection<KeyValuePair<object, object>> _cache;
-
-        private Dictionary<object, object> _preCache; 
+        private Dictionary<object, object> _preCache;
+        private List<Var> _globalVarCache;
 
         public ActionManager ActionManager { get; set; }
 
@@ -59,40 +62,54 @@ namespace ExprSemantic
         /// Sketch Input
         /// </summary>
         /// <param name="expr"></param>
-        public IKnowledge Load(Expr expr)
+        public object Load(Expr expr)
         {
-            object rTemp = ExprVisitor.Instance.Match(expr);
-            if (rTemp == null) return null;
+            var rTemp = ExprVisitor.Instance.Match(expr) as Dictionary<PatternEnum, object>;
+            Debug.Assert(rTemp != null);
 
-            object result;
-            if (rTemp is ShapeSymbol)
+            var lst = new List<object>();
+            foreach (KeyValuePair<PatternEnum, object> pair in rTemp)
             {
-                var ss = rTemp as ShapeSymbol;
-                result = new AGShapeExpr(expr, ss);
+                object result;
+                switch (pair.Key)
+                {
+                    case PatternEnum.Line:
+                        var ls = pair.Value as ShapeSymbol;
+                        result = new AGShapeExpr(expr, ls);
+                        break;
+                    case PatternEnum.Point:
+                        var ps = pair.Value as ShapeSymbol;
+                        result = new AGShapeExpr(expr, ps);
+                        break;
+                    case PatternEnum.Goal:
+                        var eg = pair.Value as EqGoal;
+                        result = new AGPropertyExpr(expr, eg);
+                        break;
+                    default:
+                        continue;
+                }
+                lst.Add(result);
             }
-            else if (rTemp is EqGoal)
-            {
-                var eg = rTemp as EqGoal;
-                result = new AGPropertyExpr(expr, eg);
-            }
-            else
-            {
-                return null;
-            }
+
+            if (lst.Count == 0) return null;
+
+            IKnowledge value;
+            if (lst.Count == 1) value = lst[0] as IKnowledge;
+            else value = SearchBySemantic(lst);
+
+            //Cache all Var from current IKnowledge
+            //ExtractVariables(value);
 
             //Search Algorithm
-            EvalPropogate(result);
+            EvalPropogate(value);
+            _cache.Add(new KeyValuePair<object, object>(expr, value));
 
-            var pair = new KeyValuePair<object, object>(expr, result);
-            _cache.Add(pair);
-            var k = result as IKnowledge;
-            return k ?? null;
+            return value ?? null;
         }
 
         public object Load(string fact)
         {
-            starPadSDK.MathExpr.Expr expr = Text.Convert(fact);
-
+            Expr expr = Text.Convert(fact);
             object result = Load(expr);
             if (result != null)
             {
@@ -102,14 +119,6 @@ namespace ExprSemantic
             else
             {
                 return null;
-            }
-        }
-
-        public void Load(IEnumerable<string> facts)
-        {
-            foreach (string f in facts)
-            {
-                Load(f);
             }
         }
 
@@ -127,12 +136,13 @@ namespace ExprSemantic
 
         public void Unload(Expr key)
         {
-            object fact = SearchFact(key);
-            if (fact != null)
+            List<KeyValuePair<object, object>> fact 
+                = _cache.Where(x => x.Key.Equals(key)).ToList();
+            if (fact.Count != 0)
             {
-                var temp = (KeyValuePair<object, object>) fact;
-                UndoEvalPropogate(temp.Value);
-                _cache.Remove(temp);
+                Debug.Assert(fact.Count == 1);
+                UndoEvalPropogate(fact[0].Value);
+                _cache.Remove(fact[0]);
             }
         }
 

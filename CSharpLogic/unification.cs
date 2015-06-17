@@ -35,7 +35,7 @@ namespace CSharpLogic
 
         private static bool UnifyImpl(object u, object v, Dictionary<object, object> s)
         {
-            return false;
+            return u.Equals(v);
         }
 
         private static bool UnifyImpl(Dictionary<object, object> u, 
@@ -58,6 +58,17 @@ namespace CSharpLogic
             return true;
         }
 
+        public static bool UnifyImpl(Term u, Term v, Dictionary<object, object> s)
+        {
+            bool opUnifiable = Unify(u.Op, v.Op, s);
+
+            if (opUnifiable)
+            {
+                return Unify(u.Args, v.Args, s);
+            }
+            return false;
+        }
+
         public static bool Unify(object u, object v, Dictionary<object, object> s)
         {
             if (s == null)
@@ -71,6 +82,11 @@ namespace CSharpLogic
             if (LogicSharp.equal_test(tempU, tempV))
             {
                 return true;
+            }
+
+            if (Var.IsVar(tempU) && Var.IsVar(tempV))
+            {
+                return tempU.Equals(tempV);
             }
 
             if (Var.IsVar(tempU))

@@ -12,7 +12,7 @@ using Text = starPadSDK.MathExpr.Text;
 namespace ExprSemanticTest
 {
     [TestFixture]
-    public class Test
+    public class TestPoint
     {
         #region Point Pattern Match
 
@@ -102,7 +102,7 @@ namespace ExprSemanticTest
         public void Test_Substitution_1()
         {
             //With Arithmetic in the goal
-             const string fact1 = "(x,y)";
+            const string fact1 = "(x,y)";
             Reasoner.Instance.Load(fact1);
             var result = Reasoner.Instance.TestGetShapeFacts();
             Assert.NotNull(result);

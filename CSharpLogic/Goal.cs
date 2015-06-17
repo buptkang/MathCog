@@ -274,6 +274,11 @@ namespace CSharpLogic
         {
             return this.Lhs.GetHashCode() ^ this.Rhs.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0}={1}", Lhs, Rhs);
+        }
     }
 
     public static class EqGoalExtension
@@ -298,6 +303,31 @@ namespace CSharpLogic
             substitute.Add(pair.Key, pair.Value);
             return substitute;
         }
+
+        /// <summary>
+        /// Trace Derivation purpose
+        /// </summary>
+        /// <param name="goal"></param>
+        /// <returns></returns>
+        public static EqGoal GetLatestDerivedGoal(this EqGoal goal)
+        {
+            //pre-processing of goal
+            EqGoal tempGoal;
+            if (goal.TraceCount != 0)
+            {
+                var trace = goal.Traces[0];
+                Debug.Assert(trace.Target != null);
+                var traceGoal = trace.Target as EqGoal;
+                Debug.Assert(traceGoal != null);
+                tempGoal = traceGoal;
+            }
+            else
+            {
+                tempGoal = goal;
+            }
+            return tempGoal;
+        }
+
     }
 
 }

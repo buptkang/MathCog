@@ -52,6 +52,7 @@
     <Compile Include="Reasoner.Evaluator.cs" />
     <Compile Include="Reasoner.Interaction.cs" />
     <Compile Include="Reasoner.Query.cs" />
+    <Compile Include="Test\Test.Line.cs" />
     <Compile Include="Test\Test.Query.cs" />
     <Compile Include="Test\Test.Property.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -62,9 +63,9 @@
       <Project>{b2421fe7-b924-49d9-b898-fb722c50cede}</Project>
       <Name>AlgebraGeometry.Expr</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AlgebraGeometry\AlgebraGeometry.csproj">
+    <ProjectReference Include="..\AlgebraGeometry\Geometry.Logic.csproj">
       <Project>{37ff5773-06ae-41c1-bb0f-b7fe22fc874b}</Project>
-      <Name>AlgebraGeometry</Name>
+      <Name>Geometry.Logic</Name>
     </ProjectReference>
     <ProjectReference Include="..\CSharpLogic\CSharpLogic.csproj">
       <Project>{b6ae1355-89f0-4ecb-83ac-b3b5118a6e4e}</Project>
