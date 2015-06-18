@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
@@ -29,12 +30,18 @@ namespace AlgebraGeometry
         public RelationGraph()
         {
             _nodes = new List<GraphNode>();
-//            _edges = new List<GraphEdge>();
+        }
+
+        public RelationGraph(List<GraphNode> nodes)
+        {
+            _nodes = nodes;
         }
 
         #endregion
 
         #region Input API
+
+        #region Entity Input
 
         /// <summary>
         /// Add node onto the graph
@@ -78,6 +85,14 @@ namespace AlgebraGeometry
                         shapeNode.OutEdges.Remove(outEdge); 
                     }
                 }
+
+                for (int j = 0; j < shapeNode.InEdges.Count; j++)
+                {
+                    var inEdge = shapeNode.InEdges[j];
+                    var sourceNode = inEdge.Source;
+                    sourceNode.OutEdges.Remove(inEdge);
+                }
+
                 _nodes.Remove(shapeNode);
             }
         }
@@ -96,21 +111,22 @@ namespace AlgebraGeometry
             }
         }
 
-        /// <summary>
-        /// Add edge onto the graph
-        /// </summary>
-        /// <param name="s1"></param>
-        /// <param name="s2"></param>
-        /// <param name="shapeType"></param>
-        public Shape AddRelation(Shape s1, Shape s2, ShapeType shapeType)
-        {
-            Shape outputShape = RelationLogic.BuildRelation(s1, s2, shapeType);
+        #endregion
 
-            if (outputShape != null)
+        #region Relation Input
+
+        public bool AddRelation(Tuple<object,object> tuple2, out object output)
+        {
+            bool result = RelationLogic.CreateRelation(tuple2.Item1,
+                                    tuple2.Item2,out output);
+
+            if (result)
             {
+                var outputShape = output as Shape;
+                Debug.Assert(outputShape != null);
                 ShapeNode gShapeNode = AddShapeNode(outputShape);
-                var gn1 = SearchNode(s1) as ShapeNode;
-                var gn2 = SearchNode(s2) as ShapeNode;
+                var gn1 = SearchNode(tuple2.Item1) as ShapeNode;
+                var gn2 = SearchNode(tuple2.Item2) as ShapeNode;
 
                 if (gn1 != null && gn2 != null)
                 {
@@ -122,22 +138,42 @@ namespace AlgebraGeometry
                     gn2.OutEdges.Add(edge2);
                     gShapeNode.InEdges.Add(edge2);
                 }
-
-                return outputShape;
+                return true;
             }
-            return null;
+
+            return false;
         }
 
-        /// <summary>
-        /// such as building a line by using two properties, 
-        /// </summary>
-        /// <param name="g1"></param>
-        /// <param name="g2"></param>
-        /// <param name="shapeType"></param>
-        public void AddRelation(Goal g1, Goal g2, ShapeType shapeType)
+        public bool AddRelation(Tuple<object, object> tuple2,
+            ShapeType shapeType, out object output)
         {
-            throw new Exception("TODO");
+            bool result = RelationLogic.CreateRelation(tuple2.Item1,
+                                    tuple2.Item2, shapeType, out output);
+            if (result)
+            {
+                var outputShape = output as Shape;
+                Debug.Assert(outputShape != null);
+                ShapeNode gShapeNode = AddShapeNode(outputShape);
+                var gn1 = SearchNode(tuple2.Item1) as ShapeNode;
+                var gn2 = SearchNode(tuple2.Item2) as ShapeNode;
+
+                if (gn1 != null && gn2 != null)
+                {
+                    var edge1 = new GraphEdge(gn1, gShapeNode);
+                    gn1.OutEdges.Add(edge1);
+                    gShapeNode.InEdges.Add(edge1);
+
+                    var edge2 = new GraphEdge(gn2, gShapeNode);
+                    gn2.OutEdges.Add(edge2);
+                    gShapeNode.InEdges.Add(edge2);
+                }
+                return true;
+            }
+
+            return false;
         }
+
+        #endregion
 
         #endregion
 

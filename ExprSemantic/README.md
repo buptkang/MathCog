@@ -17,3 +17,9 @@ Interpreter.Evaluator.cs: Eval method
 TODO:
 Input: 3x+1=0
 Query: a=?
+
+Reasoner:
+Pattern Match => Logic Inference => Give Inference Matching Answer
+
+
+Input Pattern Match => Logic Pattern Match

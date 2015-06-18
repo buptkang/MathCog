@@ -23,10 +23,13 @@ namespace AlgebraGeometry
 
             graph.AddShapeNode(A);
             graph.AddShapeNode(B);
-            graph.AddRelation(A, B, ShapeType.Line);
-
-            var shapes = graph.RetrieveShapes();
-            Assert.True(shapes.Count == 2);
+            object output;
+            bool result = graph.AddRelation
+                (new Tuple<object, object>(A, B), ShapeType.Line, out output);
+            Assert.False(result);
+            var str = output as String;
+            Assert.NotNull(str);
+            Assert.True(str.Equals(LineGenerationRule.IdentityPoints));
         }
 
         [Test]
@@ -37,7 +40,12 @@ namespace AlgebraGeometry
             var B = new Point(2.0, -1.0);
             graph.AddShapeNode(A);
             graph.AddShapeNode(B);
-            graph.AddRelation(A, B, ShapeType.Line);
+            object output;
+            bool result = graph.AddRelation(new Tuple<object, object>(A, B), ShapeType.Line, out output);
+            Assert.True(result);
+            var shape = output as Line;
+            Assert.NotNull(shape);
+
             var shapes = graph.RetrieveShapes();
             Assert.True(shapes.Count == 3);
         }
@@ -50,7 +58,11 @@ namespace AlgebraGeometry
             var B = new Point(2.0, -1.0);
             graph.AddShapeNode(A);
             graph.AddShapeNode(B);
-            graph.AddRelation(A, B, ShapeType.Line);
+            object output;
+            bool result = graph.AddRelation(new Tuple<object, object>(A, B), ShapeType.Line, out output);
+            Assert.True(result);
+            var shape = output as Line;
+            Assert.NotNull(shape);
             var shapes = graph.RetrieveShapes();
             Assert.True(shapes.Count == 3);
         }
@@ -63,7 +75,11 @@ namespace AlgebraGeometry
             var B = new Point(2.0, -1.0);
             graph.AddShapeNode(A);
             graph.AddShapeNode(B);
-            graph.AddRelation(A, B, ShapeType.Line);
+            object output;
+            bool result = graph.AddRelation(new Tuple<object, object>(A, B), ShapeType.Line, out output);
+            Assert.True(result);
+            var shape = output as Line;
+            Assert.NotNull(shape);
             var shapes = graph.RetrieveShapes();
             Assert.True(shapes.Count == 3);
         }
@@ -77,7 +93,7 @@ namespace AlgebraGeometry
         {
             /*
              * (2.0,3.0) (2.0,a)
-             */ 
+             */
             var graph = new RelationGraph();
 
             var variable = new Var('a');
@@ -87,7 +103,11 @@ namespace AlgebraGeometry
 
             graph.AddShapeNode(A);
             graph.AddShapeNode(B);
-            graph.AddRelation(A, B, ShapeType.Line);
+            object output;
+            bool result = graph.AddRelation(new Tuple<object, object>(A, B), ShapeType.Line, out output);
+            Assert.True(result);
+            var shape = output as Line;
+            Assert.NotNull(shape);
 
             var shapes = graph.RetrieveShapes();
             Assert.True(shapes.Count == 3);
@@ -106,7 +126,7 @@ namespace AlgebraGeometry
             line = shapes[0] as Line;
             Assert.NotNull(line);
             Assert.True(line.RelationStatus);
-            Assert.True(line.CachedSymbols.Count ==1);
+            Assert.True(line.CachedSymbols.Count == 1);
             var gLine = line.CachedSymbols.ToList()[0] as Line;
             Assert.NotNull(gLine);
             Assert.True(gLine.A.Equals(1.0));
@@ -129,7 +149,11 @@ namespace AlgebraGeometry
 
             graph.AddShapeNode(A);
             graph.AddShapeNode(B);
-            graph.AddRelation(A, B, ShapeType.Line);
+            object output;
+            bool result = graph.AddRelation(new Tuple<object, object>(A, B), ShapeType.Line, out output);
+            Assert.True(result);
+            var shape = output as Line;
+            Assert.NotNull(shape);
 
             var shapes = graph.RetrieveShapes();
             Assert.True(shapes.Count == 3);
@@ -171,7 +195,11 @@ namespace AlgebraGeometry
 
             graph.AddShapeNode(A);
             graph.AddShapeNode(B);
-            graph.AddRelation(A, B, ShapeType.Line);
+            object output;
+            bool result = graph.AddRelation(new Tuple<object, object>(A, B), ShapeType.Line, out output);
+            Assert.True(result);
+            var shape = output as Line;
+            Assert.NotNull(shape);
 
             var shapes = graph.RetrieveShapes();
             Assert.True(shapes.Count == 3);
@@ -204,7 +232,7 @@ namespace AlgebraGeometry
             Assert.True(gLine.A.Equals(1.0));
             Assert.True(gLine.B.Equals(-1.0));
             Assert.True(gLine.C.Equals(-1.0));
-            
+
             var eqGoal2 = new EqGoal(variable, 6); // b=6.0
             graph.AddGoalNode(eqGoal2);
 
@@ -231,7 +259,11 @@ namespace AlgebraGeometry
 
             graph.AddShapeNode(A);
             graph.AddShapeNode(B);
-            var returnLine = graph.AddRelation(A, B, ShapeType.Line);
+            object output;
+            bool result = graph.AddRelation(new Tuple<object, object>(A, B), ShapeType.Line, out output);
+            Assert.True(result);
+            var shape = output as Line;
+            Assert.NotNull(shape);
 
             var shapes = graph.RetrieveShapes();
             Assert.True(shapes.Count == 3);
@@ -257,7 +289,7 @@ namespace AlgebraGeometry
             Assert.Null(gLine.B);
             Assert.True(gLine.C.Equals(-2.0));
 
-            graph.DeleteShapeNode(returnLine);
+            graph.DeleteShapeNode(shape);
             var shapeNode = graph.RetrieveShapeNodes();
             Assert.True(shapeNode.Count == 2);
             foreach (ShapeNode sn in shapeNode)
@@ -285,7 +317,11 @@ namespace AlgebraGeometry
 
             graph.AddShapeNode(A);
             graph.AddShapeNode(B);
-            var returnLine = graph.AddRelation(A, B, ShapeType.Line);
+            object output;
+            bool result = graph.AddRelation(new Tuple<object, object>(A, B), ShapeType.Line, out output);
+            Assert.True(result);
+            var shape = output as Line;
+            Assert.NotNull(shape);
 
             var shapes = graph.RetrieveShapes();
             Assert.True(shapes.Count == 3);
@@ -334,7 +370,11 @@ namespace AlgebraGeometry
 
             graph.AddShapeNode(A);
             graph.AddShapeNode(B);
-            graph.AddRelation(A, B, ShapeType.Line);
+            object output;
+            bool result = graph.AddRelation(new Tuple<object, object>(A, B), ShapeType.Line, out output);
+            Assert.True(result);
+            var shape = output as Line;
+            Assert.NotNull(shape);
 
             var shapes = graph.RetrieveShapes();
             Assert.True(shapes.Count == 3);
@@ -390,22 +430,22 @@ namespace AlgebraGeometry
              * Input: A(2,a), B(a,3)
              * Input: a=3
              * 
-             */ 
+             */
             var variable1 = new Var('a');
             var A = new Point(2, variable1);
             var B = new Point(variable1, 3);
-/*
-            object obj = RelationFactory.Instance.BuildRelation(A, B, ShapeType.Line);
-            var line = obj as Line;
-            Assert.NotNull(line);
+            /*
+                        object obj = RelationFactory.Instance.BuildRelation(A, B, ShapeType.Line);
+                        var line = obj as Line;
+                        Assert.NotNull(line);
 
-            Assert.False(line.Concrete);
-            var goal = new EqGoal(variable1, 3);
-            A.Reify(goal);
-            Assert.True(A.Concrete);
-            Assert.True(B.Concrete);
-            Assert.True(line.Concrete);
- */ 
+                        Assert.False(line.Concrete);
+                        var goal = new EqGoal(variable1, 3);
+                        A.Reify(goal);
+                        Assert.True(A.Concrete);
+                        Assert.True(B.Concrete);
+                        Assert.True(line.Concrete);
+             */
         }
     }
 }

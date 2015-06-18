@@ -14,7 +14,7 @@
     {
         Point = 0,
         Line = 1,
-        Segment = 2,
+        LineSegment = 2,
         Circle = 3,
         PointLine = 4,
         TwoLines = 5,

@@ -23,6 +23,7 @@ namespace CSharpLogic
     {
         internal Func<Dictionary<object, object>, bool> Functor;
 
+        public string Label { get; set; }
         public object Lhs { get; set; }
         public object Rhs { get; set; }
 

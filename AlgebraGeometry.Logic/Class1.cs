@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace AlgebraGeometry
+namespace AlgebraGeometry.Logic
 {
-    public class LineRule
+    public class Class1
     {
-
     }
 }

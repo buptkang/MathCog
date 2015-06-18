@@ -39,26 +39,20 @@ namespace ExprSemantic
             var dict = new Dictionary<PatternEnum, object>();
             object obj;
 
-            bool result = exp.IsNumeric(out obj);
-            if (result) dict.Add(PatternEnum.Numeric, obj);
+            bool result = exp.IsLabel(out obj);
+            if (result) dict.Add(PatternEnum.Label, obj); //string
 
-            result = exp.IsLabel(out obj);
-            if (result) dict.Add(PatternEnum.Label, obj);
+            result = exp.IsPoint(out obj); //Algebraic point form
+            if (result) dict.Add(PatternEnum.Point, obj); //PointSymbol
 
-            result = exp.IsExpression(out obj); //Term
-            if (result) dict.Add(PatternEnum.Expression, obj);
-
-            result = exp.IsPoint(out obj);
-            if (result) dict.Add(PatternEnum.Point, obj);
-
-            LineSymbol ls;
-            result = exp.IsLine(out ls);
-            if (result) dict.Add(PatternEnum.Line, ls);
+            LineSymbol ls; 
+            result = exp.IsLine(out ls); //Algebraic line form
+            if (result) dict.Add(PatternEnum.Line, ls); //LineSymbol
        
-            result = exp.IsGoal(out obj);
-            if (result) dict.Add(PatternEnum.Goal, obj);
+            result = exp.IsGoal(out obj); //Property form
+            if (result) dict.Add(PatternEnum.Goal, obj); //EqGoal
 
-            return dict;
+            return dict.Count == 1 ? obj : dict;
         }
 
         public object MatchQuery(starPadSDK.MathExpr.Expr exp)

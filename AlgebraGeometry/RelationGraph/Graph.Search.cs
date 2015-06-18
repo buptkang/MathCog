@@ -203,7 +203,7 @@ namespace AlgebraGeometry
                     {
                         var shape1 = sn1.Shape;
                         var shape2 = sn2.Shape;
-                        bool result = RelationLogic.UpdateRelation(sn.Shape, shape1, shape2);
+                        bool result = RelationLogic.Reify(sn.Shape, shape1, shape2);
                         if (result)
                         {
                             #region Interaction

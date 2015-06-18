@@ -1,4 +1,32 @@
-﻿using System;
+﻿    //        public static Relation CreateRelation(Shape shape1, Shape shape2)
+    //        {
+    //            else if(shape1 is Line && shape2 is Line)
+    //            {
+    //                return CreateTwoLines(shape1 as Line, shape2 as Line);
+    //            }
+    //            else if (shape1 is Point && shape2 is Line)
+    //            {
+    //                return CreatePointLine(shape1 as Point, shape2 as Line);
+    //            }
+    //            else if (shape1 is Line && shape2 is Point)
+    //            {
+    //                return CreatePointLine(shape2 as Point, shape1 as Line);
+    //            }
+    //            else if (shape1 is Line && shape2 is Circle)
+    //            {
+    //                return CreateLineCircle(shape1 as Line, shape2 as Circle);
+    //            }
+    //            else if (shape1 is Circle && shape2 is Line)
+    //            {
+    //                return CreateLineCircle(shape2 as Line, shape1 as Circle);
+    //            }
+
+    //            return null;
+    //        }
+
+
+
+    using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

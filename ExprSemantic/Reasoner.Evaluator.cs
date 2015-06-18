@@ -9,11 +9,156 @@ using AlgebraGeometry;
 using AlgebraGeometry.Expr;
 using CSharpLogic;
 using NUnit.Framework;
+using starPadSDK.MathExpr;
 
 namespace ExprSemantic
 {
     public partial class Reasoner
     {
+        private bool EvalExprPatterns(Expr expr, object obj, 
+                                      out object output)
+        {
+            output = null;
+
+            //deterministic
+            var ss = obj as ShapeSymbol;
+            if (ss != null) return EvalExprPatterns(expr, ss, out output);
+
+            //deterministic
+            var goal = obj as EqGoal;
+            if (goal != null) return EvalExprPatterns(expr, goal, out output);
+
+            //non-deterministic
+            var str = obj as string;
+            if (str != null) return EvalExprPatterns(expr, str, out output);
+
+            //non-deterministic
+            var dict = obj as Dictionary<PatternEnum, object>;
+            //ambiguity of input pattern
+            if (dict != null) throw new Exception("TODO");
+
+            return false;
+        }
+
+        /// <summary>
+        /// Relation Input Pattern Match
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="str"></param>
+        /// <param name="output"></param>
+        /// <returns></returns>
+        private bool EvalExprPatterns(Expr expr, string str,
+            out object output)
+        {
+            output = null;
+
+            var charArr = str.ToCharArray();
+            object relationObj;
+            bool findNodes = _logicGraph.FindNodes(charArr, out relationObj);
+
+           
+        }
+
+        /// <summary>
+        /// ShapeSymbol Input Pattern Match
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="ps"></param>
+        /// <param name="output"></param>
+        /// <returns></returns>
+        private bool EvalExprPatterns(Expr expr, ShapeSymbol ps,
+            out object output)
+        {
+            _logicGraph.AddShapeNode(ps.Shape);
+            output = new AGShapeExpr(expr, ps);
+            return true;
+        }
+
+        /// <summary>
+        /// Goal Input Patter Match
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="goal"></param>
+        /// <param name="output"></param>
+        /// <returns></returns>
+        private bool EvalExprPatterns(Expr expr, EqGoal goal,
+            out object output)
+        {
+            _logicGraph.AddGoalNode(goal);
+            output = new AGPropertyExpr(expr, goal);
+            return true;
+        }
+
+        public bool InferRelation(Expr inputExpr, Tuple<IKnowledge, IKnowledge> tuple, out object obj)
+        {
+            obj = null;
+
+            var shapeExpr1 = tuple.Item1 as AGShapeExpr;
+            var shapeExpr2 = tuple.Item2 as AGShapeExpr;
+            var propExpr1 = tuple.Item1 as AGPropertyExpr;
+            var propExpr2 = tuple.Item2 as AGPropertyExpr;
+
+            bool inferResult = false;
+
+            if (shapeExpr1 != null && shapeExpr2 != null)
+            {
+                var gTuple = new Tuple<object, object>(shapeExpr1.ShapeSymbol.Shape, shapeExpr2.ShapeSymbol.Shape);
+                inferResult = _logicGraph.AddRelation(gTuple, out obj);
+            }
+
+            if (shapeExpr1 != null && propExpr2 != null)
+            {
+                var gTuple = new Tuple<object, object>(shapeExpr1.ShapeSymbol.Shape, propExpr2.Goal);
+                inferResult = _logicGraph.AddRelation(gTuple, out obj);
+            }
+
+            if (propExpr1 != null && shapeExpr2 != null)
+            {
+                var gTuple = new Tuple<object, object>(propExpr1.Goal, shapeExpr2.ShapeSymbol.Shape);
+                inferResult = _logicGraph.AddRelation(gTuple, out obj)
+            }
+
+            if (propExpr1 != null && propExpr2 != null)
+            {
+                var gTuple = new Tuple<object, object>(propExpr1.Goal, propExpr2.Goal);
+                inferResult = _logicGraph.AddRelation(gTuple, out obj);
+            }
+
+            if (inferResult)
+            {
+                var gShape = obj as Shape;
+                Debug.Assert(gShape != null);
+
+                ShapeSymbol ss = null;
+                var pointShape = obj as Point;
+                if (pointShape != null)
+                {
+                    ss = new PointSymbol(pointShape);
+                }
+
+                var lineShape = obj as Line;
+                if (lineShape != null)
+                {
+                    ss = new LineSymbol(lineShape);
+                }
+
+                Debug.Assert(ss != null);
+                if (inputExpr == null) //touch input
+                {
+                    Debug.Assert(ss.Shape.Label != null);
+                    throw new Exception("TODO touch selectioon");
+                }
+                else // sketch input
+                {
+                    obj = new AGShapeExpr(inputExpr, ss);
+                }
+                return true;
+            }
+            return false;
+        }
+
+
+
         /// <summary>
         /// The purpose of EvalPropogate is to reify all caching facts.
         /// </summary>
@@ -358,9 +503,24 @@ namespace ExprSemantic
             return lst;
         }
 
+        private List<IKnowledge> GetKnowledgeFacts()
+        {
+            var lst = new List<IKnowledge>();
+            foreach (KeyValuePair<object, object> pair in _cache)
+            {
+               lst.Add(pair);
+            }
+            return lst;
+        }
+
         #endregion
 
         #region Test Purpose
+
+        public List<IKnowledge> TestGetKnowledgeFacts()
+        {
+            return GetKnowledgeFacts();
+        }
 
         public List<AGShapeExpr> TestGetShapeFacts()
         {

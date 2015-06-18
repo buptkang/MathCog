@@ -38,21 +38,19 @@ namespace ExprSemantic
 
         private Reasoner()
         {
-            ActionManager = new ActionManager();
             _cache = new ObservableCollection<KeyValuePair<object, object>>();
             _preCache = new Dictionary<object, object>();
-            _globalVarCache = new List<Var>();
+            _logicGraph = new RelationGraph();
         }
 
         #endregion
 
         #region Properties
 
+        private RelationGraph _logicGraph;
         private ObservableCollection<KeyValuePair<object, object>> _cache;
         private Dictionary<object, object> _preCache;
         private List<Var> _globalVarCache;
-
-        public ActionManager ActionManager { get; set; }
 
         #endregion
 
@@ -64,46 +62,11 @@ namespace ExprSemantic
         /// <param name="expr"></param>
         public object Load(Expr expr)
         {
-            var rTemp = ExprVisitor.Instance.Match(expr) as Dictionary<PatternEnum, object>;
+            var rTemp = ExprVisitor.Instance.Match(expr);
             Debug.Assert(rTemp != null);
-
-            var lst = new List<object>();
-            foreach (KeyValuePair<PatternEnum, object> pair in rTemp)
-            {
-                object result;
-                switch (pair.Key)
-                {
-                    case PatternEnum.Line:
-                        var ls = pair.Value as ShapeSymbol;
-                        result = new AGShapeExpr(expr, ls);
-                        break;
-                    case PatternEnum.Point:
-                        var ps = pair.Value as ShapeSymbol;
-                        result = new AGShapeExpr(expr, ps);
-                        break;
-                    case PatternEnum.Goal:
-                        var eg = pair.Value as EqGoal;
-                        result = new AGPropertyExpr(expr, eg);
-                        break;
-                    default:
-                        continue;
-                }
-                lst.Add(result);
-            }
-
-            if (lst.Count == 0) return null;
-
-            IKnowledge value;
-            if (lst.Count == 1) value = lst[0] as IKnowledge;
-            else value = SearchBySemantic(lst);
-
-            //Cache all Var from current IKnowledge
-            //ExtractVariables(value);
-
-            //Search Algorithm
-            EvalPropogate(value);
+            IKnowledge value = null;
+            value = EvalExprPatterns(expr, rTemp);
             _cache.Add(new KeyValuePair<object, object>(expr, value));
-
             return value ?? null;
         }
 
@@ -147,6 +110,5 @@ namespace ExprSemantic
         }
 
         #endregion
-
     }
 }
