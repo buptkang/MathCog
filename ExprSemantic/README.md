@@ -21,5 +21,6 @@ Query: a=?
 Reasoner:
 Pattern Match => Logic Inference => Give Inference Matching Answer
 
-
 Input Pattern Match => Logic Pattern Match
+
+Input Format: Expr(Sketch) or String(Text)

@@ -20,3 +20,9 @@ Example 4:
 Example 5:
 (2*(2+y))+1 =>(4+2y)+1(distributive) => (2y+4)+1(commutative) 
 =>2y+(4+1)(associative) =>2y+5(calc)
+
+
+
+x+3 = 2-1
+(-3)   (-3) 
+Infer x = -1

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AlgebraGeometry;
 using AlgebraGeometry.Expr;
 using NUnit.Framework;
 
@@ -13,24 +14,21 @@ namespace ExprSemantic
         [Test]
         public void Test1()
         {
-            const string fact1 = "(1,1)";
-            Reasoner.Instance.Load(fact1);
+            var reasoner = new Reasoner();
+            const string fact1 = "A(1,1)";
+            reasoner.Load(fact1);
 
-            const string fact2 = "(2,1)";
-            Reasoner.Instance.Load(fact2);
+            const string fact2 = "B(2,1)";
+            reasoner.Load(fact2);
 
             //Uniform Search Input(Sketh or Touch)
-            List<IKnowledge> selectFacts = Reasoner.Instance.TestGetKnowledgeFacts();
-
+            List<AGShapeExpr> selectFacts = reasoner.TestGetShapeFacts();
             Assert.True(selectFacts.Count == 2);
-            var tupleKnowledge = new Tuple<IKnowledge, IKnowledge>(selectFacts[0], selectFacts[1]);
-
             const string query = "AB";
+            object result = reasoner.Load(query);
 
-            //pattern-match or generate
-            object result;
-            bool result = Reasoner.Instance.InferRelation(null, tupleKnowledge, out result);
-
+            var types = result as List<ShapeType>;
+            Assert.NotNull(types);
         }
     }
 }

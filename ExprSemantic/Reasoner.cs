@@ -1,76 +1,90 @@
-﻿using System;
+﻿using AlgebraGeometry.Expr;
+using GeometryLogicInference;
+using starPadSDK.MathExpr;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Dynamic;
 using System.Linq;
-using System.Resources;
-using System.Runtime.InteropServices;
-using System.Text;
-using AlgebraGeometry;
-using AlgebraGeometry.Expr;
-using CSharpLogic;
-using NUnit.Framework;
-using starPadSDK.MathExpr;
 using Text = starPadSDK.MathExpr.Text;
-using GuiLabs.Undo;
 
 namespace ExprSemantic
 {
     public partial class Reasoner
     {
-        #region Instance
+        #region Properties and Constructor
 
-        private static Reasoner _instance;
-
-        public static Reasoner Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new Reasoner();
-                }
-                return _instance;
-            }
-        }
-
-        private Reasoner()
+        public Reasoner()
         {
             _cache = new ObservableCollection<KeyValuePair<object, object>>();
             _preCache = new Dictionary<object, object>();
-            _logicGraph = new RelationGraph();
+
+            GeometryInference.Instance.Cache.CollectionChanged += Cache_CollectionChanged;
+        }
+
+        /// <summary>
+        /// Key: Expr; Value: IKnowledge
+        /// </summary>
+        private ObservableCollection<KeyValuePair<object, object>> _cache;
+        /// <summary>
+        /// Key: String; Value: Expr
+        /// </summary>
+        private Dictionary<object, object> _preCache;
+
+        #endregion
+
+        #region Feedback communication with lower reasoning engine
+
+        /// <summary>
+        /// GraphNode Update
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void Cache_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+            }
         }
 
         #endregion
 
-        #region Properties
+        #region Input communication with lower reasoning engine
 
-        private RelationGraph _logicGraph;
-        private ObservableCollection<KeyValuePair<object, object>> _cache;
-        private Dictionary<object, object> _preCache;
-        private List<Var> _globalVarCache;
-
-        #endregion
-
-        #region Evaluation Public Interface
+        public object Load(object obj)
+        {
+            var str = obj as string;
+            if (str != null) return Load(str);
+            var expr = obj as Expr;
+            if (expr != null) return Load(expr);
+            return null;
+        }
 
         /// <summary>
         /// Sketch Input
         /// </summary>
         /// <param name="expr"></param>
-        public object Load(Expr expr)
+        private object Load(Expr expr)
         {
-            var rTemp = ExprVisitor.Instance.Match(expr);
+            var rTemp = ExprVisitor.Instance.Match(expr); //input patter match
             Debug.Assert(rTemp != null);
-            IKnowledge value = null;
-            value = EvalExprPatterns(expr, rTemp);
-            _cache.Add(new KeyValuePair<object, object>(expr, value));
-            return value ?? null;
+            object output;
+            bool result = EvalExprPatterns(expr, rTemp, out output);
+            if (result)
+            {
+                var iKnowledge = output as IKnowledge;
+                if (iKnowledge != null)
+                {
+                    _cache.Add(new KeyValuePair<object, object>(expr, iKnowledge)); 
+                }
+            }
+            return output;
         }
 
-        public object Load(string fact)
+        private object Load(string fact)
         {
             Expr expr = Text.Convert(fact);
             object result = Load(expr);
@@ -92,19 +106,19 @@ namespace ExprSemantic
                 var expr = _preCache[fact] as Expr;
                 if (expr != null)
                 {
-                    Unload(expr);    
-                }                
+                    Unload(expr);
+                }
             }
         }
 
         public void Unload(Expr key)
         {
-            List<KeyValuePair<object, object>> fact 
+            List<KeyValuePair<object, object>> fact
                 = _cache.Where(x => x.Key.Equals(key)).ToList();
             if (fact.Count != 0)
             {
                 Debug.Assert(fact.Count == 1);
-                UndoEvalPropogate(fact[0].Value);
+                UnEvalExprPatterns(fact[0].Value);
                 _cache.Remove(fact[0]);
             }
         }

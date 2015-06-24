@@ -67,5 +67,24 @@ namespace AlgebraGeometry
 
     public static class LineSegRelation
     {
+        public static LineSegment Unify(Point pt1, Point pt2)
+        {
+            //point identify check
+            if (pt1.Equals(pt2)) return null;
+
+            //Line build process
+            if (pt1.Concrete && pt2.Concrete)
+            {
+                var lineSeg = LineSegmentGenerationRule.GenerateLineSegment(pt1, pt2);
+                return lineSeg;
+            }
+            else
+            {
+                //lazy evaluation    
+                //Constraint solving on Graph
+                var lineSeg = new LineSegment(null); //Ghost Line Segment
+                return lineSeg;
+            }
+        }
     }
 }

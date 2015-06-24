@@ -97,6 +97,25 @@ namespace CSharpLogic.Test
             Assert.False(eqGoal.EarlySafe());
         }
 
+        [Test]
+        public void TestEqGoal2()
+        {
+            var variable1 = new Var('x');
+            var variable2 = new Var('x');
+            var eqGoal = new EqGoal(variable1, 2);
+            Assert.True(eqGoal.ContainsVar(variable2));
+        }
+
+        [Test]
+        public void TestEqGoal3()
+        {
+            var variable1 = new Var('y');
+            var variable2 = new Var('x');
+            var eqGoal = new EqGoal(variable1, 2);
+            Assert.False(eqGoal.ContainsVar(variable2));
+        }
+
+
         #endregion
 
         #region Goal Evaluation

@@ -140,5 +140,41 @@ namespace AlgebraExpression.Test
             bool result = LineEvaluator.Unify(a, 2, out line);
             Assert.False(result);
         }
+
+        [Test]
+        public void Test7()
+        {
+            //aX+bY+1=0
+            const string a = "a";
+            var x = new Var('X');
+            var term = new Term(Expression.Multiply, new Tuple<object, object>(a, x));
+            string b = "b";
+            var y = new Var('Y');
+            var term2 = new Term(Expression.Multiply, new Tuple<object, object>(b, y));
+            var term3 = new Term(Expression.Add, new Tuple<object, object>(term, term2));
+            var term4 = new Term(Expression.Add, new Tuple<object, object>(term3, 1));
+
+            Line line;
+            bool result = LineEvaluator.Unify(term4, 0, out line);
+            Assert.True(result);
+            Assert.False(line.Concrete);
+            Assert.True(line.A.ToString().Equals(a));
+            Assert.True(line.B.ToString().Equals(b));
+            Assert.True(line.C.Equals(1.0));
+
+            // 2X+aY+1=0
+            b = "a";
+            term = new Term(Expression.Multiply, new Tuple<object, object>(2, x));
+            term2 = new Term(Expression.Multiply, new Tuple<object, object>(b, y));
+            term3 = new Term(Expression.Add, new Tuple<object, object>(term, term2));
+            term4 = new Term(Expression.Add, new Tuple<object, object>(term3, 1));
+
+            result = LineEvaluator.Unify(term4, 0, out line);
+            Assert.True(result);
+            Assert.False(line.Concrete);
+            Assert.True(line.A.Equals(2.0));
+            Assert.True(line.B.ToString().Equals(b));
+            Assert.True(line.C.Equals(1.0));
+        }
     }
 }

@@ -135,7 +135,10 @@ namespace AlgebraGeometry
             }
             else if (shapeType == ShapeType.LineSegment)
             {
-                throw new Exception("TODO");
+                output = LineSegRelation.Unify(pt1, pt2);
+                if (output != null) return true;
+                output = LineSegmentGenerationRule.IdentityPoints;
+                return false;
             }
             else
             {

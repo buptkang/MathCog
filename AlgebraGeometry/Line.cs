@@ -109,6 +109,15 @@ namespace AlgebraGeometry
             }
         }
 
+        public override List<Var> GetVars()
+        {
+            var lst = new List<Var>();
+            lst.Add(Var.GetVar(A));
+            lst.Add(Var.GetVar(B));
+            lst.Add(Var.GetVar(C));
+            return lst;
+        }
+
         #region IEqutable
 
         public override bool Equals(Shape other)
@@ -313,13 +322,13 @@ namespace AlgebraGeometry
                     {
                         if (d - 1.0 < 0.0001)
                         {
-                            return SymA == null ? 
+                            return (SymA == null || SymA.Equals("0")) ? 
                                 string.Format("y") : 
                                 string.Format("+y");
                         }
                         else
                         {
-                            return SymA == null ?
+                            return (SymA == null || SymA.Equals("0")) ?
                                 string.Format("{0}y", SymB) :
                                 string.Format("+{0}y", SymB);
                         }                        
@@ -328,13 +337,13 @@ namespace AlgebraGeometry
                     {
                         if (dd - 1.0 < 0.0001)
                         {
-                            return SymA == null ?
+                            return (SymA == null || SymA.Equals("0")) ?
                                string.Format("y") :
                                string.Format("-y");
                         }
                         else
                         {
-                            return SymA == null ?
+                            return (SymA == null || SymA.Equals("0")) ?
                                string.Format("{0}y", NegSymB) :
                                string.Format("-{0}y", NegSymB);
                         }
@@ -344,7 +353,7 @@ namespace AlgebraGeometry
                 }
                 else
                 {
-                    return SymA == null ?
+                    return (SymA == null || SymA.Equals("0")) ?
                               string.Format("{0}y", SymB) :
                               string.Format("+{0}y", SymB);
                 }

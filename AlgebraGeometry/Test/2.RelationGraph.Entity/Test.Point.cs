@@ -18,12 +18,11 @@ namespace AlgebraGeometry.TestGraph
             var x = new Var('x');
             var y = new Var('y');
             var point = new Point(x, y);
-            graph.AddShapeNode(point);
+            graph.AddNode(point);
             Assert.True(graph.Nodes.Count == 1);
             var eqGoal = new EqGoal(x, 1); // x=1
-            graph.AddGoalNode(eqGoal);
-            //bool result = point.Reify(eqGoal);
-
+            graph.AddNode(eqGoal);
+        
             List<Shape> shapes = graph.RetrieveShapes();
             Assert.True(shapes.Count == 1);
             var pt = shapes[0] as Point;
@@ -49,7 +48,7 @@ namespace AlgebraGeometry.TestGraph
             *****/
 
             var eqGoal1 = new EqGoal(x, 2); // x=2
-            graph.AddGoalNode(eqGoal1);
+            graph.AddNode(eqGoal1);
             shapes = graph.RetrieveShapes();
             Assert.True(shapes.Count == 1);
             pt = shapes[0] as Point;
@@ -71,7 +70,7 @@ namespace AlgebraGeometry.TestGraph
             *****/
 
             var eqGoal2 = new EqGoal(y, 1); // y = 1
-            graph.AddGoalNode(eqGoal2);
+            graph.AddNode(eqGoal2);
             shapes = graph.RetrieveShapes();
             Assert.True(shapes.Count == 1);
             pt = shapes[0] as Point;
@@ -96,7 +95,7 @@ namespace AlgebraGeometry.TestGraph
            *****/
 
             var eqGoal3 = new EqGoal(y, 2); // y = 2
-            graph.AddGoalNode(eqGoal3);
+            graph.AddNode(eqGoal3);
 
             shapes = graph.RetrieveShapes();
             Assert.True(shapes.Count == 1);

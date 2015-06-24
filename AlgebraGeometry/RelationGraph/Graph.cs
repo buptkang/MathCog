@@ -41,7 +41,24 @@ namespace AlgebraGeometry
 
         #region Input API
 
-        #region Entity Input
+        #region Shape and Goal CRUD Input
+
+        public GraphNode AddNode(object obj)
+        {
+            var shape = obj as Shape;
+            if (shape != null)
+            {
+                return AddShapeNode(shape);
+            }
+
+            var goal = obj as Goal;
+            if (goal != null)
+            {
+                return AddGoalNode(goal);
+            }
+
+            throw new Exception("Cannot reach here");
+        }
 
         /// <summary>
         /// Add node onto the graph
@@ -49,21 +66,36 @@ namespace AlgebraGeometry
         /// <param name="shape"></param>
         public ShapeNode AddShapeNode(Shape shape)
         {
-            var sn = new ShapeNode(shape);
-            BuildExplicitConnection(sn);
-            _nodes.Add(sn);
-            return sn;
+            if (shape.RelationStatus)
+            {
+                Debug.Assert(shape.Label!=null);
+                var shapeNode = new ShapeNode(shape);
+                UnifyRelation(shapeNode);
+                _nodes.Add(shapeNode);
+                return shapeNode;
+            }
+            else
+            {
+                var sn = new ShapeNode(shape);
+                Reify(sn);          //reify shapeNode itself
+                UpdateRelation(sn); //build connection
+                _nodes.Add(sn);
+                return sn;
+            }
         }
 
         /// <summary>
         /// Add node onto the graph
         /// </summary>
         /// <param name="goal"></param>
-        public void AddGoalNode(Goal goal)
+        public GoalNode AddGoalNode(Goal goal)
         {
             var gn = new GoalNode(goal);
-            BuildExplicitConnection(gn);
+            Reify(gn);
+            //TODO
+            //UpdateRelation(); 
             _nodes.Add(gn);
+            return gn;
         }
 
         /// <summary>
@@ -85,14 +117,12 @@ namespace AlgebraGeometry
                         shapeNode.OutEdges.Remove(outEdge); 
                     }
                 }
-
                 for (int j = 0; j < shapeNode.InEdges.Count; j++)
                 {
                     var inEdge = shapeNode.InEdges[j];
                     var sourceNode = inEdge.Source;
                     sourceNode.OutEdges.Remove(inEdge);
                 }
-
                 _nodes.Remove(shapeNode);
             }
         }
@@ -106,19 +136,20 @@ namespace AlgebraGeometry
             var goalNode = SearchNode(goal) as GoalNode;
             if (goalNode != null)
             {
-                UnBuildExplicitConnection(goalNode);
+                UnReify(goalNode);
                 _nodes.Remove(goalNode);
             }
         }
 
         #endregion
 
-        #region Relation Input
-
-        public bool AddRelation(Tuple<object,object> tuple2, out object output)
+        #region Shape and Goal Selection Input 
+        
+        public bool AddRelation(Tuple<object, object> tuple2, 
+            out object output)
         {
             bool result = RelationLogic.CreateRelation(tuple2.Item1,
-                                    tuple2.Item2,out output);
+                                    tuple2.Item2, out output);
 
             if (result)
             {
@@ -159,6 +190,8 @@ namespace AlgebraGeometry
 
                 if (gn1 != null && gn2 != null)
                 {
+                    outputShape.RelationStatus = true;
+
                     var edge1 = new GraphEdge(gn1, gShapeNode);
                     gn1.OutEdges.Add(edge1);
                     gShapeNode.InEdges.Add(edge1);
@@ -261,6 +294,42 @@ namespace AlgebraGeometry
                 }
             }
             return lst;
+        }
+
+        public GraphNode RetrieveGraphNodeByLabel(string label)
+        {
+            return (from node in Nodes let shapeNode = node as ShapeNode 
+                    where shapeNode != null 
+                    where shapeNode.Shape.Label.Equals(label) select node).
+                    FirstOrDefault();
+        }
+
+        public object RetrieveObjectByLabel(string label)
+        {
+            foreach (GraphNode node in Nodes)
+            {
+                var shapeNode = node as ShapeNode;
+                if (shapeNode != null)
+                {
+                    if (shapeNode.Shape.Label.Equals(label))
+                    {
+                        return shapeNode.Shape;
+                    }
+                }
+
+                var goalNode = node as GoalNode;
+                if (goalNode != null)
+                {
+                    var equalGoal = goalNode.Goal as EqGoal;
+                    Debug.Assert(equalGoal != null);
+                    if (equalGoal.Label.Equals(label))
+                    {
+                        return equalGoal;
+                    }
+                }
+            }
+
+            return null;
         }
 
         #endregion

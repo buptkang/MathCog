@@ -25,7 +25,7 @@ namespace AlgebraGeometry
             CachedGoals.RemoveWhere(pair => pair.Value.Equals(goal));
         }
 
-        public abstract void UndoGoal(EqGoal goal, object parent);
+        public virtual void UndoGoal(EqGoal goal, object parent) { }
 
         public object EvalGoal(object field, EqGoal goal)
         {
@@ -40,6 +40,6 @@ namespace AlgebraGeometry
                 result = field;
             }
             return result; 
-        }
+        }    
     }
 }

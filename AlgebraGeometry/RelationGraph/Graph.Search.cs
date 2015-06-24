@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Text;
@@ -10,141 +11,103 @@ namespace AlgebraGeometry
 {
     public partial class RelationGraph
     {
-        private void BuildExplicitConnection(ShapeNode shapeNode)
+        #region Symbolic Reification
+
+        private void Reify(ShapeNode shapeNode)
         {
             if (shapeNode.Shape.Concrete) return;
 
-            #region Point Reification
-            var pt = shapeNode.Shape as Point;
-            if (pt != null)
+            List<GoalNode> goalNodes = RetrieveGoalNodes();
+            foreach (GoalNode goalNode in goalNodes)
             {
-                foreach (GraphNode gn in _nodes)
+                var pt = shapeNode.Shape as Point;
+                if (pt != null)
                 {
-                    var goalNode = gn as GoalNode;
-                    if (goalNode != null)
+                    bool result = pt.Reify((EqGoal)goalNode.Goal);
+                    if (result)
                     {
-                        bool result = pt.Reify((EqGoal)goalNode.Goal);
-                        if (result)
-                        {
-                            //create edge between the shape with other goals
-                            var edge = new GraphEdge(gn, shapeNode);
-                            //_edges.Add(edge);
-                            gn.OutEdges.Add(edge);
-                            shapeNode.InEdges.Add(edge);                           
-                        }                        
+                        var edge = new GraphEdge(goalNode, shapeNode);
+                        goalNode.OutEdges.Add(edge);
+                        shapeNode.InEdges.Add(edge);
                     }
+
+                    #region Interaction
+                    if (KnowledgeUpdated != null)
+                        KnowledgeUpdated(this, shapeNode.Shape);
+                    #endregion
+                    continue;
                 }
-
-                #region Interaction
-                if (KnowledgeUpdated != null)
-                    KnowledgeUpdated(this, shapeNode.Shape);
-                #endregion
-            }
-            #endregion
-
-            #region Line Reification
-
-            var line = shapeNode.Shape as Line;
-            if (line != null)
-            {
-                foreach (GraphNode gn in _nodes)
+                var line = shapeNode.Shape as Line;
+                if (line != null)
                 {
-                    var goalNode = gn as GoalNode;
-                    if (goalNode != null)
+                    bool result = line.Reify((EqGoal)goalNode.Goal);
+                    if (result)
                     {
-                        bool result = line.Reify((EqGoal)goalNode.Goal);
-                        if (result)
-                        {
-                            //create edge between the shape with other goals
-                            var edge = new GraphEdge(gn, shapeNode);
-                            //_edges.Add(edge);
-                            gn.OutEdges.Add(edge);
-                            shapeNode.InEdges.Add(edge); 
-                        }
+                        var edge = new GraphEdge(goalNode, shapeNode);
+                        goalNode.OutEdges.Add(edge);
+                        shapeNode.InEdges.Add(edge);
                     }
+                    #region Interaction
+                    if (KnowledgeUpdated != null)
+                        KnowledgeUpdated(this, shapeNode.Shape);
+                    #endregion
+
+                    continue;
                 }
-
-                #region Interaction
-                if (KnowledgeUpdated != null)
-                    KnowledgeUpdated(this, shapeNode.Shape);
-                #endregion
             }
-
-
-            #endregion
         }
 
-        private void BuildExplicitConnection(GoalNode goalNode)
+        private void Reify(GoalNode goalNode)
         {
             var eqGoal = goalNode.Goal as EqGoal;
             Debug.Assert(eqGoal != null);
-            foreach (GraphNode gn in _nodes)
+            foreach (GraphNode gn in _nodes) //breadth first search
             {
                 var shapeNode = gn as ShapeNode;
-                if (shapeNode != null)
+                if (shapeNode == null) continue;
+
+                if (shapeNode.Shape.Concrete) continue;
+                bool reifyResult = false;
+
+                #region Shape Type Dynamic Reification
+                //Point Reification
+                var pt = shapeNode.Shape as Point;
+                if (pt != null) reifyResult = pt.Reify(eqGoal);
+
+                if (reifyResult)
                 {
-                    if (shapeNode.Shape.Concrete) continue;
-
-                    #region Point Reification
-                    var pt = shapeNode.Shape as Point;
-                    if (pt != null)
-                    {
-                        bool result = pt.Reify(eqGoal);
-                        if (result)
-                        {
-                            //create edge between the shape with other goals
-                            var edge = new GraphEdge(goalNode, shapeNode);
-                            //_edges.Add(edge);
-                            goalNode.OutEdges.Add(edge);
-                            shapeNode.InEdges.Add(edge);
-
-                            //update shapeNode's upper relation
-                            UpdateRelation(shapeNode);
-                        }
-
-                        #region Interaction
-
-                        if (KnowledgeUpdated != null)
-                            KnowledgeUpdated(this, shapeNode.Shape);
-
-                        #endregion
-                    }
-
+                    var edge = new GraphEdge(goalNode, shapeNode);
+                    goalNode.OutEdges.Add(edge);
+                    shapeNode.InEdges.Add(edge);
+                    ReifyByRelation(shapeNode); //dfs
+                    #region Interaction
+                    if (KnowledgeUpdated != null)
+                        KnowledgeUpdated(this, shapeNode.Shape);
                     #endregion
-
-                    #region Line Reification
-                    var line = shapeNode.Shape as Line;
-                    if (line != null)
-                    {
-                        bool result = line.Reify(eqGoal);
-                        if (result)
-                        {
-                            //create edge between the shape with other goals
-                            var edge = new GraphEdge(goalNode, shapeNode);
-                            //_edges.Add(edge);
-                            goalNode.OutEdges.Add(edge);
-                            shapeNode.InEdges.Add(edge);
-
-                            //update shapeNode's upper relation
-                            UpdateRelation(shapeNode);
-                        }
-
-                        #region Interaction
-
-                        if (KnowledgeUpdated != null)
-                            KnowledgeUpdated(this, shapeNode.Shape);
-
-                        #endregion
-                    }
-                    #endregion
+                    continue;
                 }
+ 
+                //Line Reification
+                var line = shapeNode.Shape as Line;
+                if (line != null) reifyResult = line.Reify(eqGoal);
+                if (reifyResult)
+                {
+                    var edge = new GraphEdge(goalNode, shapeNode);
+                    goalNode.OutEdges.Add(edge);
+                    shapeNode.InEdges.Add(edge);
+                    ReifyByRelation(shapeNode); //dfs
+                    #region Interaction
+                    if (KnowledgeUpdated != null)
+                        KnowledgeUpdated(this, shapeNode.Shape);
+                    #endregion
+                    continue;
+                }
+                #endregion
             }
         }
 
-        private void UnBuildExplicitConnection(GoalNode goalNode)
+        private void UnReify(GoalNode goalNode)
         {
-            if(!goalNode.SourceVertex) throw new Exception("TODO");
-
             var eqGoal = goalNode.Goal as EqGoal;
             Debug.Assert(eqGoal!=null);
 
@@ -158,8 +121,7 @@ namespace AlgebraGeometry
                 if (pt != null)
                 {
                     pt.UnReify(eqGoal);
-                    UpdateRelation(shapeNode);
-
+                    ReifyByRelation(shapeNode);
                     #region Interaction
                     if (KnowledgeUpdated != null)
                         KnowledgeUpdated(this, pt);
@@ -170,7 +132,7 @@ namespace AlgebraGeometry
                 if (line != null)
                 {
                     line.UnReify(eqGoal);
-                    UpdateRelation(shapeNode);
+                    ReifyByRelation(shapeNode);
                     #region Interaction
                     if (KnowledgeUpdated != null)
                         KnowledgeUpdated(this, line);
@@ -184,9 +146,10 @@ namespace AlgebraGeometry
 
         /// <summary>
         /// Re-eval shapeNode itself and propagate to upper relation
+        /// Depth First Search
         /// </summary>
         /// <param name="shapeNode"></param>
-        private void UpdateRelation(ShapeNode shapeNode)
+        private void ReifyByRelation(ShapeNode shapeNode)
         {
             List<GraphNode> nodes = RetrieveOutEdgeNodes(shapeNode);
 
@@ -213,9 +176,8 @@ namespace AlgebraGeometry
 
                             #endregion
                         }
-
                         //recursive update
-                        UpdateRelation(sn);
+                        ReifyByRelation(sn);
                     }
                     else
                     {
@@ -224,9 +186,96 @@ namespace AlgebraGeometry
                     }
                 }
             }
-         }
+        }
+
+        #endregion
+
+        #region Symbolic Unification
+
+        /// <summary>
+        /// Build relation with relation-based obj
+        /// </summary>
+        /// <param name="gn">non-relation based input ShapeNode</param>
+        private void UpdateRelation(GraphNode gn)
+        {
+            var shapeNode = gn as ShapeNode;
+            if (shapeNode == null) return;//TODO, GoalNode
+
+            //find all the relation-based graphNode
+            List<GraphNode> relationNodes = RetrieveRelationBasedNode();
+
+            foreach (GraphNode gnn in relationNodes)
+            {
+                var relationNode = gnn as ShapeNode;
+                Debug.Assert(relationNode != null);
+                
+                //check relation existence
+                if (RelationLogic.VerifyRelation(relationNode.Shape, shapeNode.Shape))
+                {
+                    var graphEdge = new GraphEdge(shapeNode, relationNode);
+                    shapeNode.OutEdges.Add(graphEdge);
+                    relationNode.InEdges.Add(graphEdge);
+                    ReifyByRelation(shapeNode); // reify relationnodes
+                }
+            }
+        }
+
+        /// <summary>
+        /// Build relation with non-relation based obj
+        /// TODO: build relation with other relation based obj
+        /// </summary>
+        /// <param name="shape">relation based input ShapeNode</param>
+        /// <returns></returns>
+        public void UnifyRelation(ShapeNode relNode)
+        {
+            Debug.Assert(relNode.Shape.Label != null);
+            Debug.Assert(relNode.Shape.RelationStatus);
+
+            //Find all the non-relation based obj
+            List<GraphNode> nonRelNodes = RetrieveNonRelatioinBasedNode();
+
+            foreach (GraphNode gn in nonRelNodes)
+            {
+                var nonRelNode = gn as ShapeNode;
+                Debug.Assert(nonRelNode != null);
+
+                //check relation existence
+                if (RelationLogic.VerifyRelation(relNode.Shape, nonRelNode.Shape))
+                {
+                    var graphEdge = new GraphEdge(nonRelNode, relNode);
+                    nonRelNode.OutEdges.Add(graphEdge);
+                    relNode.InEdges.Add(graphEdge);
+                    ReifyByRelation(nonRelNode); // reify Relation Nodes
+                }
+            }
+        }
+
+        #endregion
 
         #region Search Utilities
+
+        public List<GraphNode> RetrieveRelationBasedNode()
+        {
+            return (from node in Nodes let shapeNode = node as ShapeNode 
+                    where shapeNode != null && 
+                          shapeNode.Shape.RelationStatus select node)
+                   .ToList();
+        }
+
+        public List<GraphNode> RetrieveNonRelatioinBasedNode()
+        {
+            var lst = new List<GraphNode>();
+            foreach (GraphNode node in Nodes)
+            {
+                var shapeNode = node as ShapeNode;
+                if (shapeNode == null) continue;
+                if (!shapeNode.Shape.RelationStatus)
+                {
+                    lst.Add(node);
+                }
+            }
+            return lst;
+        }
 
         private List<GraphNode> RetrieveOutEdgeNodes(GraphNode node)
         {
@@ -278,6 +327,17 @@ namespace AlgebraGeometry
             }
 
             return null;
+        }
+
+        public List<Var> RetrieveShapeInternalVars()
+        {
+            var lst = new List<Var>();
+            var shapes = RetrieveShapes();
+            foreach (Shape shape in shapes)
+            {
+                lst.AddRange(shape.GetVars());
+            }
+            return lst;
         }
 
         #endregion

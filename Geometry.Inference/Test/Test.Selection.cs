@@ -13,6 +13,7 @@ namespace GeometryLogicInference
         [Test]
         public void Test1()
         {
+            //TODO
             var graph = new RelationGraph();
             var pt1 = new Point("A", 1.0, 2.0);
             var pt2 = new Point("B", 2.0, 4.0);
@@ -22,11 +23,6 @@ namespace GeometryLogicInference
             graph.AddShapeNode(pt2);
             graph.AddShapeNode(pt3);
             graph.AddShapeNode(line1);
-            
-            GeometryInference.Instance.SelectNode(pt1);
-
-            //graph.Infer("AB");
-            //graph.Infer(pt1, pt2);
         }
     }
 }

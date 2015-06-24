@@ -33,13 +33,21 @@ namespace AG.Interpreter
 
         public ActionManager ActionManager { get; set; }
 
-        private static Reasoner _memory = Reasoner.Instance;
+        private Reasoner _reasoner;
+
+        public Reasoner Reasoner
+        {
+            get { return _reasoner; }
+            set { _reasoner = value;}
+        }
 
         private Interpreter()
         {
             ActionManager = new ActionManager();
             _queryCache = new ObservableCollection<KeyValuePair<object, object>>();
             _preQueryCache = new Dictionary<object, object>();
+
+            _reasoner = new Reasoner();
         }
 
         //Key: Expr; Value: AGQueryExpr
@@ -61,7 +69,7 @@ namespace AG.Interpreter
             {
                 Debug.Assert(kv.Value is Var);
                 object queryResult;
-                _memory.Answer(kv.Value, out queryResult);
+                _reasoner.Answer(kv.Value, out queryResult);
 
                 object obj = Eval(expr, queryResult);
                 var newKv = new KeyValuePair<object, object>(expr, obj);
@@ -122,14 +130,14 @@ namespace AG.Interpreter
         public object Load(string str)
         {
             object result = LoadQuery(str);
-            if (result == null) return _memory.Load(str);
+            if (result == null) return _reasoner.Load(str);
             else return result;
         }
 
         public object Load(Expr expr)
         {
             object result = LoadQuery(expr);
-            if (result == null) return _memory.Load(expr);
+            if (result == null) return _reasoner.Load(expr);
             else return result;
         }
 
@@ -138,7 +146,7 @@ namespace AG.Interpreter
             bool result = UnLoadQuery(str);
             if (!result)
             {
-                _memory.Unload(str);
+                _reasoner.Unload(str);
             }
         }
 
@@ -147,7 +155,7 @@ namespace AG.Interpreter
             bool result = UnLoadQuery(expr);
             if (!result)
             {
-                _memory.Unload(expr);
+                _reasoner.Unload(expr);
             }
         } 
 

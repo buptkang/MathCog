@@ -118,5 +118,35 @@ namespace CSharpLogic
                 return false;
             }
         }
+
+        public static Var GetVar(object obj)
+        {
+            while (true)
+            {
+                var variable = obj as Var;
+                if (variable != null) return variable;
+
+                var tuple = obj as Tuple<object>;
+                if (tuple != null)
+                {
+                    obj = tuple.Item1;
+                    continue;
+                }
+
+                var tuple2 = obj as Tuple<object, object>;
+                if (tuple2 != null)
+                {
+                    var result = GetVar(tuple2.Item1);
+                    if (result != null) return result;
+                    else
+                    {
+                        obj = tuple2.Item2;
+                        continue;
+                    }
+                }
+
+                return null;              
+            }
+        }
     }
 }

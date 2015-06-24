@@ -1,92 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using CSharpLogic;
-using NUnit.Framework;
-
-namespace AlgebraGeometry
-{
-    [TestFixture]
-    public class TestLineRelation
-    {
-        #region Concrete point-line relation
-
-        [Test]
-        public void Test_Line_Relation_0()
-        {
-            var graph = new RelationGraph();
-
-            //point identity test
-            var A = new Point(2.0, 3.0);
-            var B = new Point(2.0, 3.0);
-
-            graph.AddShapeNode(A);
-            graph.AddShapeNode(B);
-            object output;
-            bool result = graph.AddRelation
-                (new Tuple<object, object>(A, B), ShapeType.Line, out output);
-            Assert.False(result);
-            var str = output as String;
-            Assert.NotNull(str);
-            Assert.True(str.Equals(LineGenerationRule.IdentityPoints));
-        }
-
-        [Test]
-        public void Test_Line_Relation_1()
-        {
-            var graph = new RelationGraph();
-            var A = new Point(2.0, 3.0);
-            var B = new Point(2.0, -1.0);
-            graph.AddShapeNode(A);
-            graph.AddShapeNode(B);
-            object output;
-            bool result = graph.AddRelation(new Tuple<object, object>(A, B), ShapeType.Line, out output);
-            Assert.True(result);
-            var shape = output as Line;
-            Assert.NotNull(shape);
-
-            var shapes = graph.RetrieveShapes();
-            Assert.True(shapes.Count == 3);
-        }
-
-        [Test]
-        public void Test_Line_Relation_2()
-        {
-            var graph = new RelationGraph();
-            var A = new Point(1.0, -1.0);
-            var B = new Point(2.0, -1.0);
-            graph.AddShapeNode(A);
-            graph.AddShapeNode(B);
-            object output;
-            bool result = graph.AddRelation(new Tuple<object, object>(A, B), ShapeType.Line, out output);
-            Assert.True(result);
-            var shape = output as Line;
-            Assert.NotNull(shape);
-            var shapes = graph.RetrieveShapes();
-            Assert.True(shapes.Count == 3);
-        }
-
-        [Test]
-        public void Test_Line_Relation_3()
-        {
-            var graph = new RelationGraph();
-            var A = new Point(2.0, -2.0);
-            var B = new Point(2.0, -1.0);
-            graph.AddShapeNode(A);
-            graph.AddShapeNode(B);
-            object output;
-            bool result = graph.AddRelation(new Tuple<object, object>(A, B), ShapeType.Line, out output);
-            Assert.True(result);
-            var shape = output as Line;
-            Assert.NotNull(shape);
-            var shapes = graph.RetrieveShapes();
-            Assert.True(shapes.Count == 3);
-        }
-
-        #endregion
-
-        #region non-concrete point-line relation
+﻿          #region non-concrete point-line relation
 
         [Test]
         public void Test_Line_Relation_NonConcrete_Add0()
@@ -418,7 +330,8 @@ namespace AlgebraGeometry
             Assert.True(line.CachedSymbols.Count == 0);
         }
 
-        #endregion
+        #endregion 
+  #region TODO
 
         [Test]
         public void TODO_Test()
@@ -447,5 +360,5 @@ namespace AlgebraGeometry
                         Assert.True(line.Concrete);
              */
         }
-    }
-}
+
+        #endregion

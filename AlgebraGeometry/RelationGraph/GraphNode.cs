@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using CSharpLogic;
 using NUnit.Framework;
 
 namespace AlgebraGeometry
@@ -52,5 +53,42 @@ namespace AlgebraGeometry
         }
 
         #endregion
+    }
+
+    public class ShapeNode : GraphNode
+    {
+        private Shape _shape;
+        public Shape Shape
+        {
+            get { return _shape; }
+            set
+            {
+                NotifyPropertyChanged("Shape");
+                _shape = value;
+            }
+        }
+
+        public ShapeNode(Shape shape)
+            : base()
+        {
+            _shape = shape;
+        }
+    }
+
+    public class GoalNode : GraphNode
+    {
+        private Goal _goal;
+
+        public Goal Goal
+        {
+            get { return _goal; }
+            set { _goal = value; }
+        }
+
+        public GoalNode(Goal goal)
+            : base()
+        {
+            _goal = goal;
+        }
     }
 }

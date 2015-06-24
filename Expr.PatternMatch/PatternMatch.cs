@@ -44,7 +44,7 @@ namespace ExprSemantic
 
             result = exp.IsPoint(out obj); //Algebraic point form
             if (result) dict.Add(PatternEnum.Point, obj); //PointSymbol
-
+           
             LineSymbol ls; 
             result = exp.IsLine(out ls); //Algebraic line form
             if (result) dict.Add(PatternEnum.Line, ls); //LineSymbol
@@ -52,7 +52,7 @@ namespace ExprSemantic
             result = exp.IsGoal(out obj); //Property form
             if (result) dict.Add(PatternEnum.Goal, obj); //EqGoal
 
-            return dict.Count == 1 ? obj : dict;
+            return dict.Count == 1 ? dict.Values.ToList()[0] : dict;
         }
 
         public object MatchQuery(starPadSDK.MathExpr.Expr exp)

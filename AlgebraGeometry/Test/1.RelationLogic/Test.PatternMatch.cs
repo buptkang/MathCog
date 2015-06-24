@@ -8,14 +8,13 @@ using NUnit.Framework;
 namespace AlgebraGeometry
 {
     [TestFixture]
-    public class TupleTwo
+    public class TestPatternMatch
     {
         [Test]
-        public void Test1()
+        public void Test_PointLine_1()
         {
-            var pt1 = new Point(1.0, 2.0);
-            var pt2 = new Point(2.0, -2.0);
-
+            var pt1 = new Point("A", 1.0, 2.0);
+            var pt2 = new Point("B", 2.0, -2.0);
             object obj;
 
             //Non-deterministic
@@ -29,10 +28,14 @@ namespace AlgebraGeometry
             //Deterministic
             result = RelationLogic.CreateRelation(pt1, pt2, ShapeType.Line, out obj);
             Assert.True(result);
+
+            //Deterministic
+            result = RelationLogic.CreateRelation(pt1, pt2, ShapeType.LineSegment, out obj);
+            Assert.True(result);
         }
 
         [Test]
-        public void Test2()
+        public void Test2_TODO()
         {
             var s = new Var('s');
             var goal1 = new EqGoal(s, 2.0);
@@ -45,8 +48,9 @@ namespace AlgebraGeometry
         }
 
         [Test]
-        public void Test3()
+        public void Test3_TODO()
         {
+            //TODO
             var m = new Var('m');
             var k = new Var('k');
             var goal1 = new EqGoal(m, 2.0);

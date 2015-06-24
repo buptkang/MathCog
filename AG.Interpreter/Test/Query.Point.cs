@@ -24,7 +24,7 @@ namespace AG.Interpreter.Test
              */
 
             const string fact = "A(2,3)";
-            Reasoner.Instance.Load(fact);
+            Interpreter.Instance.Load(fact);
 
             const string variable = "Y";
             object obj = Interpreter.Instance.LoadQuery(variable);
@@ -54,7 +54,7 @@ namespace AG.Interpreter.Test
              */
 
             const string fact = "(2,y)";
-            Reasoner.Instance.Load(fact);
+            Interpreter.Instance.Load(fact);
 
             const string variable = "Y";
             object obj = Interpreter.Instance.LoadQuery(variable);
@@ -65,7 +65,7 @@ namespace AG.Interpreter.Test
             Assert.Null(output);
 
             const string fact1 = "y=1";
-            Reasoner.Instance.Load(fact1);
+            Interpreter.Instance.Load(fact1);
             obj = Interpreter.Instance.LoadQuery(variable);
             Assert.NotNull(obj);
             output = Interpreter.Instance.SearchCurrentQueryResult(variable);
@@ -82,7 +82,7 @@ namespace AG.Interpreter.Test
              * Query: x=?
              * =>
              * Answer: ambiguity, choose the point or the line?
-             */ 
+             */
 
         }
 
@@ -95,9 +95,9 @@ namespace AG.Interpreter.Test
              * =>
              * Answer: A=(-3.1,2)
              * Why: trace
-             */ 
+             */
         }
-        
+
         [Test]
         public void test5()
         {
@@ -117,15 +117,17 @@ namespace AG.Interpreter.Test
 
         #endregion
 
-        #region Multiple points 
+
+
+        #region Multiple points
 
         [Test]
         public void test_multiple_1()
         {
-            const string fact  = "A(2,3)";
+            const string fact = "A(2,3)";
             const string fact2 = "B(4,5)";
-            Reasoner.Instance.Load(fact);
-            Reasoner.Instance.Load(fact2);
+            Interpreter.Instance.Load(fact);
+            Interpreter.Instance.Load(fact2);
 
             const string variable = "Y";
             object result = Interpreter.Instance.LoadQuery(variable);
@@ -135,7 +137,7 @@ namespace AG.Interpreter.Test
                 Interpreter.Instance.SearchCurrentQueryResult(variable);
             Assert.NotNull(output);
             //output could be 3 or 5
-            Assert.IsInstanceOf(typeof(Dictionary<object,object>), output);
+            Assert.IsInstanceOf(typeof(Dictionary<object, object>), output);
             var dict = output as Dictionary<object, object>;
             Assert.NotNull(dict);
             Assert.True(dict.ContainsKey(fact));
@@ -152,5 +154,7 @@ namespace AG.Interpreter.Test
         }
 
         #endregion 
+    
+    
     }
 }

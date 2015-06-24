@@ -45,7 +45,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Graph.Infer\RelationGraphExtension.cs" />
     <Compile Include="Instructions\AGInstructions.cs" />
     <Compile Include="QueryInterpreter.cs" />
     <Compile Include="QueryResult.cs" />
@@ -53,12 +52,14 @@
     <Compile Include="Reasoner.Evaluator.cs" />
     <Compile Include="Reasoner.Interaction.cs" />
     <Compile Include="Reasoner.Query.cs" />
-    <Compile Include="Test\Test.Line.cs" />
-    <Compile Include="Test\Test.Query.cs" />
-    <Compile Include="Test\Test.Property.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Test\Test.Line.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Test\Test.Point.cs" />
-    <Compile Include="Test\Test.Relation.cs" />
+    <Compile Include="Test\Test.Relation.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AlgebraGeometry.Expr\AlgebraGeometry.Expr.csproj">
@@ -89,6 +90,10 @@
       <Project>{eff3e46c-89cb-4e15-84d3-bf7ce0d72b4b}</Project>
       <Name>Expr</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Geometry.Inference\Geometry.Inference.csproj">
+      <Project>{e1a77c04-493a-499a-b2aa-24844755c30c}</Project>
+      <Name>Geometry.Inference</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UndoFramework\UndoFramework.csproj">
       <Project>{2da7292f-8a1a-4b58-85f7-374a09fd90b9}</Project>
       <Name>UndoFramework</Name>
@@ -96,6 +101,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Test\TODO.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

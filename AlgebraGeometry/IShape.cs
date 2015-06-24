@@ -55,6 +55,11 @@ namespace AlgebraGeometry
             }
         }
 
+        public virtual List<Var> GetVars()
+        {
+            return null;
+        }
+
         #region IEquatable
 
         public virtual bool Equals(Shape other)

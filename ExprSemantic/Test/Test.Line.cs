@@ -18,10 +18,11 @@ namespace ExprSemanticTest
         [Test]
         public void Test_Line_Concrete1()
         {
+            var reasoner = new Reasoner();
             //x=2
             const string fact1 = "x=2";
-            Reasoner.Instance.Load(fact1);
-            var result = Reasoner.Instance.TestGetShapeFacts();
+            reasoner.Load(fact1);
+            var result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             var ls = result[0];
@@ -37,10 +38,12 @@ namespace ExprSemanticTest
         [Test]
         public void Test_Line_Concrete2()
         {
+            var reasoner = new Reasoner();
+
             //y=1
             const string fact1 = "y=1";
-            Reasoner.Instance.Load(fact1);
-            var result = Reasoner.Instance.TestGetShapeFacts();
+            reasoner.Load(fact1);
+            var result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             var ls = result[0];
@@ -55,10 +58,11 @@ namespace ExprSemanticTest
         [Test]
         public void Test_Line_Concrete3()
         {
+            var reasoner = new Reasoner();
             //2x+y+3=0
             const string fact1 = "2x+y+3=0";
-            Reasoner.Instance.Load(fact1);
-            var result = Reasoner.Instance.TestGetShapeFacts();
+            reasoner.Load(fact1);
+            var result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             var ls = result[0];
@@ -73,10 +77,11 @@ namespace ExprSemanticTest
         [Test]
         public void Test_Line_Concrete4()
         {
+            var reasoner = new Reasoner();
             //2x+3=0
             const string fact1 = "2x+3=0";
-            Reasoner.Instance.Load(fact1);
-            var result = Reasoner.Instance.TestGetShapeFacts();
+            reasoner.Load(fact1);
+            var result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             var ls = result[0];
@@ -87,6 +92,7 @@ namespace ExprSemanticTest
             Assert.Null(lineSym.SymB);
             Assert.True(lineSym.SymC.Equals("3"));
         }
+
 
         #endregion
 
@@ -99,11 +105,13 @@ namespace ExprSemanticTest
              * ax = 2
              * a =2 
              * 
-             */ 
+             */
             //ax=2
+
+            var reasoner = new Reasoner();
             const string fact1 = "ax=2";
-            Reasoner.Instance.Load(fact1);
-            var result = Reasoner.Instance.TestGetShapeFacts();
+            reasoner.Load(fact1);
+            var result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             var ls = result[0];
@@ -118,8 +126,8 @@ namespace ExprSemanticTest
             Assert.True(lineSymbol.SymC.Equals("-2"));
 
             const string prop1 = "a=2";
-            Reasoner.Instance.Load(prop1);
-            result = Reasoner.Instance.TestGetShapeFacts();
+            reasoner.Load(prop1);
+            result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             ls = result[0];
@@ -139,8 +147,8 @@ namespace ExprSemanticTest
             Assert.Null(shape.B);
             Assert.True(shape.C.Equals(-2.0));
 
-            Reasoner.Instance.Unload(prop1);
-            result = Reasoner.Instance.TestGetShapeFacts();
+            reasoner.Unload(prop1);
+            result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             ls = result[0];
@@ -161,9 +169,12 @@ namespace ExprSemanticTest
             * a = 2 
             * b = 1
             */
+
+            var reasoner = new Reasoner();
+
             const string fact1 = "ax+by=2";
-            Reasoner.Instance.Load(fact1);
-            var result = Reasoner.Instance.TestGetShapeFacts();
+            reasoner.Load(fact1);
+            var result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             var ls = result[0];
@@ -178,8 +189,8 @@ namespace ExprSemanticTest
             Assert.True(lineSymbol.SymC.Equals("-2"));
 
             const string prop1 = "a=2";
-            Reasoner.Instance.Load(prop1);
-            result = Reasoner.Instance.TestGetShapeFacts();
+            reasoner.Load(prop1);
+            result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             ls = result[0];
@@ -200,8 +211,8 @@ namespace ExprSemanticTest
             Assert.True(shape.C.Equals(-2.0));
 
             const string prop2 = "b=1";
-            Reasoner.Instance.Load(prop2);
-            result = Reasoner.Instance.TestGetShapeFacts();
+            reasoner.Load(prop2);
+            result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             ls = result[0];
@@ -221,8 +232,8 @@ namespace ExprSemanticTest
             Assert.True(shape.B.Equals(1));
             Assert.True(shape.C.Equals(-2.0));
 
-            Reasoner.Instance.Unload(prop1);
-            result = Reasoner.Instance.TestGetShapeFacts();
+            reasoner.Unload(prop1);
+            result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             ls = result[0];
@@ -238,8 +249,8 @@ namespace ExprSemanticTest
             Assert.True(shape.B.Equals(1));
             Assert.True(shape.C.Equals(-2.0));
 
-            Reasoner.Instance.Unload(prop2);
-            result = Reasoner.Instance.TestGetShapeFacts();
+            reasoner.Unload(prop2);
+            result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             ls = result[0];
@@ -251,10 +262,12 @@ namespace ExprSemanticTest
         [Test]
         public void Test_Line_Sub3()
         {
+            var reasoner = new Reasoner();
+
             //ax+by+m=0
             const string fact1 = "ax+by+m=0";
-            Reasoner.Instance.Load(fact1);
-            var result = Reasoner.Instance.TestGetShapeFacts();
+            reasoner.Load(fact1);
+            var result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             var ls = result[0];
@@ -270,8 +283,8 @@ namespace ExprSemanticTest
 
             //m=2
             const string prop1 = "m=2";
-            Reasoner.Instance.Load(prop1);
-            result = Reasoner.Instance.TestGetShapeFacts();
+            reasoner.Load(prop1);
+            result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             ls = result[0];
@@ -288,8 +301,8 @@ namespace ExprSemanticTest
             Assert.True(shape.C.Equals(2.0));
 
             //Unload m=2
-            Reasoner.Instance.Unload(prop1);
-            result = Reasoner.Instance.TestGetShapeFacts();
+            reasoner.Unload(prop1);
+            result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             ls = result[0];
@@ -299,5 +312,6 @@ namespace ExprSemanticTest
         }
 
         #endregion
+
     }
 }

@@ -9,7 +9,7 @@ namespace AlgebraGeometry
     [TestFixture]
     public class TestLineUnify
     {
-        #region Point and Point
+        #region Line Unify from two points
 
         [Test]
         public void Test_CreateLine_1()
@@ -55,6 +55,28 @@ namespace AlgebraGeometry
             Assert.True(line.A.Equals(1.0));
             Assert.Null(line.B);
             Assert.True(line.C.Equals(-2.0));
+        }
+
+        #endregion
+
+        #region LineSegment Unify from two points
+
+        [Test]
+        public void Test_CreateLineSegment_1()
+        {
+            var pt1 = new Point(1.0, 2.0);
+            var pt2 = new Point(2.0, 3.0);
+            var lineSeg = LineSegRelation.Unify(pt1, pt2);
+            Assert.NotNull(lineSeg);
+        }
+
+        [Test]
+        public void Test_CreateLineSegment_2()
+        {
+            var pt1 = new Point(1.0, 2.0);
+            var pt2 = new Point(1.0, 2.0);
+            var lineSeg = LineSegRelation.Unify(pt1, pt2);
+            Assert.Null(lineSeg);
         }
 
         #endregion

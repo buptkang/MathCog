@@ -280,6 +280,25 @@ namespace CSharpLogic
         {
             return string.Format("{0}={1}", Lhs, Rhs);
         }
+
+        public bool ContainsVar(Var variable)
+        {
+            var lhsVar = Lhs as Var;
+            bool result;
+            if (lhsVar != null)
+            {
+                result = lhsVar.Equals(variable);
+                if (result) return true;
+            }
+
+            var rhsVar = Rhs as Var;
+            if (rhsVar != null)
+            {
+                result = Rhs.Equals(variable);
+                if (result) return true;
+            }
+            return false;
+        }
     }
 
     public static class EqGoalExtension

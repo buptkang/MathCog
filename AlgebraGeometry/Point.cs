@@ -89,6 +89,14 @@ namespace AlgebraGeometry
             get { return !Var.ContainsVar(XCoordinate) && !Var.ContainsVar(YCoordinate); }
         }
 
+        public override List<Var> GetVars()
+        {
+            var lst = new List<Var>();
+            lst.Add(Var.GetVar(XCoordinate));
+            lst.Add(Var.GetVar(YCoordinate));
+            return lst;
+        }
+
         #region IEqutable
 
         public override bool Equals(Shape other)
@@ -96,7 +104,15 @@ namespace AlgebraGeometry
             if (other is Point)
             {
                 var pt = other as Point;
-                if (!(XCoordinate.Equals(pt.XCoordinate) && YCoordinate.Equals(pt.YCoordinate)))
+                if (XCoordinate.Equals(pt.XCoordinate) && YCoordinate.Equals(pt.YCoordinate))
+                {
+                    return true;
+                }
+                if (!XCoordinate.Equals(pt.XCoordinate))
+                {
+                    return false;
+                }
+                if(!YCoordinate.Equals(pt.YCoordinate))
                 {
                     return false;
                 }

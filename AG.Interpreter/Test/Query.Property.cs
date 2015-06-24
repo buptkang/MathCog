@@ -21,6 +21,7 @@ namespace AG.Interpreter.Test
              Answer: x = 1
              Why: given fact
              * */
+/*
             const string fact = "x=1";
             //Reasoner.Instance.Load(fact);
             Interpreter.Instance.Load(fact);
@@ -39,6 +40,7 @@ namespace AG.Interpreter.Test
             Interpreter.Instance.UnLoadQuery(query);
             number = Interpreter.Instance.GetNumberOfQueries();
             Assert.True(number == 0);
+ */ 
         }
 /*
         [Test]

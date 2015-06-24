@@ -46,7 +46,10 @@ namespace ExprPatternMatchTest
             expr = Text.Convert(txt1);
             result = ExprVisitor.Instance.Match(expr);
             Assert.NotNull(result);
-            Assert.IsInstanceOf(typeof(KeyValuePair<object,object>), result);
+            var dict = result as Dictionary<PatternEnum, object>;
+            Assert.NotNull(dict);
+
+            // Assert.IsInstanceOf(typeof(KeyValuePair<object,object>), result);
         }
 
         [Test]
@@ -92,7 +95,8 @@ namespace ExprPatternMatchTest
             //var dict = (KeyValuePair<object, object>)obj;
             var dict = (EqGoal)obj;
             Assert.NotNull(dict);
-            Assert.True(dict.Lhs.Equals("x"));
+            
+            Assert.True(dict.Lhs.ToString().Equals("x"));
             Assert.True(dict.Rhs.Equals(3));
 
             txt = "Y = 4.0";
@@ -103,7 +107,7 @@ namespace ExprPatternMatchTest
             Assert.IsInstanceOf(typeof(EqGoal), obj);
             dict = (EqGoal)obj;
             Assert.NotNull(dict);
-            Assert.True(dict.Lhs.Equals("Y"));
+            Assert.True(dict.Lhs.ToString().Equals("Y"));
             Assert.True(dict.Rhs.Equals(4.0));
 
         }
