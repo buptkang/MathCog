@@ -19,7 +19,7 @@ namespace ExprSemantic
             _cache = new ObservableCollection<KeyValuePair<object, object>>();
             _preCache = new Dictionary<object, object>();
 
-            GeometryInference.Instance.Cache.CollectionChanged += Cache_CollectionChanged;
+            //GeometryInference.Instance.Cache.CollectionChanged += Cache_CollectionChanged;
         }
 
         /// <summary>
@@ -30,25 +30,6 @@ namespace ExprSemantic
         /// Key: String; Value: Expr
         /// </summary>
         private Dictionary<object, object> _preCache;
-
-        #endregion
-
-        #region Feedback communication with lower reasoning engine
-
-        /// <summary>
-        /// GraphNode Update
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void Cache_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-            }
-        }
 
         #endregion
 

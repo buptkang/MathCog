@@ -220,3 +220,29 @@ namespace AlgebraGeometry
 //        #endregion
 //    }
 //}
+
+
+
+		private bool PropertyHitOnKnowledge(Expr expr, List<Point> points)
+        {
+            string propertyName;
+            if (!expr.IsQueryFormWithoutQuestionMark(out propertyName))
+            {
+                return false;
+            }
+
+            //problem 3 distance scenario
+            if (propertyName.Equals("d") || propertyName.Equals("D"))
+            {
+                return FindPointLineRelation(points, expr);
+            }
+            else if (propertyName.Equals("k") || propertyName.Equals("K") ||
+                    propertyName.Equals("m") || propertyName.Equals("M"))
+            {
+                return FindLineEquation(points, expr);
+            }
+            else
+            {
+                return false;
+            }
+        }

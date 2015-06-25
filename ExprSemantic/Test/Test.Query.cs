@@ -14,23 +14,22 @@ namespace ExprSemanticTest
     [TestFixture]
     public class TestQuery
     {
-        #region Query Property
+        #region Explicit Query
 
         [Test]
-        public void QueryProp1()
+        public void QueryProp0()
         {
-            var reasoner = new Reasoner();
-
             /*
-            * Input Fact: x = 1
-            * Query: x=?
+            * Input Fact: a = 1
+            * Query: a=?
             * =>
-            Answer: x = 1
+            Answer: a = 1
             Why: given fact
             * */
-            const string input = "x = 1";
+            var reasoner = new Reasoner();
+            const string input = "a = 1";
             reasoner.Load(input);
-            var variable = new Var('x');
+            var variable = new Var('a');
             object obj;
             bool result = reasoner.Answer(variable, out obj);
             Assert.True(result);
@@ -49,10 +48,26 @@ namespace ExprSemanticTest
         }
 
         [Test]
+        public void QueryProp1()
+        {
+            /*
+            * Input Fact: x = 1 (Line)
+            * Query: x=?
+            * =>
+            No answer, cannot find property x!. 
+            * */
+            var reasoner = new Reasoner();
+            const string input = "x = 1";
+            reasoner.Load(input);
+            var variable = new Var('x');
+            object obj;
+            bool result = reasoner.Answer(variable, out obj);
+            Assert.False(result);
+        }
+
+        [Test]
         public void QueryProp2()
         {
-            var reasoner = new Reasoner();
-
             /*
             *   Input Fact: x = 1
             *   Query: y =?
@@ -60,7 +75,8 @@ namespace ExprSemanticTest
             *   Answer : y = null
             *   Why: No knowledge input about y
             */
-            const string input = "x = 1";
+            var reasoner = new Reasoner();
+            const string input = "a = 1";
             reasoner.Load(input);
             var variable = new Var('y');
             object obj;
@@ -71,18 +87,17 @@ namespace ExprSemanticTest
         [Test]
         public void QueryProp3()
         {
-            var reasoner = new Reasoner();
-
             /*
-            * Input Fact: x+1=2
-            * Query: x = ?
+            * Input Fact: a+1=2
+            * Query: a = ?
             * =>
-            * Answer: x=1
+            * Answer: a=1
             * Why: Simplify the given quation, draw down arrow to check details.
             */
-            const string input = "x+1=2";
+            var reasoner = new Reasoner();
+            const string input = "a+1=2";
             reasoner.Load(input);
-            var variable = new Var('x');
+            var variable = new Var('a');
             object obj;
             bool result = reasoner.Answer(variable, out obj);
             Assert.True(result);
@@ -100,22 +115,22 @@ namespace ExprSemanticTest
         }
 
         [Test]
-        public void TestProp4()
+        public void TestProp_undeterministic_1()
         {
             /*
-             * Input Fact: x=1, x=2
-             * Query: x = ?
+             * Input Fact: a=1, a=2
+             * Query: a = ?
              * =>
              * Answser: ambiguity
              * Why: two facts are shown
              */
 
             var reasoner = new Reasoner();
-            const string input1 = "x=2";
-            const string input2 = "x=1";
+            const string input1 = "a=2";
+            const string input2 = "a=1";
             reasoner.Load(input1);
             reasoner.Load(input2);
-            var variable = new Var('x');
+            var variable = new Var('a');
             object obj;
             bool result = reasoner.Answer(variable, out obj);
             Assert.True(result);
@@ -123,6 +138,8 @@ namespace ExprSemanticTest
             var lst = obj as List<object>;
             Assert.NotNull(lst);
             Assert.True(lst.Count == 2);
+            var object1 = lst[0] as PropertyQueryResult;
+            Assert.NotNull(object1);
         }
 
         [Test]

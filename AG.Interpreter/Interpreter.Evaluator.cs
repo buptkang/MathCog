@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using AG.Interpreter.Instructions;
 using AlgebraGeometry.Expr;
 using ExprSemantic;
 using starPadSDK.MathExpr;
@@ -60,9 +61,13 @@ namespace AG.Interpreter
             }
             else
             {
-                throw new Exception("TODO");
+                var agQuery = new AGQueryExpr(expr)
+                {
+                    QuerySuccess = false,
+                    Instruction = QueryInstructions.QueryAmbiguity
+                };
+                return agQuery;
             }
-
             return null;
         }
 

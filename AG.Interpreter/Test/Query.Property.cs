@@ -15,15 +15,14 @@ namespace AG.Interpreter.Test
         public void test1()
         {
             /*
-             * Input Fact: x = 1
-             * Query: x=
+             * Input Fact: a = 1
+             * Query: a=
              * =>
-             Answer: x = 1
+             Answer: a = 1
              Why: given fact
              * */
 /*
-            const string fact = "x=1";
-            //Reasoner.Instance.Load(fact);
+            const string fact = "a=1";
             Interpreter.Instance.Load(fact);
             List<AGPropertyExpr> facts = Reasoner.Instance.TestGetProperties();
             Assert.True(facts.Count == 1);

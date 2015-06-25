@@ -71,7 +71,22 @@ namespace AG.Interpreter
                 object queryResult;
                 _reasoner.Answer(kv.Value, out queryResult);
 
+                var queryResults = queryResult as List<object>;
+                if (queryResults != null)
+                {
+                    if (queryResults.Count == 1) // deterministic
+                    {
+                        var propResult = queryResults[0] as PropertyQueryResult;
+                        if (propResult != null)
+                        {
+                            expr = propResult.Answer;
+                        }
+                        //TODO
+                    }
+                }
+
                 object obj = Eval(expr, queryResult);
+
                 var newKv = new KeyValuePair<object, object>(expr, obj);
                 _queryCache.Add(newKv);
 
