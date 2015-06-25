@@ -18,7 +18,7 @@ namespace ExprPatternMatchTest
             object x = 3;
             object y = -3.9;
 
-            PointSymbol ps = ExprKnowledgeFactory.CreatePointSymbol(x, y);
+            PointSymbol ps = PointEvaluator.CreatePointSymbol(x, y);
             Assert.NotNull(ps);
             Assert.True(ps.SymXCoordinate.Equals("3"));
             Assert.True(ps.SymYCoordinate.Equals("-3.9"));
@@ -28,7 +28,7 @@ namespace ExprPatternMatchTest
             Assert.True(pt.Concrete);
 
             string label = "A";
-            ps = ExprKnowledgeFactory.CreatePointSymbol(label, x, y);
+            ps = PointEvaluator.CreatePointSymbol(label, x, y);
             Assert.NotNull(ps);
             Assert.True(ps.SymXCoordinate.Equals("3"));
             Assert.True(ps.SymYCoordinate.Equals("-3.9"));
@@ -39,7 +39,7 @@ namespace ExprPatternMatchTest
            
             x = "X";
             y = "2";
-            ps = ExprKnowledgeFactory.CreatePointSymbol(x, y);
+            ps = PointEvaluator.CreatePointSymbol(x, y);
             Assert.NotNull(ps);
             Assert.True(ps.SymXCoordinate.Equals("X"));
             Assert.True(ps.SymYCoordinate.Equals("2"));

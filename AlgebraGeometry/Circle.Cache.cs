@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AlgebraGeometry
 {
-    public partial class Circle : Shape
+    public partial class Circle : QuadraticCurve
     {
 
     }

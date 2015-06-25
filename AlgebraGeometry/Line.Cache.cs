@@ -348,25 +348,25 @@ namespace AlgebraGeometry
             object cResult = line.EvalGoal(line.C, tempGoal);
 
             //Atomic operation
-            if (!line.A.Equals(aResult))
+            if(aResult != null && !line.A.Equals(aResult))
             {
                 line.CacheA(aResult, goal);
                 return true;
             }
-            else if (!line.B.Equals(bResult))
+
+            if (bResult != null && !line.B.Equals(bResult))
             {
                 line.CacheB(bResult, goal);
-                return true;
+                return true;                
             }
-            else if (!line.C.Equals(cResult))
+
+            if (cResult != null && !line.C.Equals(cResult))
             {
                 line.CacheC(cResult, goal);
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         public static bool UnReify(this Line line, EqGoal goal)

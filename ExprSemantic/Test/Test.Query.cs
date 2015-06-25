@@ -12,13 +12,15 @@ using System.Linq.Expressions;
 namespace ExprSemanticTest
 {
     [TestFixture]
-    public class TestInfer
+    public class TestQuery
     {
         #region Query Property
 
         [Test]
         public void QueryProp1()
         {
+            var reasoner = new Reasoner();
+
             /*
             * Input Fact: x = 1
             * Query: x=?
@@ -27,10 +29,10 @@ namespace ExprSemanticTest
             Why: given fact
             * */
             const string input = "x = 1";
-            Reasoner.Instance.Load(input);
+            reasoner.Load(input);
             var variable = new Var('x');
             object obj;
-            bool result = Reasoner.Instance.Answer(variable, out obj);
+            bool result = reasoner.Answer(variable, out obj);
             Assert.True(result);
             Assert.IsInstanceOf(typeof(List<object>), obj);
             var lst = obj as List<object>;
@@ -39,7 +41,7 @@ namespace ExprSemanticTest
 
             var propQueryResult = lst[0] as PropertyQueryResult;
             Assert.NotNull(propQueryResult);
-            var agExprs = Reasoner.Instance.TestGetProperties();
+            var agExprs = reasoner.TestGetProperties();
             Assert.True(agExprs.Count == 1);
             var inputKnowledge = agExprs[0];
             Assert.True(inputKnowledge.Expr.Equals(propQueryResult.Answer));
@@ -49,6 +51,8 @@ namespace ExprSemanticTest
         [Test]
         public void QueryProp2()
         {
+            var reasoner = new Reasoner();
+
             /*
             *   Input Fact: x = 1
             *   Query: y =?
@@ -57,16 +61,18 @@ namespace ExprSemanticTest
             *   Why: No knowledge input about y
             */
             const string input = "x = 1";
-            Reasoner.Instance.Load(input);
+            reasoner.Load(input);
             var variable = new Var('y');
             object obj;
-            bool result = Reasoner.Instance.Answer(variable, out obj);
+            bool result = reasoner.Answer(variable, out obj);
             Assert.False(result);
         }
 
         [Test]
         public void QueryProp3()
         {
+            var reasoner = new Reasoner();
+
             /*
             * Input Fact: x+1=2
             * Query: x = ?
@@ -75,10 +81,10 @@ namespace ExprSemanticTest
             * Why: Simplify the given quation, draw down arrow to check details.
             */
             const string input = "x+1=2";
-            Reasoner.Instance.Load(input);
+            reasoner.Load(input);
             var variable = new Var('x');
             object obj;
-            bool result = Reasoner.Instance.Answer(variable, out obj);
+            bool result = reasoner.Answer(variable, out obj);
             Assert.True(result);
             Assert.IsInstanceOf(typeof(List<object>), obj);
             var lst = obj as List<object>;
@@ -87,7 +93,7 @@ namespace ExprSemanticTest
 
             var propQueryResult = lst[0] as PropertyQueryResult;
             Assert.NotNull(propQueryResult);
-            var agExprs = Reasoner.Instance.TestGetProperties();
+            var agExprs = reasoner.TestGetProperties();
             Assert.True(agExprs.Count == 1);            
             Assert.NotNull(propQueryResult.Trace);
             Assert.True(propQueryResult.Trace.Count == 2);
@@ -104,13 +110,14 @@ namespace ExprSemanticTest
              * Why: two facts are shown
              */
 
+            var reasoner = new Reasoner();
             const string input1 = "x=2";
             const string input2 = "x=1";
-            Reasoner.Instance.Load(input1);
-            Reasoner.Instance.Load(input2);
+            reasoner.Load(input1);
+            reasoner.Load(input2);
             var variable = new Var('x');
             object obj;
-            bool result = Reasoner.Instance.Answer(variable, out obj);
+            bool result = reasoner.Answer(variable, out obj);
             Assert.True(result);
             Assert.IsInstanceOf(typeof(List<object>), obj);
             var lst = obj as List<object>;
@@ -128,11 +135,12 @@ namespace ExprSemanticTest
              * Answser: x=2
              * Why: two traces
              */
+            var reasoner = new Reasoner();
             const string input2 = "x=1";
-            Reasoner.Instance.Load(input2);
+            reasoner.Load(input2);
             var term = new Term(Expression.Add, new Tuple<object, object>(new Var('x'),1));
             object obj;
-            bool result = Reasoner.Instance.Answer(term, out obj);
+            bool result = reasoner.Answer(term, out obj);
             Assert.True(result);
             Assert.IsInstanceOf(typeof(List<object>), obj);
             var lst = obj as List<object>;

@@ -43,6 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ellipse.cs" />
+    <Compile Include="Line.Extension.cs" />
+    <Compile Include="QuadraticCurve.cs" />
     <Compile Include="RelationLogic\Relation.Verifier.cs" />
     <Compile Include="RelationRule\Acronym.cs" />
     <Compile Include="Circle.Cache.cs" />
@@ -64,7 +67,6 @@
     <Compile Include="RelationLogic\Relation.PatternMatch.cs" />
     <Compile Include="RelationGraph\GraphEdge.cs" />
     <Compile Include="RelationGraph\Graph.cs" />
-    <Compile Include="RelationGraph\Graph.Interaction.cs" />
     <Compile Include="RelationGraph\Graph.Search.cs" />
     <Compile Include="RelationGraph\GraphNode.cs" />
     <Compile Include="RelationLogic\Relation.Unify.cs" />

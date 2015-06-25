@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Line.Unify.cs" />
-    <Compile Include="TermEvaluator.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test\Test.LineUnify.cs" />
     <Compile Include="Test\Test.TermEvaluator.cs" />

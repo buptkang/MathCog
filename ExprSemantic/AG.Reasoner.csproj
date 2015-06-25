@@ -50,13 +50,14 @@
     <Compile Include="QueryResult.cs" />
     <Compile Include="Reasoner.cs" />
     <Compile Include="Reasoner.Evaluator.cs" />
-    <Compile Include="Reasoner.Interaction.cs" />
     <Compile Include="Reasoner.Query.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test\Test.Line.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Test\Test.Point.cs" />
+    <Compile Include="Test\Test.Property.cs" />
+    <Compile Include="Test\Test.Query.cs" />
     <Compile Include="Test\Test.Relation.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -74,9 +75,9 @@
       <Project>{b6ae1355-89f0-4ecb-83ac-b3b5118a6e4e}</Project>
       <Name>CSharpLogic</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Expr.PatternMatch\Expr.PatternMatch.csproj">
+    <ProjectReference Include="..\Expr.PatternMatch\Expr.Unify.csproj">
       <Project>{c4f74bbb-98d6-462f-9d63-2590f646b9d3}</Project>
-      <Name>Expr.PatternMatch</Name>
+      <Name>Expr.Unify</Name>
     </ProjectReference>
     <ProjectReference Include="..\ExprMathML\ExprMathML.fsproj">
       <Project>{c647dee7-18a0-4f6e-809b-ba02d474aba5}</Project>
@@ -101,9 +102,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Test\TODO.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

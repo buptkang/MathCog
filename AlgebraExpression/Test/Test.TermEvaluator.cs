@@ -20,7 +20,6 @@ namespace AlgebraExpression.Test
         {
             //ax
             var variable = new Var("ax");
-
             object result = LineTermEvaluator.RectifyLineTerm(variable);
             Assert.NotNull(result);
             Assert.IsInstanceOf(typeof(Term), result);
@@ -191,6 +190,18 @@ namespace AlgebraExpression.Test
             Assert.NotNull(xVar); 
             Assert.True(xVar.ToString().Equals("x"));
         }
+
+        [Test]
+        public void Test_Rectify_5()
+        {
+            //a*x
+            var a = new Var('a');
+            var x = new Var('x');
+            var term = new Term(Expression.Multiply, new Tuple<object, object>(a, x));
+            
+            //object result = LineTermEvaluator.RectifyLineTerm(term);
+        }
+
 
         #endregion
 

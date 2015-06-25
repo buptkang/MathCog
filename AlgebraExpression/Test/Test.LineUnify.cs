@@ -30,6 +30,46 @@ namespace AlgebraExpression.Test
         }
 
         [Test]
+        public void Test1_1()
+        {
+            //ax=2
+            var a = new Var('a');
+            object obj1 = new Var("x");
+            var term = new Term(Expression.Multiply, new Tuple<object, object>(a, obj1));
+            object obj2 = 2;
+
+            //need to rectify the term
+            //change a from Var to string because line rule
+
+            Line line;
+            bool result = LineEvaluator.Unify(term, obj2, out line);
+            Assert.True(result);
+            Assert.False(line.Concrete);
+            Assert.True(line.A.Equals(a));
+            Assert.Null(line.B);
+            Assert.True(line.C.Equals(-2.0));
+        }
+
+        [Test]
+        public void Test1_2()
+        {
+            //bx=2
+            object obj1 = new Var("x");
+            object a = new Var('b');
+            var term = new Term(Expression.Multiply, new Tuple<object, object>(a, obj1));
+            object obj2 = 2;
+
+            Line line;
+            bool result = LineEvaluator.Unify(term, obj2, out line);
+            Assert.True(result);
+            Assert.False(line.Concrete);
+            Assert.True(line.A.Equals(a));
+            Assert.Null(line.B);
+            Assert.True(line.C.Equals(-2.0));
+        }
+
+
+        [Test]
         public void Test2()
         {
             //y=1

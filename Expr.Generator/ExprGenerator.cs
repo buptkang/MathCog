@@ -3,7 +3,9 @@ using System.Diagnostics;
 using System.Linq.Expressions;
 using AlgebraGeometry;
 using CSharpLogic;
+using NUnit.Framework;
 using starPadSDK.MathExpr;
+using Text = starPadSDK.MathExpr.Text;
 
 namespace ExprGenerator
 {
@@ -43,15 +45,16 @@ namespace ExprGenerator
 
         public static Expr Generate(ShapeSymbol ss)
         {
-            if (ss is PointSymbol)
-            {
-                var ps = ss as PointSymbol;
-                return ps.ToExpr();
-            }
-            else
-            {
-                return null;
-            }
+            var ps = ss as PointSymbol;
+            if (ps != null) return ps.ToExpr();
+
+            var ls = ss as LineSymbol;
+            if (ls != null) return ls.ToExpr();
+/*
+            var lineSeg = ss as LineSegmentSymbol;
+            if(lineSeg != null) return lineSeg
+*/
+            return null;
         }
 
         public static Expr Generate(EqGoal goal)
@@ -128,6 +131,23 @@ namespace ExprGenerator
             if(result) return new DoubleNumber(dNumber);
 
             return new WordSym(coord);            
+        }
+    }
+
+    public static class LineExpExtension
+    {
+        public static Expr ToExpr(this LineSymbol ls)
+        {
+            return Text.Convert(ls.ToString());
+        }
+    }
+
+    public static class LineSegExpExtension
+    {
+        public static Expr ToExpr(this LineSegmentSymbol lss)
+        {
+            Debug.Assert(lss.Shape.Label != null);
+            return Text.Convert(lss.Shape.Label);
         }
     }
 }

@@ -8,7 +8,7 @@ using CSharpLogic;
 
 namespace ExprSemantic
 {
-    public static class ExprKnowledgeFactory
+    public static class PointEvaluator
     {
         public static PointSymbol CreatePointSymbol(object coord1, object coord2)
         {
@@ -58,7 +58,6 @@ namespace ExprSemantic
                 ps.Shape.Label = label;
             }
             return ps;
-        }
-    
+        }    
     }
 }

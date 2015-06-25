@@ -55,7 +55,9 @@
     <Compile Include="Test\Query.Property.cs" />
     <Compile Include="Test\Query.TraceAction.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="query.txt" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="README.md" />
@@ -73,13 +75,13 @@
       <Project>{b6ae1355-89f0-4ecb-83ac-b3b5118a6e4e}</Project>
       <Name>CSharpLogic</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Expr.Generator\Expr.Generator.csproj">
+    <ProjectReference Include="..\Expr.Generator\Expr.Reify.csproj">
       <Project>{0646d21e-db97-480d-bdd3-f0a783f2bc84}</Project>
-      <Name>Expr.Generator</Name>
+      <Name>Expr.Reify</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Expr.PatternMatch\Expr.PatternMatch.csproj">
+    <ProjectReference Include="..\Expr.PatternMatch\Expr.Unify.csproj">
       <Project>{c4f74bbb-98d6-462f-9d63-2590f646b9d3}</Project>
-      <Name>Expr.PatternMatch</Name>
+      <Name>Expr.Unify</Name>
     </ProjectReference>
     <ProjectReference Include="..\ExprSemantic\AG.Reasoner.csproj">
       <Project>{71ed2833-ddd7-43d4-8bdf-23fbb83d000c}</Project>

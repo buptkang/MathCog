@@ -48,6 +48,9 @@ namespace ExprSemantic
             LineSymbol ls; 
             result = exp.IsLine(out ls); //Algebraic line form
             if (result) dict.Add(PatternEnum.Line, ls); //LineSymbol
+
+            result = exp.IsLineRel(out ls);
+            if (result) dict.Add(PatternEnum.Line, ls); //LineSymbol
        
             result = exp.IsGoal(out obj); //Property form
             if (result) dict.Add(PatternEnum.Goal, obj); //EqGoal

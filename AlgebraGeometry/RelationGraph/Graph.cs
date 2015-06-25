@@ -333,5 +333,13 @@ namespace AlgebraGeometry
         }
 
         #endregion
+
+        #region Delegate for the interaction purpose
+        /*
+        public delegate void UpdateKnowledgeHandler(object sender, object args);
+
+        public event UpdateKnowledgeHandler KnowledgeUpdated;
+*/
+        #endregion
     }
 }

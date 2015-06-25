@@ -15,8 +15,26 @@ namespace ExprPatternMatchTest
     [TestFixture]
     public class TestLine
     {
+        /*
+         * True Positive Test:
+         * 
+         *  1: x=2 
+         *  2: y=1
+         *  3: x+by+1=0
+         *  4: 2x+y+1=0
+         *  5: ax=0
+         *  6: by=0
+         *  7: cy=0
+         *  TODO: ax-by+1=0
+         * 
+         * False Negative Test:
+         *  
+         *  1: 2+1=0
+         *  2: 2z+1=0
+         */
+
         [Test]
-        public void Test_Line1()
+        public void Test_Line_TruePositive_1()
         {
             //x=2 
             const string txt = "x=2";
@@ -30,7 +48,7 @@ namespace ExprPatternMatchTest
         }
 
         [Test]
-        public void Test_Line2()
+        public void Test_Line_TruePositive_2()
         {
             //y=1
             const string txt = "y=1";
@@ -45,7 +63,7 @@ namespace ExprPatternMatchTest
         }
 
         [Test]
-        public void Test_Line3()
+        public void Test_Line_TruePositive_3()
         {
             const string txt = "ax+by+1=0";
             starPadSDK.MathExpr.Expr expr = Text.Convert(txt);
@@ -59,7 +77,7 @@ namespace ExprPatternMatchTest
         }
 
         [Test]
-        public void Test_Line4()
+        public void Test_Line_TruePositive_4()
         {
             const string txt = "2x+y+1=0";
             starPadSDK.MathExpr.Expr expr = Text.Convert(txt);
@@ -73,7 +91,55 @@ namespace ExprPatternMatchTest
         }
 
         [Test]
-        public void Test_Line5()
+        public void Test_Line_TruePositive_5()
+        {
+            //ax=0
+            var a = new Var('a');
+            const string txt = "ax=0";
+            Expr expr = Text.Convert(txt);
+            LineSymbol ls;
+            bool result = expr.IsLine(out ls);
+            Assert.True(result);
+            Assert.NotNull(ls);
+            Assert.True(ls.SymA.Equals(a.ToString()));
+            Assert.Null(ls.SymB);
+            Assert.Null(ls.SymC);
+        }
+
+        [Test]
+        public void Test_Line_TruePositive_6()
+        {
+            //by=0
+            var b = new Var('b');
+            const string txt = "by=0";
+            Expr expr = Text.Convert(txt);
+            LineSymbol ls;
+            bool result = expr.IsLine(out ls);
+            Assert.True(result);
+            Assert.NotNull(ls);
+            Assert.Null(ls.SymA);
+            Assert.True(ls.SymB.Equals(b.ToString()));
+            Assert.Null(ls.SymC);
+        }
+
+        [Test]
+        public void Test_Line_TruePositive_7()
+        {
+            //cy=0
+            var c = new Var('c');
+            const string txt = "cy=0";
+            Expr expr = Text.Convert(txt);
+            LineSymbol ls;
+            bool result = expr.IsLine(out ls);
+            Assert.True(result);
+            Assert.NotNull(ls);
+            Assert.Null(ls.SymA);
+            Assert.True(ls.SymB.Equals(c.ToString()));
+            Assert.Null(ls.SymC);
+        }
+
+        [Test]
+        public void Test_Line_FalseNegative_1()
         {
             //2+1=0
             const string txt = "2+1=0";
@@ -84,7 +150,7 @@ namespace ExprPatternMatchTest
         }
 
         [Test]
-        public void Test_Line6()
+        public void Test_Line_FalseNegative_2()
         {
             //2z+1=0
             const string txt = "2z+1=0";
@@ -92,12 +158,6 @@ namespace ExprPatternMatchTest
             LineSymbol ls;
             bool result = expr.IsLine(out ls);
             Assert.False(result);
-        }
-
-        public void Test_line3()
-        {
-            //TODO
-            const string txt = "ax-by+1=0";
         }
     }
 }

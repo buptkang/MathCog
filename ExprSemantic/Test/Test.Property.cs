@@ -17,16 +17,13 @@ namespace ExprSemanticTest
         [Test]
         public void Test0()
         {
+            var reasoner = new Reasoner();
             //x = 1
             const string fact1 = "x = 1";
-            Reasoner.Instance.Load(fact1);
-            var result = Reasoner.Instance.TestGetProperties();
+            reasoner.Load(fact1);
+            var result = reasoner.TestGetProperties();
             Assert.NotNull(result);
-            Assert.True(result.Count == 1);
-            var prop = result[0] as AGPropertyExpr;
-            Assert.NotNull(prop);
-            var goal = prop.Goal as EqGoal;
-            Assert.True(goal.Traces.Count == 0);
+            Assert.True(result.Count == 0);
         }
 
         [Test]
@@ -34,10 +31,12 @@ namespace ExprSemanticTest
         {
             //Add arithmetic to the property
 
-            //x = 2-1
-            const string fact1 = "x = 2-1";
-            Reasoner.Instance.Load(fact1);
-            var result = Reasoner.Instance.TestGetProperties();
+            var reasoner = new Reasoner();
+
+            //a = 2-1
+            const string fact1 = "a = 2-1";
+            reasoner.Load(fact1);
+            var result = reasoner.TestGetProperties();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             var prop = result[0] as AGPropertyExpr;
@@ -45,11 +44,11 @@ namespace ExprSemanticTest
             var goal = prop.Goal as EqGoal;
             Assert.True(goal.Traces.Count == 1);
 
-            //x+1=1
-            const string fact2 = "x+1=1";
-            Reasoner.Instance.Unload(fact1);
-            Reasoner.Instance.Load(fact2);
-            result = Reasoner.Instance.TestGetProperties();
+            //a+1=1
+            const string fact2 = "a+1=1";
+            reasoner.Unload(fact1);
+            reasoner.Load(fact2);
+            result = reasoner.TestGetProperties();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             prop = result[0] as AGPropertyExpr;
@@ -58,11 +57,11 @@ namespace ExprSemanticTest
             Assert.NotNull(goal);
             Assert.True(goal.Traces.Count==2);
 
-            //x+1=2*2
-            const string fact3 = "x+1=2*2";
-            Reasoner.Instance.Unload(fact2);
-            Reasoner.Instance.Load(fact3);
-            result = Reasoner.Instance.TestGetProperties();
+            //a+1=2*2
+            const string fact3 = "a+1=2*2";
+            reasoner.Unload(fact2);
+            reasoner.Load(fact3);
+            result = reasoner.TestGetProperties();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             prop = result[0] as AGPropertyExpr;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -102,8 +103,9 @@ namespace AlgebraExpression
         /// <returns></returns>
         private static bool Unify(Var lhs, Term rhs, out Line line)
         {
+            //TODO
             line = null;
-            throw new Exception("TODO");            
+            return false;
         }
 
         private static bool Unify(Var lhs, Var rhs, out Line line)
@@ -120,14 +122,16 @@ namespace AlgebraExpression
 
         private static bool Unify(double lhs, Var rhs, out Line line)
         {
+            //TODO
             line = null;
-            throw new Exception("TODO");
+            return false;
         }
 
         private static bool Unify(double lhs, Term rhs, out Line line)
         {
+            //TODO
             line = null;
-            throw new Exception("TODO");            
+            return false;
         }
 
         /// <summary>
@@ -160,8 +164,9 @@ namespace AlgebraExpression
         /// <returns></returns>
         private static bool Unify(Term lhs, Var rhs, out Line line)
         {
+            //TODO
             line = null;
-            throw new Exception("TODO");       
+            return false;
         }
 
         /// <summary>
@@ -173,8 +178,145 @@ namespace AlgebraExpression
         /// <returns></returns>
         private static bool Unify(Term lhs, Term rhs, out Line line)
         {
+            //TODO
             line = null;
-            throw new Exception("TODO"); 
+            return false;
+        }
+    }
+
+    public static class LineTermEvaluator
+    {
+        private readonly static List<string> SpecialLabels = new List<string>()
+        {
+            "X", "x", "Y","y"
+        };
+
+        private static readonly List<Var> SpecialVars = new List<Var>()
+        {
+            new Var('x'),
+            new Var('X'),
+            new Var('y'),
+            new Var('Y')
+        };
+
+        private static readonly Var xKey = new Var("a");
+        private static readonly Var yKey = new Var('b');
+        private static readonly Var cKey = new Var('c');
+
+        private readonly static Term XTerm = new Term(Expression.Multiply,
+            new Tuple<object, object>(xKey, new Var('X')));
+        private readonly static Term xTerm = new Term(Expression.Multiply,
+            new Tuple<object, object>(xKey, new Var('x')));
+        private readonly static Term YTerm = new Term(Expression.Multiply,
+           new Tuple<object, object>(yKey, new Var('Y')));
+        private readonly static Term yTerm = new Term(Expression.Multiply,
+           new Tuple<object, object>(yKey, new Var('y')));
+
+        /// <summary>
+        /// recognize x-term, such as ax, transform it.
+        /// </summary>
+        /// <param name="obj"></param>
+        public static object RectifyLineTerm(object obj)
+        {
+            return TermEvaluator.RecognizeSpecialTerm(obj, SpecialLabels);
+        }
+
+        public static Line UnifyLineTerm(this Term term)
+        {
+            var argLst = term.Args as List<object>;
+            if (argLst == null) return null;
+
+            if (argLst.Count > 3)
+            {
+                return null;
+            }
+            var dict = new Dictionary<Var, object>();
+            Line line;
+            return UnifyLineTerm(argLst, 0, dict);
+        }
+
+        private static Line UnifyLineTerm(List<object> args, int index,
+                                         Dictionary<Var, object> dict)
+        {
+
+            if (index == args.Count)
+            {
+                object xCord = dict.ContainsKey(xKey) ? dict[xKey] : null;
+                object yCord = dict.ContainsKey(yKey) ? dict[yKey] : null;
+                object cCord = dict.ContainsKey(cKey) ? dict[cKey] : null;
+                return new Line(xCord, yCord, cCord);
+            }
+
+            object currArg = args[index];
+            bool finalResult = false;
+
+            var dictTemp = new Dictionary<object, object>();
+            bool result = LogicSharp.Unify(currArg, XTerm, dictTemp);
+            if (result)
+            {
+                Debug.Assert(dictTemp.ContainsKey(xKey));
+                if (dict.ContainsKey(xKey))
+                    throw new Exception("cannot contain two terms with same var");
+                dict.Add(xKey, dictTemp[xKey]);
+                finalResult = true;
+            }
+
+            result = LogicSharp.Unify(currArg, xTerm, dictTemp);
+            if (result)
+            {
+                Debug.Assert(dictTemp.ContainsKey(xKey));
+                if (dict.ContainsKey(xKey))
+                    throw new Exception("cannot contain two terms with same var");
+                dict.Add(xKey, dictTemp[xKey]);
+                finalResult = true;
+            }
+
+            result = LogicSharp.Unify(currArg, YTerm, dictTemp);
+            if (result)
+            {
+                Debug.Assert(dictTemp.ContainsKey(yKey));
+                if (dict.ContainsKey(yKey))
+                    throw new Exception("cannot contain two terms with same var");
+                dict.Add(yKey, dictTemp[yKey]);
+                finalResult = true;
+            }
+
+            result = LogicSharp.Unify(currArg, yTerm, dictTemp);
+            if (result)
+            {
+                Debug.Assert(dictTemp.ContainsKey(yKey));
+                if (dict.ContainsKey(yKey))
+                    throw new Exception("cannot contain two terms with same var");
+                dict.Add(yKey, dictTemp[yKey]);
+                finalResult = true;
+            }
+
+            double d;
+            result = LogicSharp.IsDouble(currArg, out d);
+            if (result)
+            {
+                if (dict.ContainsKey(cKey))
+                    throw new Exception("cannot contain two terms with same var");
+                dict.Add(cKey, d);
+                finalResult = true;
+            }
+
+            if (currArg is string)
+            {
+                if (dict.ContainsKey(cKey))
+                    throw new Exception("cannot contain two terms with same var");
+                dict.Add(cKey, new Var(currArg));
+                finalResult = true;
+            }
+
+            if (finalResult)
+            {
+                return UnifyLineTerm(args, index + 1, dict);
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

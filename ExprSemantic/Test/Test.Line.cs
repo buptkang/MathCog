@@ -311,6 +311,67 @@ namespace ExprSemanticTest
             Assert.Null(iEnum);
         }
 
+        [Test]
+        public void Test_Line_Sub4()
+        {
+            /*
+             * ax = 0
+             * a = 2 
+             * 
+             */
+            var reasoner = new Reasoner();
+            const string fact1 = "ax=0";
+            reasoner.Load(fact1);
+            var result = reasoner.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 1);
+            var ls = result[0];
+            Assert.NotNull(ls);
+            var lineSymbol = ls.ShapeSymbol as LineSymbol;
+            Assert.NotNull(lineSymbol);
+            var line = lineSymbol.Shape as Line;
+            Assert.NotNull(line);
+            Assert.False(line.Concrete);
+            Assert.True(lineSymbol.SymA.Equals("a"));
+            Assert.Null(lineSymbol.SymB);
+            Assert.True(lineSymbol.SymC.Equals("0"));
+
+            const string prop1 = "a=2";
+            reasoner.Load(prop1);
+            result = reasoner.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 1);
+            ls = result[0];
+            Assert.NotNull(ls);
+            lineSymbol = ls.ShapeSymbol as LineSymbol;
+            Assert.NotNull(lineSymbol);
+            line = lineSymbol.Shape as Line;
+            Assert.NotNull(line);
+            var lst = ls.RetrieveGeneratedShapes().ToList();
+            Assert.True(lst.Count == 1);
+            var gShapeExpr = lst[0] as AGShapeExpr;
+            Assert.NotNull(gShapeExpr);
+            var shape = gShapeExpr.ShapeSymbol.Shape as Line;
+            Assert.NotNull(shape);
+            Assert.True(shape.Concrete);
+            Assert.True(shape.A.Equals(2.0));
+            Assert.Null(shape.B);
+            Assert.True(shape.C.Equals(0.0));
+
+            reasoner.Unload(prop1);
+            result = reasoner.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 1);
+            ls = result[0];
+            Assert.NotNull(ls);
+            lineSymbol = ls.ShapeSymbol as LineSymbol;
+            Assert.NotNull(lineSymbol);
+            line = lineSymbol.Shape as Line;
+            Assert.NotNull(line);
+            IEnumerable<IKnowledge> iEnum = ls.RetrieveGeneratedShapes();
+            Assert.Null(iEnum);
+        }
+
         #endregion
 
     }

@@ -87,6 +87,11 @@ namespace AlgebraGeometry
             {
                 _c = new Var(_c);
             }
+
+            if (_c == null)
+            {
+                _c = 0.0d;
+            }
         }
 
         public Line(object a, object b, object c): 
@@ -225,7 +230,7 @@ namespace AlgebraGeometry
             {
                 var line = Shape as Line;
                 Debug.Assert(line != null);
-                return line.C.ToString();
+                return line.C != null ? line.C.ToString() : null;
             }
         }
 

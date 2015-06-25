@@ -30,11 +30,12 @@ namespace AlgebraGeometry
                         goalNode.OutEdges.Add(edge);
                         shapeNode.InEdges.Add(edge);
                     }
-
+                    /*
                     #region Interaction
                     if (KnowledgeUpdated != null)
                         KnowledgeUpdated(this, shapeNode.Shape);
                     #endregion
+                     * */
                     continue;
                 }
                 var line = shapeNode.Shape as Line;
@@ -47,11 +48,12 @@ namespace AlgebraGeometry
                         goalNode.OutEdges.Add(edge);
                         shapeNode.InEdges.Add(edge);
                     }
+                    /*
                     #region Interaction
                     if (KnowledgeUpdated != null)
                         KnowledgeUpdated(this, shapeNode.Shape);
                     #endregion
-
+                    */
                     continue;
                 }
             }
@@ -80,10 +82,12 @@ namespace AlgebraGeometry
                     goalNode.OutEdges.Add(edge);
                     shapeNode.InEdges.Add(edge);
                     ReifyByRelation(shapeNode); //dfs
+                    /*
                     #region Interaction
                     if (KnowledgeUpdated != null)
                         KnowledgeUpdated(this, shapeNode.Shape);
                     #endregion
+                     */ 
                     continue;
                 }
  
@@ -96,10 +100,12 @@ namespace AlgebraGeometry
                     goalNode.OutEdges.Add(edge);
                     shapeNode.InEdges.Add(edge);
                     ReifyByRelation(shapeNode); //dfs
+                    /*
                     #region Interaction
                     if (KnowledgeUpdated != null)
                         KnowledgeUpdated(this, shapeNode.Shape);
                     #endregion
+                     */ 
                     continue;
                 }
                 #endregion
@@ -122,10 +128,12 @@ namespace AlgebraGeometry
                 {
                     pt.UnReify(eqGoal);
                     ReifyByRelation(shapeNode);
+                    /*
                     #region Interaction
                     if (KnowledgeUpdated != null)
                         KnowledgeUpdated(this, pt);
                     #endregion
+                     */
                 }
 
                 var line = shapeNode.Shape as Line;
@@ -133,10 +141,12 @@ namespace AlgebraGeometry
                 {
                     line.UnReify(eqGoal);
                     ReifyByRelation(shapeNode);
+                    /*
                     #region Interaction
                     if (KnowledgeUpdated != null)
                         KnowledgeUpdated(this, line);
                     #endregion
+                     */ 
                 }
 
                 shapeNode.InEdges.Remove(outEdge);
@@ -169,12 +179,12 @@ namespace AlgebraGeometry
                         bool result = RelationLogic.Reify(sn.Shape, shape1, shape2);
                         if (result)
                         {
+                            /*
                             #region Interaction
-
                             if (KnowledgeUpdated != null)
                                 KnowledgeUpdated(this, sn.Shape);
-
                             #endregion
+                             */ 
                         }
                         //recursive update
                         ReifyByRelation(sn);

@@ -36,9 +36,7 @@ namespace GeometryLogicInference
             Assert.True(GeometryInference.Instance.CurrentGraph.Nodes.Count == 1);
 
             object optsObj = GeometryInference.Instance.Add(opts);
-            var goalNode = optsObj as GoalNode;
-            Assert.NotNull(goalNode);
-            var goal = goalNode.Goal as EqGoal;
+            var goal = optsObj as EqGoal;
             Assert.NotNull(goal);
             Assert.True(goal.Equals(opt2));
             Assert.True(GeometryInference.Instance.CurrentGraph.Nodes.Count == 2);
@@ -71,9 +69,7 @@ namespace GeometryLogicInference
             var opts = new List<object> { opt1, opt2 };
 
             object optsObj = GeometryInference.Instance.Add(opts);
-            var sn = optsObj as ShapeNode;
-            Assert.NotNull(sn);
-            var line = sn.Shape as Line;
+            var line = optsObj as Line;
             Assert.NotNull(line);
             Assert.True(line.Equals(opt1));
             Assert.True(GeometryInference.Instance.CurrentGraph.Nodes.Count == 1);

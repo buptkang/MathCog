@@ -1,8 +1,13 @@
-﻿Pattern Matching (parse) direction:
+﻿Syntax Pattern Match (Syntax Unification)
 
-Expr -> ShapeSymbol
+output:
+parse tree (Terms) of numeric value or string 
+
+==========================================================
+
+Pattern Matching (parse) direction:
 
 PEG parser(Parsing Expression Grammar)
 https://github.com/otac0n/Pegasus
 
-Pattern Matcher does not tackle relation issue.
+PointEvaluator: parse tree => PointSymbol

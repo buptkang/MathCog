@@ -12,194 +12,98 @@ using CSharpLogic;
 
 namespace AlgebraExpression
 {
-    public static class LineTermEvaluator
-    {
-        private readonly static List<string> SpecialTerms = new List<string>()
-        {
-            "X", "x", "Y","y"
-        };
-
-        private static readonly Var xKey = new Var("a");
-        private static readonly Var yKey = new Var('b');
-        private static readonly Var cKey = new Var('c');
-
-        private readonly static Term XTerm = new Term(Expression.Multiply,
-            new Tuple<object, object>(xKey, new Var('X')));
-        private readonly static Term xTerm = new Term(Expression.Multiply,
-            new Tuple<object, object>(xKey, new Var('x')));
-        private readonly static Term YTerm = new Term(Expression.Multiply,
-           new Tuple<object, object>(yKey, new Var('Y')));
-        private readonly static Term yTerm = new Term(Expression.Multiply,
-           new Tuple<object, object>(yKey, new Var('y')));
-        
-        /// <summary>
-        /// recognize x-term, such as ax, transform it.
-        /// </summary>
-        /// <param name="obj"></param>
-        public static object RectifyLineTerm(object obj)
-        {
-            return TermEvaluator.RecognizeSpecialTerm(obj, SpecialTerms);
-        }
-
-        public static Line UnifyLineTerm(this Term term)
-        {
-            Debug.Assert(term.Op.Method.Name.Equals("Add"));
-            var argLst = term.Args as List<object>;
-            if (argLst == null) return null;
-
-            if (argLst.Count > 3)
-            {
-                return null;
-            }
-            var dict = new Dictionary<Var, object>();
-            Line line;
-            return UnifyLineTerm(argLst, 0, dict);
-        }
-
-        private static Line UnifyLineTerm(List<object> args, int index,
-                                         Dictionary<Var, object> dict)
-        {
-
-            if (index == args.Count)
-            {
-                object xCord = dict.ContainsKey(xKey) ? dict[xKey] : null;
-                object yCord = dict.ContainsKey(yKey) ? dict[yKey] : null;
-                object cCord = dict.ContainsKey(cKey) ? dict[cKey] : null;
-                return new Line(xCord, yCord, cCord);
-            }
-
-            object currArg = args[index];
-            bool finalResult = false;
-
-            var dictTemp = new Dictionary<object, object>();
-            bool result = LogicSharp.Unify(currArg, XTerm, dictTemp);
-            if (result)
-            {
-                Debug.Assert(dictTemp.ContainsKey(xKey));
-                if (dict.ContainsKey(xKey)) 
-                    throw new Exception("cannot contain two terms with same var");
-                dict.Add(xKey,dictTemp[xKey]);
-                finalResult = true;
-            }
-
-            result = LogicSharp.Unify(currArg, xTerm, dictTemp);
-            if (result)
-            {
-                Debug.Assert(dictTemp.ContainsKey(xKey));
-                if (dict.ContainsKey(xKey))
-                    throw new Exception("cannot contain two terms with same var");
-                dict.Add(xKey, dictTemp[xKey]);
-                finalResult = true;
-            }
-
-            result = LogicSharp.Unify(currArg, YTerm, dictTemp);
-            if (result)
-            {
-                Debug.Assert(dictTemp.ContainsKey(yKey));
-                if (dict.ContainsKey(yKey))
-                    throw new Exception("cannot contain two terms with same var");
-                dict.Add(yKey, dictTemp[yKey]);
-                finalResult = true;
-            }
-
-            result = LogicSharp.Unify(currArg, yTerm, dictTemp);
-            if (result)
-            {
-                Debug.Assert(dictTemp.ContainsKey(yKey));
-                if (dict.ContainsKey(yKey))
-                    throw new Exception("cannot contain two terms with same var");
-                dict.Add(yKey, dictTemp[yKey]);
-                finalResult = true;
-            }
-
-            double d;
-            result = LogicSharp.IsDouble(currArg, out d);
-            if (result)
-            {        
-                if (dict.ContainsKey(cKey))
-                    throw new Exception("cannot contain two terms with same var");
-                dict.Add(cKey, d);
-                finalResult = true;
-            }
-
-            if (currArg is string)
-            {
-                if (dict.ContainsKey(cKey))
-                    throw new Exception("cannot contain two terms with same var");
-                dict.Add(cKey, new Var(currArg));
-                finalResult = true;                
-            }
-
-            if (finalResult)
-            {
-                return UnifyLineTerm(args, index + 1, dict);
-            }
-            else
-            {
-                return null;
-            }
-        }        
-    }
-
     public static class TermEvaluator
     {
         public static object RecognizeSpecialTerm(object obj, List<string> names)
         {
             if (LogicSharp.IsNumeric(obj)) return obj;
 
+            #region Var Information Extraction
+
             var variable = obj as Var;
             if (variable != null)
             {
                 var token = variable.ToString();
                 Debug.Assert(token != null);
+
+                #region Single Token Coeff Extraction
                 if (token.Length == 1)
                 {
-                    foreach (string name in names)
+                    if (names.Any(token.Equals))
                     {
-                        if (token.Equals(name))
-                        {
-                            return new Term(Expression.Multiply,
-                                new Tuple<object, object>(1, new Var(token)));
-                        }
+                        return new Term(Expression.Multiply,
+                            new Tuple<object, object>(1, new Var(token)));
                     }
                     return token;
                 }
+                #endregion
+
+                #region Multiple Tokens Grouping and Coeff Extraction
+
                 var coeffVar = token.Substring(0, token.Length - 1);
                 var specicalTerm = token.Substring(token.Length - 1, 1);
-                foreach (string name in names)
+                if (names.Any(specicalTerm.Equals))
                 {
-                    if (specicalTerm.Equals(name))
+                    Term tt;
+                    if (LogicSharp.IsNumeric(coeffVar))
                     {
-                        Term tt;
-                        if (LogicSharp.IsNumeric(coeffVar))
-                        {
-                            double d;
-                            LogicSharp.IsDouble(coeffVar, out d);
-
-                            tt = new Term(Expression.Multiply,
-                                            new Tuple<object, object>(d, new Var(specicalTerm)));
-                        }
-                        else
-                        {
-                            tt = new Term(Expression.Multiply,
-                                            new Tuple<object, object>(coeffVar, new Var(specicalTerm)));
-                        }
-                        return tt;
+                        double d;
+                        LogicSharp.IsDouble(coeffVar, out d);
+                        tt = new Term(Expression.Multiply,
+                            new Tuple<object, object>(d, new Var(specicalTerm)));
                     }
+                    else
+                    {
+                        tt = new Term(Expression.Multiply,
+                            new Tuple<object, object>(coeffVar, new Var(specicalTerm)));
+                    }
+                    return tt;
                 }
+
+                #endregion
 
                 return obj;
             }
+
+            #endregion
+
+            #region Term Information Extraction
+
             var term = obj as Term;
             if (term != null)
             {
                 var tuple = term.Args as Tuple<object, object>;
                 Debug.Assert(tuple != null);
-                object obj1, obj2;
+                object obj1 = null, obj2= null;
                 if (term.Op.Method.Name.Equals("Add"))
                 {
                     obj1 = RecognizeSpecialTerm(tuple.Item1, names);
                     obj2 = RecognizeSpecialTerm(tuple.Item2, names);                    
+                }
+                else if (term.Op.Method.Name.Equals("Multiply"))
+                {
+                    #region Case: change Var to string if Speical Var found
+                    var variable2 = tuple.Item2 as Var;
+                    if (variable2 != null)
+                    {
+                        bool foundSpecialTerm = false;
+                        foreach (var name in names.Where(name => variable2.ToString().Equals(name)))
+                        {
+                            foundSpecialTerm = true;
+                        }
+                        if (foundSpecialTerm)
+                        {
+                            //change the other from Var to string
+                            var variable1 = tuple.Item1 as Var;
+                            if (variable1 != null)
+                            {
+                                obj1 = variable1.ToString();
+                            }
+                        }
+                    }
+                    #endregion
+                    if (obj1 == null) obj1 = tuple.Item1;
+                    obj2 = tuple.Item2;
                 }
                 else
                 {
@@ -216,6 +120,9 @@ namespace AlgebraExpression
                     return obj;
                 }
             }
+
+            #endregion
+
             return obj;
         }
 
@@ -273,14 +180,18 @@ namespace AlgebraExpression
 
             #endregion
 
+            //return new Term(term.Op, args);
+
             if (arg1Term != null || arg2Term != null)
             {
                 return new Term(term.Op, args);
             }
             else
             {
-                return term;
-            }
+                var uniqueArg = new List<object>();
+                uniqueArg.Add(term);
+                return new Term(Expression.Add, uniqueArg);
+            } 
         }
 
         public static Term Treeify(this Term term)

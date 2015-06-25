@@ -262,7 +262,6 @@ namespace ExprSemantic
                     obj = iObj;
                     return true;
                 }
-
                 obj = new Var((string)obj);
                 return true;
             }
@@ -553,13 +552,13 @@ namespace ExprSemantic
             {
                 if (hasLabel)
                 {
-                    var temp = ExprKnowledgeFactory.CreatePointSymbol((string)label,coord1, coord2);
+                    var temp = PointEvaluator.CreatePointSymbol((string)label,coord1, coord2);
                     //point = new AGShapeExpr(expr, temp);
                     point =  temp;
                 }
                 else
                 {
-                    var temp = ExprKnowledgeFactory.CreatePointSymbol(coord1, coord2);
+                    var temp = PointEvaluator.CreatePointSymbol(coord1, coord2);
                     //point = new AGShapeExpr(expr, temp);
                     point = temp;
                 }
@@ -616,7 +615,52 @@ namespace ExprSemantic
             }
         }
 
-        
+        public static bool IsLineRel(this Expr expr, out LineSymbol ls)
+        {
+            ls = null;
+            var compExpr = expr as CompositeExpr;
+            if (compExpr == null) return false;
+
+            if (compExpr.Head.Equals(WellKnownSym.times) &&
+                compExpr.Args.Count() == 2)
+            {
+                var underExpr = compExpr.Args[1] as CompositeExpr;
+                if (underExpr == null) return false;
+                if (underExpr.Head.Equals(WellKnownSym.divide)
+                    && underExpr.Args.Count() == 1)
+                {
+                    var expr1 = underExpr.Args[0] as CompositeExpr;
+                    if (expr1 == null) return false;
+
+                    if (expr1.Head.Equals(WellKnownSym.times) &&
+                        expr1.Args.Count() == 2)
+                    {
+                        object obj1, obj2;
+                        bool result1 = expr1.Args[0].IsLabel(out obj1);
+                        bool result2 = expr1.Args[1].IsLabel(out obj2);
+
+                        if (result1 && result2)
+                        {
+                            var str1 = obj1 as string;
+                            var str2 = obj2 as string;
+                            Debug.Assert(str1 != null);
+                            Debug.Assert(str2 != null);
+                            string label = str1 + str2;
+                            var line = new Line(label);
+                            ls = new LineSymbol(line);
+                            return true;
+                        }
+                        return false;                        
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                return false;
+            }
+            return false;
+        }
     }
 
     public static class NotInUse
@@ -899,8 +943,6 @@ namespace ExprSemantic
                 return false;
             }
         }
-
-       
 
         //public static bool IsDistanceForm(this Expr expr, out IKnowledgeExpr distanceExpr)
         //{

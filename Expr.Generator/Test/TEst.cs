@@ -16,8 +16,6 @@ namespace ExprGeneratorTest
 
             //var x = new Var('x');            
             //var rhs = new Term(Expression.Substract, )
-
-
         }
     }
 }
