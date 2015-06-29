@@ -25,6 +25,11 @@ namespace AlgebraGeometry
             CachedGoals.RemoveWhere(pair => pair.Value.Equals(goal));
         }
 
+        public List<EqGoal> RetrieveGoals()
+        {
+            return CachedGoals.Select(pair => pair.Value).ToList();
+        }
+
         public virtual void UndoGoal(EqGoal goal, object parent) { }
 
         public object EvalGoal(object field, EqGoal goal)
