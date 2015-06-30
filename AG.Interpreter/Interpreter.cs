@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AlgebraGeometry;
 using CSharpLogic;
 using ExprSemantic;
 using GuiLabs.Undo;
@@ -153,7 +154,14 @@ namespace AG.Interpreter
         {
             object result = LoadQuery(expr);
             if (result == null) return _reasoner.Load(expr);
-            else return result;
+            return result;
+        }
+
+        public object Load(Expr expr, ShapeType st)
+        {
+            object result = LoadQuery(expr);
+            if (result == null) return _reasoner.Load(expr, st);
+            return result;
         }
 
         public void UnLoad(string str)

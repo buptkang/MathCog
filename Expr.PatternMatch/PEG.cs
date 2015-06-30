@@ -51,7 +51,24 @@ namespace ExprSemantic
                 }
                 label = word.Word;
                 return true;
-            }           
+            }
+            else if (expr is CompositeExpr) // merge labels
+            {
+                var composite = expr as CompositeExpr;
+                if (composite.Head.Equals(WellKnownSym.times))
+                {
+                    var builder = new StringBuilder();
+                    foreach (Expr tempExpr in composite.Args)
+                    {
+                        object tempObj;
+                        bool result = tempExpr.IsLabel(out tempObj);
+                        if (!result) return false;
+                        builder.Append(tempObj);
+                    }
+                    label = builder.ToString();
+                    return true;
+                }
+            }
             return false;
         }
 

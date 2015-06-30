@@ -134,6 +134,21 @@ namespace GeometryLogicInference
             List<Shape> shapes = GeometryInference.Instance.CurrentGraph.RetrieveShapes();
             Assert.True(shapes.Count == 2);
 
+            //4. user input to solve ambiguity
+            object obj1 = GeometryInference.Instance.SolveAmbiguityByUser(label, ShapeType.Line);
+            var gLine = obj1 as Line;
+            Assert.NotNull(gLine);
+
+            shapes = GeometryInference.Instance.CurrentGraph.RetrieveShapes();
+            Assert.True(shapes.Count == 3);
+
+            obj1 = GeometryInference.Instance.SolveAmbiguityByUser(label, ShapeType.LineSegment);
+            var gLingSeg = obj1 as LineSegment;
+            Assert.NotNull(gLingSeg);
+
+            shapes = GeometryInference.Instance.CurrentGraph.RetrieveShapes();
+            Assert.True(shapes.Count == 3);
+
             GeometryInference.Instance.Delete(ptA);
             Assert.True(GeometryInference.Instance.CurrentGraph.Nodes.Count == 1);
 

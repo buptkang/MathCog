@@ -83,6 +83,8 @@ namespace AlgebraGeometry
                 //lazy evaluation    
                 //Constraint solving on Graph
                 var lineSeg = new LineSegment(null); //Ghost Line Segment
+                lineSeg.Pt1 = pt1;
+                lineSeg.Pt2 = pt2;
                 return lineSeg;
             }
         }

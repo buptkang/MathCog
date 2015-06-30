@@ -36,6 +36,31 @@ namespace ExprSemantic
         }
 
         private bool EvalExprPatterns(Expr expr, object obj, 
+                                ShapeType st, out object output)
+        {
+            output = null;
+
+            //deterministic
+            var ss = obj as ShapeSymbol;
+            if (ss != null) return EvalExprPatterns(expr, ss, out output);
+
+            //deterministic
+            var goal = obj as EqGoal;
+            if (goal != null) return EvalExprPatterns(expr, goal, out output);
+
+            //non-deterministic
+            var str = obj as string;
+            if (str != null) return EvalExprPatterns(expr, str, st, out output);
+
+            //non-deterministic
+            var dict = obj as Dictionary<PatternEnum, object>;
+            //ambiguity of input pattern
+            if (dict != null) return EvalExprPatterns(expr, dict, out output);
+
+            return false;
+        }
+
+        private bool EvalExprPatterns(Expr expr, object obj, 
                                       out object output)
         {
             output = null;
@@ -150,10 +175,25 @@ namespace ExprSemantic
         private bool EvalExprPatterns(Expr expr, string str,
             out object output)
         {
-            output = null;
             object obj = GeometryInference.Instance.Add(str);
-            return EvalNonDeterministic(expr, obj, out output);           
+            return EvalNonDeterministic(expr, obj, out output);
         }
+
+        /// <summary>
+        /// Relation Input Pattern Match
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="str"></param>
+        /// <param name="st"></param>
+        /// <param name="output"></param>
+        /// <returns></returns>
+        private bool EvalExprPatterns(Expr expr, string str,
+            ShapeType st, out object output)
+        {
+            object obj = GeometryInference.Instance.SolveAmbiguityByUser(str, st);
+            return EvalNonDeterministic(expr, obj, out output);
+        }
+
 
         /// <summary>
         /// ShapeSymbol Input Pattern Match

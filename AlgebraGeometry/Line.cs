@@ -177,6 +177,8 @@ namespace AlgebraGeometry
         {
         }
 
+        #region Symbolic Elements
+
         public string SymA
         {
             get
@@ -419,6 +421,8 @@ namespace AlgebraGeometry
                 return string.Format("{0}{1}{2}=0", TermX, TermY, TermC);
             }
         }
+
+        #endregion
 
         public override string ToString()
         {

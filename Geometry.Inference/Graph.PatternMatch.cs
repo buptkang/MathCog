@@ -17,6 +17,37 @@ namespace AlgebraGeometry
         /// </summary>
         /// <param name="graph"></param>
         /// <param name="label"></param>
+        /// <param name="st"></param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static bool InferVariable(this RelationGraph graph,
+            string label, ShapeType st, out object obj)
+        {
+            obj = null;
+            Debug.Assert(label != null);
+
+            if (label.ToCharArray().Length == 2)
+            {
+                string str1 = label.ToCharArray()[0].ToString();
+                string str2 = label.ToCharArray()[1].ToString();
+
+                object obj1 = graph.RetrieveObjectByLabel(str1);
+                object obj2 = graph.RetrieveObjectByLabel(str2);
+
+                if (obj1 == null || obj2 == null) return false;
+
+                return RelationLogic.CreateRelation(obj1, obj2, st, out obj);
+            }
+            //TODO
+            return false;
+        }
+
+        /// <summary>
+        /// This func takes charge of pattern match string with 
+        /// existing nodes
+        /// </summary>
+        /// <param name="graph"></param>
+        /// <param name="label"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
         public static bool InferVariable(this RelationGraph graph, 

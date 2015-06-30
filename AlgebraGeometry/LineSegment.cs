@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using CSharpLogic;
@@ -50,19 +51,89 @@ namespace AlgebraGeometry
                 Label = string.Concat(label1, label2);
             }
         }
-    }
 
+        public override bool Concrete
+        {
+            get
+            {
+                return !Var.ContainsVar(_pt1.XCoordinate) &&
+                       !Var.ContainsVar(_pt1.YCoordinate) &&
+                       !Var.ContainsVar(_pt2.XCoordinate) &&
+                       !Var.ContainsVar(_pt2.YCoordinate);
+            }
+        }
+
+        public override List<Var> GetVars()
+        {
+            var lst = new List<Var>();
+            lst.Add(Var.GetVar(_pt1.XCoordinate));
+            lst.Add(Var.GetVar(_pt1.YCoordinate));
+            lst.Add(Var.GetVar(_pt2.XCoordinate));
+            lst.Add(Var.GetVar(_pt2.YCoordinate));
+            return lst;
+        }
+
+        #region IEqutable
+
+        public override bool Equals(Shape other)
+        {
+            if (other == null) return false;
+            if (other is LineSegment)
+            {
+                var lineSeg = other as LineSegment;
+                bool equalPt1 = Pt1.Equals(lineSeg.Pt1);
+                bool equalPt2 = Pt2.Equals(lineSeg.Pt2);
+                if (!(equalPt1 || equalPt2)) return false;
+            }
+            return base.Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            Debug.Assert(Label != null);
+            if (Pt1 != null)
+            {
+                if (Pt2 != null)
+                {
+                    return Pt1.GetHashCode() ^ Pt2.GetHashCode() ^ Label.GetHashCode();
+                }
+                else
+                {
+                    return Pt1.GetHashCode() ^ Label.GetHashCode();
+                }
+            }
+            else
+            {
+                if (Pt2 != null)
+                {
+                    return Pt2.GetHashCode() ^ Label.GetHashCode();
+                }
+                else
+                {
+                    return Label.GetHashCode();
+                }
+            }
+        }
+
+        #endregion
+    }
 
     public class LineSegmentSymbol : ShapeSymbol
     {
-        public LineSegmentSymbol(LineSegment _seg) : base(_seg)
-        {
-
-        }
-
         public override IEnumerable<ShapeSymbol> RetrieveGeneratedShapes()
         {
-            throw new NotImplementedException();
+            if (Shape.CachedSymbols.Count == 0) return null;
+            return Shape.CachedSymbols.Select(s => s as LineSegment)
+                .Select(lineSeg => new LineSegmentSymbol(lineSeg)).ToList();
+        }
+
+        public LineSegmentSymbol(LineSegment _seg) : base(_seg)
+        {
+        }
+
+        public override string ToString()
+        {
+            return "LineSegment";
         }
     }
 }

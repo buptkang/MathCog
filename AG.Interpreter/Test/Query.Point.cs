@@ -117,8 +117,6 @@ namespace AG.Interpreter.Test
 
         #endregion
 
-
-
         #region Multiple points
 
         [Test]
@@ -154,7 +152,5 @@ namespace AG.Interpreter.Test
         }
 
         #endregion 
-    
-    
     }
 }

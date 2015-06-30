@@ -50,10 +50,10 @@ namespace ExprGenerator
 
             var ls = ss as LineSymbol;
             if (ls != null) return ls.ToExpr();
-/*
+
             var lineSeg = ss as LineSegmentSymbol;
-            if(lineSeg != null) return lineSeg
-*/
+            if (lineSeg != null) return lineSeg.ToExpr();
+
             return null;
         }
 
@@ -147,7 +147,7 @@ namespace ExprGenerator
         public static Expr ToExpr(this LineSegmentSymbol lss)
         {
             Debug.Assert(lss.Shape.Label != null);
-            return Text.Convert(lss.Shape.Label);
+            return Text.Convert(lss.ToString());
         }
     }
 }

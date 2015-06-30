@@ -136,6 +136,10 @@ namespace AlgebraGeometry
             var lineObj = nodes[0].Shape as LineSegment;
             Assert.NotNull(lineObj);
             Assert.True(lineObj.Label.Equals("AB"));
+            Assert.NotNull(lineObj.Pt1);
+            Assert.True(lineObj.Pt1.Equals(A));
+            Assert.NotNull(lineObj.Pt2);
+            Assert.True(lineObj.Pt2.Equals(B));
             Assert.True(lineObj.RelationStatus);
             Assert.True(lineObj.CachedSymbols.Count == 1);
         }

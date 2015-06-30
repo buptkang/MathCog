@@ -42,7 +42,19 @@ namespace AlgebraGeometry
 
             if (nonRelLabel == null) return false;
             Debug.Assert(relLabel != null);
-            return relLabel.Contains(nonRelLabel);
+            bool result= relLabel.Contains(nonRelLabel);
+            if (result)
+            {
+                if (relLabel.Substring(0, 1).Equals(nonRelLabel))
+                {
+                    lineSeg.Pt1 = point;
+                }
+                if (relLabel.Substring(1, 1).Equals(nonRelLabel))
+                {
+                    lineSeg.Pt2 = point;
+                }
+            }
+            return result;
         }
 
         private static bool VerifyRelation(Line line, object dependent)
@@ -55,7 +67,7 @@ namespace AlgebraGeometry
             string nonRelLabel = point.Label;
 
             if (nonRelLabel == null) return false;
-            Debug.Assert(relLabel != null);
+            if (relLabel == null) return false;
             return relLabel.Contains(nonRelLabel);
         }
     }

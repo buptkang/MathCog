@@ -166,6 +166,43 @@ namespace GeometryLogicInference
 
         #region Label Analysis
 
+        /// <summary>
+        /// User Input
+        /// </summary>
+        /// <param name="label"></param>
+        /// <param name="st"></param>
+        /// <returns></returns>
+        public object SolveAmbiguityByUser(string label, ShapeType st)
+        {
+            Delete(label);
+            return EvalLabel(label, st);
+        }
+
+        private object EvalLabel(string label, ShapeType st)
+        {
+            object obj1;
+            bool result = _relationGraph.InferVariable(label, st, out obj1);
+            if (result)
+            {
+                var unifiedShape = obj1 as Shape;
+                if (unifiedShape != null)
+                {
+                    //object value = Add(unifiedShape);
+                    GraphNode gn = _relationGraph.AddNode(unifiedShape);
+                    _cache.Add(new KeyValuePair<object, object>(label, gn));
+                    return unifiedShape;
+                }
+            }
+            else
+            {
+                var types = obj1 as List<ShapeType>;
+                //User Feedback Required
+                if (types != null) throw new Exception("Cannot reach here");
+            }
+            _cache.Add(new KeyValuePair<object, object>(label, null));
+            return label;
+        }
+
         private object EvalLabel(string label)
         {
             object obj1;
