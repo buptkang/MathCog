@@ -127,6 +127,7 @@ namespace AlgebraGeometry
 
         public override bool Equals(Shape other)
         {
+            if (other == null) return false;
             if (other is Line)
             {
                 var line = other as Line;

@@ -36,4 +36,17 @@ namespace AlgebraGeometry
         //            RadiusAlongYAxis = _radiusAlongYAxis;
         //        }
     }
+
+    public class EllipseSymbol : ShapeSymbol
+    {
+        public EllipseSymbol(Shape _shape) : base(_shape)
+        {
+        }
+
+        public override IEnumerable<ShapeSymbol> RetrieveGeneratedShapes()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
 }

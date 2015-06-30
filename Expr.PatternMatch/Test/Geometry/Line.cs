@@ -25,7 +25,12 @@ namespace ExprPatternMatchTest
          *  5: ax=0
          *  6: by=0
          *  7: cy=0
+         *  8: -2.1x-3y-1=0
+         *  9: -2x+3.2y+1=0
+         *  
+         * 
          *  TODO: ax-by+1=0
+         *  TODO: -ax-by-9=0
          * 
          * False Negative Test:
          *  
@@ -103,7 +108,7 @@ namespace ExprPatternMatchTest
             Assert.NotNull(ls);
             Assert.True(ls.SymA.Equals(a.ToString()));
             Assert.Null(ls.SymB);
-            Assert.Null(ls.SymC);
+            Assert.True(ls.SymC.Equals("0"));
         }
 
         [Test]
@@ -119,7 +124,7 @@ namespace ExprPatternMatchTest
             Assert.NotNull(ls);
             Assert.Null(ls.SymA);
             Assert.True(ls.SymB.Equals(b.ToString()));
-            Assert.Null(ls.SymC);
+            Assert.True(ls.SymC.Equals("0"));
         }
 
         [Test]
@@ -135,7 +140,35 @@ namespace ExprPatternMatchTest
             Assert.NotNull(ls);
             Assert.Null(ls.SymA);
             Assert.True(ls.SymB.Equals(c.ToString()));
-            Assert.Null(ls.SymC);
+            Assert.True(ls.SymC.Equals("0"));
+        }
+
+        [Test]
+        public void Test_Line_TruePositive_8()
+        {
+            const string txt = "-2.1x-3y-1=0";
+            Expr expr = Text.Convert(txt);
+            LineSymbol ls;
+            bool result = expr.IsLine(out ls);
+            Assert.True(result);
+            Assert.NotNull(ls);
+            Assert.True(ls.SymA.Equals("-2.1"));
+            Assert.True(ls.SymB.Equals("-3"));
+            Assert.True(ls.SymC.Equals("-1"));
+        }
+
+        [Test]
+        public void Test_Line_TruePositive_9()
+        {
+            const string txt = "-2x+3.2y+1=0";
+            Expr expr = Text.Convert(txt);
+            LineSymbol ls;
+            bool result = expr.IsLine(out ls);
+            Assert.True(result);
+            Assert.NotNull(ls);
+            Assert.True(ls.SymA.Equals("-2"));
+            Assert.True(ls.SymB.Equals("3.2"));
+            Assert.True(ls.SymC.Equals("1"));
         }
 
         [Test]

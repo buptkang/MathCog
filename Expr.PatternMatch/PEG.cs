@@ -248,7 +248,7 @@ namespace ExprSemantic
 
     public static class ExpressionPatternExtensions
     {
-        public static bool IsExpression(this starPadSDK.MathExpr.Expr expr, out object obj)
+        public static bool IsExpression(this Expr expr, out object obj)
         {
             obj = null;
 
@@ -317,8 +317,20 @@ namespace ExprSemantic
             }
             else if (root.Head.Equals(WellKnownSym.minus))
             {
-                //-by
-                throw new Exception("TODO");
+                Debug.Assert(root.Args.Length == 1);
+                object obj2;
+                bool result = root.Args[0].IsLabel(out obj2);
+                if (result)
+                {
+                    var label = obj2 as string;
+                    string newLabel = "-" + label;
+                    obj = new Var(newLabel);
+                    return true;
+                }
+                else
+                {
+                    throw new Exception("TODO");
+                }
             }
             else if (root.Head.Equals(WellKnownSym.times))
             {
