@@ -692,6 +692,333 @@ namespace ExprSemantic
         }
     }
 
+    public static class EllipsePatternExtensions
+    {
+        #region Ellipse Matching
+/*
+
+        private bool MatchEllipseImplicitTemplate(Expr expr, out ShapeExpr shape)
+        {
+            if (!(expr is CompositeExpr))
+            {
+                shape = null;
+                return false;
+            }
+
+            var compositeExpr = expr as CompositeExpr;
+
+            if (!compositeExpr.Head.Equals(WellKnownSym.equals)
+                || compositeExpr.Args.Length != 2)
+            {
+                shape = null;
+                return false;
+            }
+
+            Expr leftExpr = compositeExpr.Args[0];
+            Expr rightExpr = compositeExpr.Args[1];
+
+            if (!(rightExpr is IntegerNumber && leftExpr is CompositeExpr))
+            {
+                shape = null;
+                return false;
+            }
+
+            var rightNumber = rightExpr as IntegerNumber;
+            if (!rightNumber.Num.IsOne)
+            {
+                shape = null;
+                return false;
+            }
+            var leftCompositeExpr = leftExpr as CompositeExpr;
+
+            if (!(leftCompositeExpr.Head.Equals(WellKnownSym.plus) &&
+                  leftCompositeExpr.Args.Length == 2))
+            {
+                shape = null;
+                return false;
+            }
+
+            Expr xTerm = leftCompositeExpr.Args[0];
+            Expr yTerm = leftCompositeExpr.Args[1];
+
+            if (!(xTerm is CompositeExpr && yTerm is CompositeExpr))
+            {
+                shape = null;
+                return false;
+            }
+
+            var xCompositeTerm = xTerm as CompositeExpr;
+            var yCompositeTerm = yTerm as CompositeExpr;
+
+
+            /////////////////////////////////////////////////////////////////
+
+            if (!(xCompositeTerm.Head.Equals(WellKnownSym.times) &&
+                  yCompositeTerm.Head.Equals(WellKnownSym.times) &&
+                  xCompositeTerm.Args.Length == 2 &&
+                  yCompositeTerm.Args.Length == 2))
+            {
+                shape = null;
+                return false;
+            }
+
+            Expr xCordTerm = xCompositeTerm.Args[0];
+            Expr xSemiTerm = xCompositeTerm.Args[1];
+            Expr yCordTerm = yCompositeTerm.Args[0];
+            Expr ySemiTerm = yCompositeTerm.Args[1];
+
+            if (!(xCordTerm is CompositeExpr && xSemiTerm is CompositeExpr &&
+                  yCordTerm is CompositeExpr && ySemiTerm is CompositeExpr))
+            {
+                shape = null;
+                return false;
+            }
+
+            var xCordCompositeTerm = xCordTerm as CompositeExpr;
+            var xSemiCompositeTerm = xSemiTerm as CompositeExpr;
+            var yCordCompositeTerm = yCordTerm as CompositeExpr;
+            var ySemiCompositeTerm = ySemiTerm as CompositeExpr;
+
+            if (!(xSemiCompositeTerm.Head.Equals(WellKnownSym.divide) &&
+                  ySemiCompositeTerm.Head.Equals(WellKnownSym.divide) &&
+                  xSemiCompositeTerm.Args.Length == 1 &&
+                  ySemiCompositeTerm.Args.Length == 1))
+            {
+                shape = null;
+                return false;
+            }
+
+            xSemiTerm = xSemiCompositeTerm.Args[0];
+            ySemiTerm = ySemiCompositeTerm.Args[0];
+
+            if (!(ySemiTerm is CompositeExpr && xSemiTerm is CompositeExpr))
+            {
+                shape = null;
+                return false;
+            }
+
+            xSemiCompositeTerm = xSemiTerm as CompositeExpr;
+            ySemiCompositeTerm = ySemiTerm as CompositeExpr;
+
+            if (!(xCordCompositeTerm.Head.Equals(WellKnownSym.power) &&
+                  xSemiCompositeTerm.Head.Equals(WellKnownSym.power) &&
+                  yCordCompositeTerm.Head.Equals(WellKnownSym.power) &&
+                  ySemiCompositeTerm.Head.Equals(WellKnownSym.power) &&
+                  xCordCompositeTerm.Args.Length == 2 &&
+                  xSemiCompositeTerm.Args.Length == 2 &&
+                  yCordCompositeTerm.Args.Length == 2 &&
+                  ySemiCompositeTerm.Args.Length == 2))
+            {
+                shape = null;
+                return false;
+            }
+
+            var xCordSquareTerm = xCordCompositeTerm.Args[1];
+            var xSemiSquareTerm = xSemiCompositeTerm.Args[1];
+            var yCordSquareTerm = yCordCompositeTerm.Args[1];
+            var ySemiSquareTerm = ySemiCompositeTerm.Args[1];
+
+            if (!(xCordSquareTerm is IntegerNumber &&
+                  xSemiSquareTerm is IntegerNumber &&
+                  yCordSquareTerm is IntegerNumber &&
+                  ySemiSquareTerm is IntegerNumber))
+            {
+                shape = null;
+                return false;
+            }
+
+            var xCordSquareNumber = xCordSquareTerm as IntegerNumber;
+            var xSemiSquareNumber = xSemiSquareTerm as IntegerNumber;
+            var yCordSquareNumber = yCordSquareTerm as IntegerNumber;
+            var ySemiSquareNumber = ySemiSquareTerm as IntegerNumber;
+
+            if (!(xCordSquareNumber.Num == 2 &&
+                  xSemiSquareNumber.Num == 2 &&
+                  yCordSquareNumber.Num == 2 &&
+                  ySemiSquareNumber.Num == 2))
+            {
+                shape = null;
+                return false;
+            }
+
+            xCordTerm = xCordCompositeTerm.Args[0];
+            xSemiTerm = xSemiCompositeTerm.Args[0];
+            yCordTerm = yCordCompositeTerm.Args[0];
+            ySemiTerm = ySemiCompositeTerm.Args[0];
+
+            #region center Point coordinate
+
+            if (!((xCordTerm is CompositeExpr) &&
+                (yCordTerm is CompositeExpr)))
+            {
+                shape = null;
+                return false;
+            }
+
+            xCordCompositeTerm = xCordTerm as CompositeExpr;
+            yCordCompositeTerm = yCordTerm as CompositeExpr;
+
+            if (!(xCordCompositeTerm.Head.Equals(WellKnownSym.plus) &&
+                  yCordCompositeTerm.Head.Equals(WellKnownSym.plus) &&
+                  xCordCompositeTerm.Args.Length == 2 &&
+                  yCordCompositeTerm.Args.Length == 2 &&
+                  xCordCompositeTerm.Args[0] is LetterSym &&
+                  yCordCompositeTerm.Args[0] is LetterSym))
+            {
+                shape = null;
+                return false;
+            }
+
+            var xTermSym = xCordCompositeTerm.Args[0] as LetterSym;
+            var yTermSym = yCordCompositeTerm.Args[0] as LetterSym;
+
+            if (!(xTermSym.Letter.ToString().Equals("x") || xTermSym.Letter.ToString().Equals("X")))
+            {
+                shape = null;
+                return false;
+            }
+
+            if (!(yTermSym.Letter.ToString().Equals("y") || yTermSym.Letter.ToString().Equals("Y")))
+            {
+                shape = null;
+                return false;
+            }
+
+            xCordTerm = xCordCompositeTerm.Args[1];
+            yCordTerm = yCordCompositeTerm.Args[1];
+
+            double xCor, yCor;
+
+            if (xCordTerm is CompositeExpr)  // X - 1 e.g
+            {
+                var xCordComposite = xCordTerm as CompositeExpr;
+                if (!(xCordComposite.Head.Equals(WellKnownSym.minus) &&
+                     xCordComposite.Args.Length == 1))
+                {
+                    shape = null;
+                    return false;
+                }
+
+                if (xCordComposite.Args[0] is IntegerNumber)
+                {
+                    var xCordInteger = xCordComposite.Args[0] as IntegerNumber;
+                    xCor = double.Parse(xCordInteger.Num.ToString());
+                }
+                else if (xCordComposite.Args[0] is DoubleNumber)
+                {
+                    var xCordDouble = xCordComposite.Args[0] as DoubleNumber;
+                    xCor = xCordDouble.Num;
+                }
+                else
+                {
+                    shape = null;
+                    return false;
+                }
+            }
+            else if (xCordTerm is IntegerNumber)
+            {
+                var xCordInteger = xCordTerm as IntegerNumber;
+                xCor = -1 * double.Parse(xCordInteger.Num.ToString());
+            }
+            else if (xCordTerm is DoubleNumber)
+            {
+                var xCordDouble = xCordTerm as DoubleNumber;
+                xCor = -1 * xCordDouble.Num;
+            }
+            else
+            {
+                shape = null;
+                return false;
+            }
+
+            if (yCordTerm is CompositeExpr)  // X - 1 e.g
+            {
+                var yCordComposite = yCordTerm as CompositeExpr;
+                if (!(yCordComposite.Head.Equals(WellKnownSym.minus) &&
+                     yCordComposite.Args.Length == 1))
+                {
+                    shape = null;
+                    return false;
+                }
+
+                if (yCordComposite.Args[0] is IntegerNumber)
+                {
+                    var yCordInteger = yCordComposite.Args[0] as IntegerNumber;
+                    yCor = double.Parse(yCordInteger.Num.ToString());
+                }
+                else if (yCordComposite.Args[0] is DoubleNumber)
+                {
+                    var yCordDouble = yCordComposite.Args[0] as DoubleNumber;
+                    yCor = yCordDouble.Num;
+                }
+                else
+                {
+                    shape = null;
+                    return false;
+                }
+            }
+            else if (yCordTerm is IntegerNumber)
+            {
+                var yCordInteger = yCordTerm as IntegerNumber;
+                yCor = -1 * double.Parse(yCordInteger.Num.ToString());
+            }
+            else if (yCordTerm is DoubleNumber)
+            {
+                var yCordDouble = yCordTerm as DoubleNumber;
+                yCor = -1 * yCordDouble.Num;
+            }
+            else
+            {
+                shape = null;
+                return false;
+            }
+
+            #endregion
+
+            var center = new Point(xCor, yCor);
+
+            double radiusAlongX, radiusAlongY;
+            if (xSemiTerm is IntegerNumber)
+            {
+                var xSemiInteger = xSemiTerm as IntegerNumber;
+                radiusAlongX = double.Parse(xSemiInteger.Num.ToString());
+            }
+            else if (xSemiTerm is DoubleNumber)
+            {
+                var radiusDouble = xSemiTerm as DoubleNumber;
+                radiusAlongX = radiusDouble.Num;
+            }
+            else
+            {
+                shape = null;
+                return false;
+            }
+
+            if (ySemiTerm is IntegerNumber)
+            {
+                var ySemiInteger = ySemiTerm as IntegerNumber;
+                radiusAlongY = double.Parse(ySemiInteger.Num.ToString());
+            }
+            else if (ySemiTerm is DoubleNumber)
+            {
+                var radiusDouble = ySemiTerm as DoubleNumber;
+                radiusAlongY = radiusDouble.Num;
+            }
+            else
+            {
+                shape = null;
+                return false;
+            }
+
+            var ellipse = new Ellipse(center, radiusAlongX, radiusAlongY);
+            shape = new EllipseExpr(expr, ellipse);
+            return true;
+        }
+*/
+
+        #endregion
+    }
+
     public static class NotInUse
     {
         public static bool IsXTerm(this Expr expr, out object coeffExpr)
@@ -1004,5 +1331,46 @@ namespace ExprSemantic
         //        return false;
         //    }
         //}
+    }
+
+    public class AGTemplateExpressions
+    {
+        ////////////////////////// Point Template ///////////////////////////////////
+
+        public static List<string> PointTemplates = new List<string>()
+        {
+            "A(1,2)",
+            "(1,2)"
+        };
+
+        /////////////////////////// Line Template ///////////////////////////////////         
+
+        public static string LineImplicitTemplate = "a*X + b*Y + c = 0";
+        public static string LineExplicitTemplate = "Y = aX + b";
+
+        public static readonly string[] LineParametricTemplate = new string[]
+        {
+            "X = x0 + a * T",
+            "Y = y0 + b * T",
+        };
+
+        /////////////////////////// Circle Template ///////////////////////////////////   
+
+        public const string CircleImplicitTemplate = "(X - a) ^ 2 + (Y - b) ^ 2 = r ^ 2";
+        public static readonly string[] CircleParametricTemplate = new string[]
+        {
+           "X = r * cos(t)",
+           "Y = r * sin(t)"
+        };
+
+        /////////////////////////// Ellipse Template ///////////////////////////////////
+
+        public const string EllipseImplicitTemplate = "(X - h) ^ 2 / a ^ 2 + (Y - k) ^ 2 / b ^ 2 = 1";
+
+        public static readonly string[] EllipseParametricTemplate = new string[]
+        {
+            "X = a * cos(t) + h",
+            "Y = b * sin(t) + k"
+        };
     }
 }
