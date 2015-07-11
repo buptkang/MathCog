@@ -147,7 +147,7 @@ namespace AG.Interpreter
         {
             object result = LoadQuery(str);
             if (result == null) return _reasoner.Load(str);
-            else return result;
+            return result;
         }
 
         public object Load(Expr expr)
