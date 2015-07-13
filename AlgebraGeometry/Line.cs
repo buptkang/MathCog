@@ -10,6 +10,9 @@ namespace AlgebraGeometry
 {
     public partial class Line : Shape
     {
+        #region Properties and Constructors
+
+        #region Properties
         private object _a;
         public object A
         {
@@ -51,6 +54,10 @@ namespace AlgebraGeometry
                 NotifyPropertyChanged("C");
             }
         }
+
+        #endregion
+
+        #region Entity Constructors
 
         public Line(string label, object a, object b, object c)
             : base(ShapeType.Line, label)
@@ -99,10 +106,22 @@ namespace AlgebraGeometry
         {
         }
 
-        public Line(string label) : base(ShapeType.Line, label)
+        #endregion
+
+        #region Relation Constructors
+
+        // relation based line
+        public Line(string label)
+            : base(ShapeType.Line, label)
         {
             RelationStatus = true;
         }
+
+        #endregion
+
+        #endregion
+
+        #region Utils
 
         public override bool Concrete
         {
@@ -122,6 +141,8 @@ namespace AlgebraGeometry
             lst.Add(Var.GetVar(C));
             return lst;
         }
+
+        #endregion
 
         #region IEqutable
 

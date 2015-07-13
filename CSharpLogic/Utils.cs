@@ -27,7 +27,7 @@ namespace CSharpLogic
             return dicOne.Except(dicTwo).Concat(dicTwo.Except(dicOne));
         }
 
-        public static IEnumerable<KeyValuePair<object,object>> Interleave(List<Goal> objs)
+        public static IEnumerable<KeyValuePair<object, object>> Interleave(List<Goal> objs)
         {
             return null;
         }
@@ -138,7 +138,7 @@ namespace CSharpLogic
                 builder.Append(term.Item1.ToString()).Append(",").Append(term.Item2.ToString());
                 return builder.ToString();
             }
-            else if (obj is Tuple<object, object,object>)
+            else if (obj is Tuple<object, object, object>)
             {
                 var term = obj as Tuple<object, object, object>;
                 var builder = new StringBuilder();
@@ -147,7 +147,7 @@ namespace CSharpLogic
             }
             else if (obj is Tuple<object, object, object, object>)
             {
-                var term = obj as Tuple<object, object, object,object>;
+                var term = obj as Tuple<object, object, object, object>;
                 var builder = new StringBuilder();
                 builder.Append(term.Item1.ToString()).Append(",").Append(term.Item2.ToString()).Append(",").Append(term.Item3.ToString()).Append(",").Append(term.Item4.ToString());
                 return builder.ToString();
@@ -158,12 +158,6 @@ namespace CSharpLogic
             }
         }
 
-        public static object CalTerm(Term term)
-        {
-            var tuple = term.Args as Tuple<object, object>;
-            if(tuple == null) throw new Exception("Cannot be null");
-            return Calculate(term.Op, tuple.Item1, tuple.Item2);
-        }
 
         public static object Calculate(Func<Expression, Expression, BinaryExpression> func,
             object x, object y)
@@ -195,8 +189,7 @@ namespace CSharpLogic
                 return null;
             }
         }
-        
-        
+
         public static bool IsInt(object expression, out int number)
         {
             if (expression == null)
@@ -229,54 +222,35 @@ namespace CSharpLogic
 
         public static bool IsNumeric(object obj)
         {
-            int inum;
-            bool result = IsInt(obj, out inum);
-            if (result)
+            bool result;
+            try
             {
-                return true;
+                int inum;
+                result = IsInt(obj, out inum);
+                if (result)
+                {
+                    return true;
+                }
+            }
+            catch (Exception)
+            {                
             }
 
-            double dnum;
-            result = IsDouble(obj, out dnum);
-            if (result)
+            try
             {
-                return true;
+                double dnum;
+                result = IsDouble(obj, out dnum);
+                if (result)
+                {
+                    return true;
+                }
             }
-            else
+            catch (Exception)
             {
-                return false;
             }
+
+            return false;
         }
-
-
-        #region Arithmetic Operator
-
-        public static Func<Expression, Expression, BinaryExpression> ReverseOp(Func<Expression, Expression, BinaryExpression> op)
-        {
-            if (op.Method.Name.Equals("Add"))
-            {
-                return Expression.Subtract;
-            }
-            else if (op.Method.Name.Equals("Subtract"))
-            {
-                return Expression.Add;
-            }
-            else if (op.Method.Name.Equals("Multiply"))
-            {
-                return Expression.Divide;
-            }
-            else if (op.Method.Name.Equals("Divide"))
-            {
-                return Expression.Multiply;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-
-        #endregion
 
     }
 }

@@ -202,7 +202,6 @@ namespace AlgebraExpression.Test
             //object result = LineTermEvaluator.RectifyLineTerm(term);
         }
 
-
         #endregion
 
         #region Term Flattern and Treeify(UnFlattern)

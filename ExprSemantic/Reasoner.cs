@@ -1,5 +1,6 @@
 ﻿using AlgebraGeometry;
 using AlgebraGeometry.Expr;
+using ExprPatternMatch;
 using GeometryLogicInference;
 using starPadSDK.MathExpr;
 using System.Collections.Generic;

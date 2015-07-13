@@ -10,7 +10,7 @@ using Text = starPadSDK.MathExpr.Text;
 using AlgebraGeometry;
 using CSharpLogic;
 
-namespace ExprPatternMatchTest
+namespace ExprPatternMatch
 {
     [TestFixture]
     public class TestLine

@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace CSharpLogic
 {
     /// <summary>
     /// Substitution or term
     /// </summary>
-    public class Term : DyLogicObject
+    public partial class Term : DyLogicObject,
+                IArithmeticLogic, IAlgebraLogic
     {
+        #region Properties and Constructors
+
         public Func<Expression, Expression, BinaryExpression> Op { get; set; }
         public object Args { get; set; }
 
@@ -21,6 +26,16 @@ namespace CSharpLogic
             Op = _op;
             Args = _args;
         }
+
+        #endregion
+
+        public Term Reify(Dictionary<object, object> s)
+        {
+            var gArgs = LogicSharp.Reify(Args, s);
+            return new Term(Op, gArgs);
+        }
+
+        #region Utility Functions
 
         public override bool Equals(object obj)
         {
@@ -35,143 +50,66 @@ namespace CSharpLogic
         public override string ToString()
         {
             var builder = new StringBuilder();
-            var tuple = Args as Tuple<object, object>;
-            if(tuple == null) throw new Exception("cannot be null");
 
-            builder.Append('(');
-
-            var lTerm = tuple.Item1;
-            var rTerm = tuple.Item2;
-          
-            builder.Append(lTerm.ToString());
-            
-            if (Op.Method.Name.Equals("Add"))
-            {
-                builder.Append('+');
-            }
-            else if (Op.Method.Name.Equals("Substract"))
-            {
-                builder.Append('-');
-            }
-            else if (Op.Method.Name.Equals("Multiply"))
-            {
-                builder.Append('*');
-            }
-            else if (Op.Method.Name.Equals("Divide"))
-            {
-                builder.Append('/');
-            }
-                
-            builder.Append(rTerm.ToString());
-            builder.Append(')');
-            return builder.ToString();
-        }
-
-        /// <summary>
-        /// Evaluation with calculation functionality, it does not 
-        /// take care of term rewriting.
-        /// 
-        /// Terms should follow the below rules:
-        /// tp: "x" , "2", "2+2",  "2+3-1", "2+2*2", "x+(1+2)", "x + y + 3"
-        /// tp: "x^2+x+2+1" 
-        /// fn: "(x+1)+2" or "1+x+2", "x+x"
-        /// </summary>
-        /// <returns></returns>
-        public object Eval()
-        {
             var tuple = Args as Tuple<object, object>;
             if (tuple != null)
             {
-                #region Recursive Eval
+                #region Tuple Format
+                builder.Append('(');
 
-                var item1Tuple = tuple.Item1 as Term;
-                object arg1UpdatedTerm = null;
-                bool item1Update = false;
-                if (item1Tuple != null)
-                {
-                    arg1UpdatedTerm = item1Tuple.Eval();
-                    if (!arg1UpdatedTerm.Equals(item1Tuple)) item1Update = true;
-                }
+                var lTerm = tuple.Item1;
+                var rTerm = tuple.Item2;
 
-                object arg2UpdatedTerm = null;
-                var item2Tuple = tuple.Item2 as Term;
-                bool item2Update = false;
-                if (item2Tuple != null)
-                {
-                    arg2UpdatedTerm = item2Tuple.Eval();
-                    if (!arg2UpdatedTerm.Equals(item2Tuple)) item2Update = true;
-                }
+                builder.Append(lTerm.ToString());
 
-                object item1 = null;
-                if (item1Update)
+                if (Op.Method.Name.Equals("Add"))
                 {
-                    object recurHead = arg1UpdatedTerm;
-                    for (int i = item1Tuple.Traces.Count - 1; i >= 0; i--)
-                    {
-                        var ts = item1Tuple.Traces[i];
-                        if (ts.Target.Equals(recurHead))
-                        {
-                            var oldTerm = new Term(Op,
-                               new Tuple<object, object>(ts.Source, tuple.Item2));
-                            var newTerm = new Term(Op,
-                               new Tuple<object, object>(ts.Target, tuple.Item2));
-                            var newStep = new TraceStep(oldTerm, newTerm, ts.Rule);
-                            Traces.Insert(0, newStep);
-                            recurHead = ts.Source;
-                        }
-                    }
-                    item1 = arg1UpdatedTerm;
+                    builder.Append('+');
                 }
-                else
+                else if (Op.Method.Name.Equals("Substract"))
                 {
-                    item1 = tuple.Item1;
+                    builder.Append('-');
+                }
+                else if (Op.Method.Name.Equals("Multiply"))
+                {
+                    builder.Append('*');
+                }
+                else if (Op.Method.Name.Equals("Divide"))
+                {
+                    builder.Append('/');
                 }
 
-                object item2 = null;
-                if (item2Update)
-                {
-                    object recurHead = arg2UpdatedTerm;
-                    for (int i = item2Tuple.Traces.Count - 1; i >= 0; i--)
-                    {
-                        var ts = item2Tuple.Traces[i];
-                        if (ts.Target.Equals(recurHead))
-                        {
-                            var oldTerm = new Term(Op,
-                               new Tuple<object, object>(tuple.Item1,ts.Source));
-                            var newTerm = new Term(Op,
-                               new Tuple<object, object>(tuple.Item1,ts.Target));
-                            var newStep = new TraceStep(oldTerm, newTerm, ts.Rule);
-                            Traces.Insert(0, newStep);
-                            recurHead = ts.Source;
-                        }
-                    }
-                    item2 = arg2UpdatedTerm;
-                }
-                else
-                {
-                    item2 = tuple.Item2;
-                }
+                builder.Append(rTerm.ToString());
+                builder.Append(')');
+                #endregion
+            }
 
-                //Args = new Tuple<object, object>(item1, item2);
-                //tuple = Args as Tuple<object, object>;
-                tuple = new Tuple<object, object>(item1, item2); 
+            var lst = Args as List<object>;
+            if (lst != null)
+            {
+                #region List Format
+
+
 
                 #endregion
-
-                if (LogicSharp.IsNumeric(tuple.Item1) && LogicSharp.IsNumeric(tuple.Item2))
-                {
-                    var obj = LogicSharp.Calculate(Op, tuple.Item1, tuple.Item2);
-                    string rule = ArithRule.CalcRule(Op.Method.Name, tuple.Item1, tuple.Item2, obj);
-                    var newStep = new TraceStep(this, obj, rule);
-                    Traces.Add(newStep);
-                    return obj;
-                }
-                else
-                {                   
-                    return new Term(Op, tuple);
-                }
             }
-            return this;
+
+            return builder.ToString();
+        }
+
+        public bool ContainsVar()
+        {
+            var lst = Args as List<object>;
+            Debug.Assert(lst != null);
+            foreach (var obj in lst)
+            {
+                var variable = obj as Var;
+                if (variable != null) return true;
+
+                var term1 = obj as Term;
+                if (term1 != null && term1.ContainsVar()) return true;
+            }
+            return false;
         }
 
         public bool ContainsVar(Var variable)
@@ -218,16 +156,37 @@ namespace CSharpLogic
                 return false;
             }
 
-            throw new Exception("Add tuple3, tuple4...");            
+            throw new Exception("Term.cs: Cannot reach here");
         }
-    }
 
-    public static class TermExtention
-    {
-        public static Term Reify(this Term term, Dictionary<object, object> s)
+        public Term Clone()
         {
-            var gArgs = LogicSharp.Reify(term.Args, s);
-            return new Term(term.Op, gArgs);
-        }   
+            var term = (Term)this.MemberwiseClone();
+            var newlst = new List<object>();
+
+            var lst = Args as List<object>;
+            Debug.Assert(lst != null);
+            foreach (object obj in lst)
+            {
+                var variable = obj as Var;
+                if (variable != null)
+                {
+                    newlst.Add(variable.Clone());
+                    continue;
+                }
+
+                var localTerm = obj as Term;
+                if (localTerm != null)
+                {
+                    newlst.Add(localTerm.Clone());
+                    continue;
+                }
+
+                newlst.Add(obj);
+            }
+            term.Args = newlst;
+            return term;
+        }
+        #endregion
     }
 }

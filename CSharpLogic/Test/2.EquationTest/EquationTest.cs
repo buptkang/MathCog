@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using System.Linq.Expressions;
 
-namespace CSharpLogic.Test
+namespace CSharpLogic
 {
     [TestFixture]
-    public class TestArith
+    public class EquationTest
     {
-        [Test]
+    /*    [Test]
         public void Test_Add()
         {
             var goal = LogicSharp.Add(1, 2, 3) as EqGoal;
@@ -68,7 +67,7 @@ namespace CSharpLogic.Test
             bool result = goal.Unify(dict);
             Assert.True(result);
             Assert.True(dict.Count == 0);
-           
+
             //assert not results(sub(4, 2, 1))
             goal = LogicSharp.Sub(4, 2, 1) as EqGoal;
             Assert.NotNull(goal);
@@ -150,7 +149,7 @@ namespace CSharpLogic.Test
 
             // assert results(mul(x, 3, 6)) == [{x: 2}]
             variable = new Var('x');
-            goal = LogicSharp.Mul(variable,3, 6) as EqGoal;
+            goal = LogicSharp.Mul(variable, 3, 6) as EqGoal;
             Assert.NotNull(goal);
             dict = new Dictionary<object, object>();
             result = goal.Unify(dict);
@@ -183,7 +182,6 @@ namespace CSharpLogic.Test
             Assert.True(result.ContainsKey(variable2));
             Assert.True(result[variable1].Equals(2));
             Assert.True(result[variable2].Equals(4));
-        }
-
+        }*/
     }
 }

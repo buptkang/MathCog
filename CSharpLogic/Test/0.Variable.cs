@@ -12,6 +12,15 @@ namespace CSharpLogic.Test
     public class TestVariable
     {
         [Test]
+        public void Test_Clone()
+        {
+            var variable = new Var('a'); 
+            var variable1 = variable.Clone();
+            variable1.Token = "b";
+            Assert.True(variable.Token.Equals('a'));
+        }
+
+        [Test]
         public void Test_IsVar()
         {
             Assert.IsTrue(Var.IsVar(new Var(3)));

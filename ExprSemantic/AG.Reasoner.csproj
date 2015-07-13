@@ -63,9 +63,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AlgebraGeometry.Expr\AlgebraGeometry.Expr.csproj">
+    <ProjectReference Include="..\AlgebraGeometry.Expr\AG.Expr.csproj">
       <Project>{b2421fe7-b924-49d9-b898-fb722c50cede}</Project>
-      <Name>AlgebraGeometry.Expr</Name>
+      <Name>AG.Expr</Name>
     </ProjectReference>
     <ProjectReference Include="..\AlgebraGeometry\Geometry.Logic.csproj">
       <Project>{37ff5773-06ae-41c1-bb0f-b7fe22fc874b}</Project>

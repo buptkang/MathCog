@@ -8,17 +8,18 @@
 7. Core.cs
 8. Arith.cs
 
-
-
 TODO:
 Goal.cs:  ApplyTransitiveProperty ax = ay -> x=y 
 Substitution Trace
 
-Line relation(reification process): given two points A(2,2) and B(3,3)-> AB
-
-
 Getting Started
 
-Next Steps
+Evaluation Loop:
+Outer Loop Algebra Eval
+Inner Loop Arithmetic Eval
 
-Directory Structure
+
+
+x+3 = 2-1
+(-3)   (-3) 
+Infer x = -1

@@ -30,7 +30,7 @@ namespace AlgebraGeometry
             var B = new Point("B", 2.0, variable);
             graph.AddNode(A);
             graph.AddNode(B);
-            var line = new Line("AB");
+            var line = new Line("AB"); //Implicit Define
             graph.AddNode(line);
 
             var lines = graph.RetrieveSpecicShapes(ShapeType.Line);

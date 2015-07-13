@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AlgebraGeometry;
 using CSharpLogic;
+using ExprPatternMatch;
 using ExprSemantic;
 using GuiLabs.Undo;
 using starPadSDK.MathExpr;

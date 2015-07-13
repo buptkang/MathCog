@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
-using NUnit.Framework.Constraints;
 
 namespace CSharpLogic
 {
     public class Var
     {
-        private static dynamic id = 1;
+        #region Properties and Constructors
+
+        private static dynamic _id = 1;
 
         private object _token;
 
@@ -19,13 +15,24 @@ namespace CSharpLogic
 
         public Var()
         {
-            _token = id;
-            id += 1;
+            _token = _id;
+            _id += 1;
         }
 
         public Var(object id)
         {
             _token = id;
+        }
+
+        #endregion
+
+        #region Basic Override 
+
+        public Var Clone()
+        {
+            var variable = (Var)MemberwiseClone();
+            variable._token = _token.ToString();
+            return variable;
         }
 
         public override string ToString()
@@ -50,6 +57,10 @@ namespace CSharpLogic
         {
             return Token.GetHashCode();
         }
+
+        #endregion
+
+        #region Var Checking
 
         public static bool IsVar(Var obj)
         {
@@ -148,5 +159,7 @@ namespace CSharpLogic
                 return null;              
             }
         }
+
+        #endregion
     }
 }

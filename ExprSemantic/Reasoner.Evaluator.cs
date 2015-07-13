@@ -8,6 +8,7 @@ using System.Text;
 using AlgebraGeometry;
 using AlgebraGeometry.Expr;
 using CSharpLogic;
+using ExprPatternMatch;
 using GeometryLogicInference;
 using NUnit.Framework;
 using starPadSDK.MathExpr;

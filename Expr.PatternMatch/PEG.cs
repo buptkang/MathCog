@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.Remoting.Messaging;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using AlgebraExpression;
 using AlgebraGeometry;
 using CSharpLogic;
+using ExprSemantic;
 using starPadSDK.MathExpr;
-using System.Text.RegularExpressions;
 
-
-namespace ExprSemantic
+namespace ExprPatternMatch
 {
     public static partial class GeneralPatternExtensions
     {
@@ -78,7 +76,7 @@ namespace ExprSemantic
         /// <param name="expr"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static bool IsWordTerm(this Expr expr, out object obj)
+        public static bool IsWordTerm(this starPadSDK.MathExpr.Expr expr, out object obj)
         {
             obj = null;
             if (expr is LetterSym) return false;
@@ -159,7 +157,7 @@ namespace ExprSemantic
                 return true;
             }
 
-            starPadSDK.MathExpr.Expr tempExpr;
+            Expr tempExpr;
             if (IsNegativeTerm(expr, out tempExpr))
             {
                 if (tempExpr.IsNumeric(out number))
@@ -196,12 +194,11 @@ namespace ExprSemantic
 
             return false;
         }
-
     }
 
     public static class QueryPatternExtensions
     {
-        public static bool IsQuery(this Expr expr, out object property)
+        public static bool IsQuery(this starPadSDK.MathExpr.Expr expr, out object property)
         {
             property = null;
             if (!(expr is CompositeExpr)) return false;
@@ -265,11 +262,8 @@ namespace ExprSemantic
 
     public static class ExpressionPatternExtensions
     {
-        public static bool IsExpression(this Expr expr, out object obj)
+        private static bool IsExpressionLabel(this Expr expr, out object obj)
         {
-            obj = null;
-
-            if (expr.IsNumeric(out obj)) return true;
             if (expr.IsLabel(out obj))
             {
                 object iObj;
@@ -282,73 +276,39 @@ namespace ExprSemantic
                 obj = new Var((string)obj);
                 return true;
             }
+            return false;
+        }
+
+        public static bool IsExpression(this Expr expr, out object obj)
+        {
+            obj = null;
+            if (expr.IsNumeric(out obj)) return true;
+            if (expr.IsExpressionLabel(out obj)) return true;
 
             var root = expr as CompositeExpr;
             if (root == null) return false;
 
             if (root.Head.Equals(WellKnownSym.plus))
             {
-                #region Add Term
-                int argCount = root.Args.Count();
-                if (argCount == 2)
+                #region Addition Terms
+                var argCount = root.Args.Count();
+                var lst = new List<object>();
+                for (int i = 0; i < argCount; i++)
                 {
-                    object obj1;
-                    bool arg1Expr = root.Args[0].IsExpression(out obj1);
-                    object obj2;
-                    bool arg2Expr = root.Args[1].IsExpression(out obj2);
-
-                    if (arg1Expr && arg2Expr)
+                    object tempObj;
+                    if (root.Args[i].IsExpression(out tempObj))
                     {
-                        obj = new Term(Expression.Add, new Tuple<object, object>(obj1, obj2));
-                        return true;
+                        lst.Add(tempObj);
                     }
-                    return false;
-                }
-                else if (argCount > 2)
-                {
-                    object obj1;
-                    bool arg1Expr = root.Args[0].IsExpression(out obj1);
-                    object obj2;
-                    bool arg2Expr = root.Args[1].IsExpression(out obj2);
-
-                    if (arg1Expr && arg2Expr)
+                    else
                     {
-                        obj = new Term(Expression.Add, new Tuple<object, object>(obj1, obj2));
-                        object tempObj;
-                        for (int i = 2; i < argCount; i++)
-                        {
-                            if (root.Args[i].IsExpression(out tempObj))
-                            {
-                                obj = new Term(Expression.Add, new Tuple<object, object>(obj, tempObj));
-                            }
-                        }
-                        return true;
+                        return false;
                     }
-                    return false;
                 }
-                else
-                {
-                    return false;
-                }
+                obj = new Term(Expression.Add, lst);
+                return true;
                 #endregion
-            }
-            else if (root.Head.Equals(WellKnownSym.minus))
-            {
-                Debug.Assert(root.Args.Length == 1);
-                object obj2;
-                bool result = root.Args[0].IsLabel(out obj2);
-                if (result)
-                {
-                    var label = obj2 as string;
-                    string newLabel = "-" + label;
-                    obj = new Var(newLabel);
-                    return true;
-                }
-                else
-                {
-                    throw new Exception("TODO");
-                }
-            }
+            }            
             else if (root.Head.Equals(WellKnownSym.times))
             {
                 #region Multiply Term
@@ -395,7 +355,6 @@ namespace ExprSemantic
                 }
                 #endregion
             }
-
             return false;
         }
     }
@@ -408,7 +367,7 @@ namespace ExprSemantic
         /// <param name="expr"></param>
         /// <param name="coord"></param>
         /// <returns></returns>
-        public static bool IsTerm(this Expr expr,
+        public static bool IsTerm(this starPadSDK.MathExpr.Expr expr,
             out object coord)
         {
             coord = null;
@@ -448,7 +407,7 @@ namespace ExprSemantic
         /// <param name="expr"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static bool IsGoal(this Expr expr, out object obj)
+        public static bool IsGoal(this starPadSDK.MathExpr.Expr expr, out object obj)
         {
             obj = null;
             var compExpr = expr as CompositeExpr;
@@ -527,8 +486,6 @@ namespace ExprSemantic
         {
             point = null;
             object label;
-            object xCord;
-            object yCord;
 
             var composite = expr as CompositeExpr;
             if (composite == null) return false;
@@ -581,13 +538,13 @@ namespace ExprSemantic
             {
                 if (hasLabel)
                 {
-                    var temp = PointEvaluator.CreatePointSymbol((string)label,coord1, coord2);
+                    var temp = CreatePointSymbol((string)label,coord1, coord2);
                     //point = new AGShapeExpr(expr, temp);
                     point =  temp;
                 }
                 else
                 {
-                    var temp = PointEvaluator.CreatePointSymbol(coord1, coord2);
+                    var temp = CreatePointSymbol(coord1, coord2);
                     //point = new AGShapeExpr(expr, temp);
                     point = temp;
                 }
@@ -599,11 +556,61 @@ namespace ExprSemantic
                 return false;
             }
         }
+
+        public static PointSymbol CreatePointSymbol(object coord1, object coord2)
+        {
+            object setCoord1 = null;
+            object setCoord2 = null;
+
+            if (coord1 is string)
+            {
+                coord1 = new Var(coord1);
+            }
+            else if (coord1 is KeyValuePair<object, object>)
+            {
+                var dict = (KeyValuePair<object, object>)coord1;
+                coord1 = new Var(dict.Key);
+                setCoord1 = dict.Value;
+            }
+
+            if (coord2 is string)
+            {
+                coord2 = new Var(coord2);
+            }
+            else if (coord2 is KeyValuePair<object, object>)
+            {
+                var dict = (KeyValuePair<object, object>)coord2;
+                coord2 = new Var(dict.Key);
+                setCoord2 = dict.Value;
+            }
+
+            var pt = new Point(coord1, coord2);
+            if (setCoord1 != null)
+            {
+                pt.AddXCoord(setCoord1);
+            }
+
+            if (setCoord2 != null)
+            {
+                pt.AddYCoord(setCoord2);
+            }
+            return new PointSymbol(pt);
+        }
+
+        public static PointSymbol CreatePointSymbol(string label, object coord1, object coord2)
+        {
+            PointSymbol ps = CreatePointSymbol(coord1, coord2);
+            if (ps != null)
+            {
+                ps.Shape.Label = label;
+            }
+            return ps;
+        }   
     }
 
     public static class LinePatternExtensions
     {
-        public static bool IsLine(this Expr expr, out LineSymbol ls)
+        public static bool IsLine(this starPadSDK.MathExpr.Expr expr, out LineSymbol ls)
         {
             ls = null;
             var compExpr = expr as CompositeExpr;
@@ -626,25 +633,14 @@ namespace ExprSemantic
                     if (result)
                     {
                         ls = new LineSymbol(line);
-                        return true;                        
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
+                        return true;
+                    } 
                 }
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
-        public static bool IsLineRel(this Expr expr, out LineSymbol ls)
+        public static bool IsLineRel(this starPadSDK.MathExpr.Expr expr, out LineSymbol ls)
         {
             ls = null;
             var compExpr = expr as CompositeExpr;
@@ -1021,7 +1017,7 @@ namespace ExprSemantic
 
     public static class NotInUse
     {
-        public static bool IsXTerm(this Expr expr, out object coeffExpr)
+        public static bool IsXTerm(this starPadSDK.MathExpr.Expr expr, out object coeffExpr)
         {
             //Check negative
             Expr outputExpr;
@@ -1085,7 +1081,7 @@ namespace ExprSemantic
             return false;
         }
 
-        public static bool IsYTerm(this Expr expr, out object coeffExpr)
+        public static bool IsYTerm(this starPadSDK.MathExpr.Expr expr, out object coeffExpr)
         {
             //Check negative
             Expr outputExpr;
@@ -1149,7 +1145,7 @@ namespace ExprSemantic
             return false;
         }
 
-        private static bool IsPowerYForm(this Expr expr)
+        private static bool IsPowerYForm(this starPadSDK.MathExpr.Expr expr)
         {
             if (!(expr is CompositeExpr))
             {
@@ -1174,7 +1170,7 @@ namespace ExprSemantic
             return false;
         }
 
-        private static bool IsPowerXForm(this Expr expr)
+        private static bool IsPowerXForm(this starPadSDK.MathExpr.Expr expr)
         {
             if (!(expr is CompositeExpr))
             {
@@ -1199,7 +1195,7 @@ namespace ExprSemantic
             return false;
         }
 
-        public static bool IsXXTerm(this Expr expr, out DoubleNumber coeffExpr)
+        public static bool IsXXTerm(this starPadSDK.MathExpr.Expr expr, out DoubleNumber coeffExpr)
         {
             //Check negative
             Expr outputExpr;
@@ -1238,7 +1234,7 @@ namespace ExprSemantic
             return false;
         }
 
-        public static bool IsYYTerm(this Expr expr, out DoubleNumber coeffExpr)
+        public static bool IsYYTerm(this starPadSDK.MathExpr.Expr expr, out DoubleNumber coeffExpr)
         {
             //Check negative
             Expr outputExpr;
@@ -1277,7 +1273,7 @@ namespace ExprSemantic
             return false;
         }
 
-        public static bool IsTwoLabel(this Expr expr, out List<string> letters)
+        public static bool IsTwoLabel(this starPadSDK.MathExpr.Expr expr, out List<string> letters)
         {
             letters = null;
             if (!(expr is CompositeExpr)) return false;

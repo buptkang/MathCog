@@ -46,17 +46,17 @@
   <ItemGroup>
     <Compile Include="Misc\BuiltInEngine.cs" />
     <Compile Include="Misc\Engine.cs" />
-    <Compile Include="PointEvaluator.cs" />
     <Compile Include="PEG.cs" />
     <Compile Include="PatternMatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Test\Test.Expression.cs" />
-    <Compile Include="Test\Test.PointEval.cs" />
-    <Compile Include="Test\Test.Goal.cs" />
-    <Compile Include="Test\Geometry\Line.cs" />
-    <Compile Include="Test\Test.LineRelation.cs" />
-    <Compile Include="Test\Geometry\Point.cs" />
-    <Compile Include="Test\Test.Query.Property.cs" />
+    <Compile Include="Test\0.Expression.Arithmetic.cs" />
+    <Compile Include="Test\1.Expression.Algebra.cs" />
+    <Compile Include="Test\2.Equation.cs" />
+    <Compile Include="Test\4.Goal.cs" />
+    <Compile Include="Test\5.Line.cs" />
+    <Compile Include="Test\6.LineRelation.cs" />
+    <Compile Include="Test\3.Point.cs" />
+    <Compile Include="Test\Query.Property.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup />

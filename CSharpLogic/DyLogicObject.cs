@@ -17,8 +17,8 @@ namespace CSharpLogic
             get { return Traces.Count; }
         }
 
-        public Dictionary<object, object> Properties 
-            = new Dictionary<object, object>();
+        public readonly Dictionary<object, object> Properties 
+                                    = new Dictionary<object, object>();
 
         public int Count
         {

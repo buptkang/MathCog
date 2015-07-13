@@ -71,7 +71,8 @@ D:
 true positive Assumption: two points: A(2,x) and B(3,4)
 1. a line "AB" 
 
-
+Line relation(reification process): 
+given two points A(2,2) and B(3,3)-> AB
 ===============================================================
 
 Graph Search Algorithm (Heuristic Search on directed acyclic graph):

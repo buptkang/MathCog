@@ -7,7 +7,7 @@ using FunctionalCSharp;
 using FunctionalCSharp.DiscriminatedUnions;
 using starPadSDK.MathExpr;
 
-namespace ExprSemantic
+namespace ExprPatternMatch
 {
     public class ExprVisitor
     {

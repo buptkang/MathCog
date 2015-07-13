@@ -12,20 +12,20 @@ namespace CSharpLogic
     public abstract class Goal : DyLogicObject
     {
         public abstract bool EarlySafe();
-
         public abstract bool Reify(Dictionary<object, object> substitutions);
-
         public abstract bool Unify(Dictionary<object, object> substitutions);
-
     }
 
     public class EqGoal : Goal
     {
+        #region Properties and Constructors
+
         internal Func<Dictionary<object, object>, bool> Functor;
 
         public string Label { get; set; }
         public object Lhs { get; set; }
         public object Rhs { get; set; }
+        public bool IsExpression { get { return Rhs == null; } }
 
         public EqGoal(object lhs, object rhs, bool generated = false)
         {
@@ -109,8 +109,6 @@ namespace CSharpLogic
             }
         }
 
-        public bool IsExpression { get { return Rhs == null; } }
-
         public EqGoal(object lhs, bool generated = false)
         {
             Lhs = lhs;
@@ -146,66 +144,16 @@ namespace CSharpLogic
             }
         }
 
-        public override bool Reify(Dictionary<object, object> substitutions)
+        #endregion
+
+        public virtual object Eval()
         {
-            Lhs = LogicSharp.Reify(Lhs, substitutions);
-            Rhs = LogicSharp.Reify(Rhs, substitutions);
-
-            if (Var.ContainsVar(Lhs) || Var.ContainsVar(Rhs))
-            {
-                return true;
-            }
-            else
-            {
-                return Lhs.Equals(Rhs);
-            }
-        }
-
-        public override bool Unify(Dictionary<object, object> substitutions)
-        {
-            return Functor(substitutions);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public object Eval()
-        {
-            #region TODO Apply Symmetric Property of Equation
-            //Assert cannot be (Lhs is constant, Rhs contains variable)  
-
-            /*
-                else if(Var.IsVar(x) && Var.IsVar(y))
-                {
-                    var term1 = new Term(RevOp, new Tuple<object, object>(z, y));
-                    return new EqGoal(x, term1);
-                }
-                else if(Var.IsVar(y) && Var.IsVar(z))
-                {
-                    var term1 = new Term(Op, new Tuple<object, object>(x, y));
-                    return new EqGoal(term1, z);
-                }
-                else if(Var.IsVar(x) && Var.IsVar(z))
-                {
-                    //var oper = new Operator(RevOp.Method.Name);
-                    var term1 = new Term(Op, new Tuple<object, object>(x, y));
-                    return new EqGoal(term1, z);
-                }
-            */
-            #endregion 
-            
             var lTerm = Lhs as Term;
             var rTerm = Rhs as Term;
 
-            //TODO 
             if(Var.ContainsVar(Rhs)) throw new Exception("TODO not supported now");
             Debug.Assert(LogicSharp.IsNumeric(Rhs));
-
             if (lTerm == null) return this;
-
-            //Apply TransitiveProperty rule for the equality
-            //if x = y, then x + a = y + a
-            //if x = y, then ax = ay
 
             if (lTerm.Op.Method.Name.Equals("Add"))
             {
@@ -216,7 +164,7 @@ namespace CSharpLogic
                     //Rule 1: substract same term in both sides
                     var rhsTerm = new Term(Expression.Subtract, new Tuple<object, object>(Rhs, tuple.Item2));                
                     var newGoal = new EqGoal(tuple.Item1, rhsTerm, true);
-                    string rule = EqualityRules.ApplyTransitiveProperty(Expression.Subtract, tuple.Item2);
+                    string rule = EquationsRule.ApplyTransitiveProperty(Expression.Subtract, tuple.Item2);
                     var step = new TraceStep(this, newGoal, rule);
                   
                     //Rule 2: do the calculation again
@@ -252,14 +200,58 @@ namespace CSharpLogic
                     return this;
                 }
             }
-
             return this;
+        }
+
+        #region Goal Override Functions
+
+        public override bool Reify(Dictionary<object, object> substitutions)
+        {
+            Lhs = LogicSharp.Reify(Lhs, substitutions);
+            Rhs = LogicSharp.Reify(Rhs, substitutions);
+
+            if (Var.ContainsVar(Lhs) || Var.ContainsVar(Rhs))
+            {
+                return true;
+            }
+            else
+            {
+                return Lhs.Equals(Rhs);
+            }
+        }
+
+        public override bool Unify(Dictionary<object, object> substitutions)
+        {
+            return Functor(substitutions);
         }
 
         public override bool EarlySafe()
         {
             return !(Var.ContainsVar(Lhs) && Var.ContainsVar(Rhs));
         }
+
+        public bool ContainsVar(Var variable)
+        {
+            var lhsVar = Lhs as Var;
+            bool result;
+            if (lhsVar != null)
+            {
+                result = lhsVar.Equals(variable);
+                if (result) return true;
+            }
+
+            var rhsVar = Rhs as Var;
+            if (rhsVar != null)
+            {
+                result = Rhs.Equals(variable);
+                if (result) return true;
+            }
+            return false;
+        }
+
+        #endregion
+
+        #region Object Override functions
 
         public override bool Equals(object obj)
         {
@@ -281,24 +273,7 @@ namespace CSharpLogic
             return string.Format("{0}={1}", Lhs, Rhs);
         }
 
-        public bool ContainsVar(Var variable)
-        {
-            var lhsVar = Lhs as Var;
-            bool result;
-            if (lhsVar != null)
-            {
-                result = lhsVar.Equals(variable);
-                if (result) return true;
-            }
-
-            var rhsVar = Rhs as Var;
-            if (rhsVar != null)
-            {
-                result = Rhs.Equals(variable);
-                if (result) return true;
-            }
-            return false;
-        }
+        #endregion
     }
 
     public static class EqGoalExtension
@@ -347,7 +322,5 @@ namespace CSharpLogic
             }
             return tempGoal;
         }
-
     }
-
 }

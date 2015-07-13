@@ -9,7 +9,7 @@ using Text = starPadSDK.MathExpr.Text;
 using starPadSDK.MathExpr;
 using ExprSemantic;
 
-namespace ExprPatternMatchTest
+namespace ExprPatternMatch
 {
     [TestFixture]
     public class TestGoal

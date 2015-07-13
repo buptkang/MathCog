@@ -8,7 +8,7 @@ using NUnit.Framework;
 using Text = starPadSDK.MathExpr.Text;
 using ExprSemantic;
 
-namespace ExprPatternMatchTest
+namespace ExprPatternMatch
 {
     [TestFixture]
     public class TestQueryProperty

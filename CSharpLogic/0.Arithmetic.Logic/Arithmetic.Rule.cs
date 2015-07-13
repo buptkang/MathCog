@@ -7,7 +7,7 @@ namespace CSharpLogic
 {
     public class ArithRule
     {
-        public static string CalcRule(object method, object left, 
+        public static string CalcRule(object method, object left,
             object right, object result)
         {
             return string.Format("Make the calculation: {1} {0} {2}",

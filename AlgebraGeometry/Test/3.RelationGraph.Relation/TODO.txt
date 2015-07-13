@@ -1,4 +1,4 @@
-﻿          #region non-concrete point-line relation
+﻿		#region non-concrete point-line relation
 
         [Test]
         public void Test_Line_Relation_NonConcrete_Add0()
