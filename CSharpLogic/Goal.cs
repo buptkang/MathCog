@@ -16,7 +16,7 @@ namespace CSharpLogic
         public abstract bool Unify(Dictionary<object, object> substitutions);
     }
 
-    public class EqGoal : Goal
+    public partial class EqGoal : Goal
     {
         #region Properties and Constructors
 

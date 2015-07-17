@@ -28,7 +28,7 @@ namespace CSharpLogic
                case AlgebraRuleType.Commutative:
                     return string.Format("Apply commutative law between {0} and {1}", obj1, obj2);
                case AlgebraRuleType.Identity:
-                    return string.Format("Apply identity law between {0} and {1}", obj1, obj2);
+                    return string.Format("Apply identity law on {0}", obj1);
                case AlgebraRuleType.Inverse:
                     return string.Format("Apply inverse law between {0} and {1}", obj1, obj2);
                default:

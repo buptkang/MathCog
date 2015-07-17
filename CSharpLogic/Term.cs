@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using NUnit.Framework;
 
 namespace CSharpLogic
 {
@@ -42,7 +44,14 @@ namespace CSharpLogic
             if (obj is Term)
             {
                 var term = obj as Term;
-                return Op.Equals(term.Op) && Args.Equals(term.Args);
+                if (!Op.Equals(term.Op)) return false;
+                
+                var lst = Args as List<object>;
+                var lst1 = term.Args as List<object>;
+                Debug.Assert(lst != null);
+                Debug.Assert(lst1 != null);
+                if (lst.Count != lst1.Count) return false;
+                return !lst.Where((t, i) => !t.Equals(lst1[i])).Any();
             }
             return false;
         }
@@ -88,12 +97,52 @@ namespace CSharpLogic
             if (lst != null)
             {
                 #region List Format
+                if (lst.Count == 1)
+                {
+                    return lst[0].ToString();
+                }
 
+                builder.Append('(');
+                int index = 0;
 
+                do
+                {
+                    bool noOp = false;
+                    builder.Append(lst[index]);
+                    if (Op.Method.Name.Equals("Add"))
+                    {
+                        if (index + 1 < lst.Count)
+                        {
+                            bool isNumeric = LogicSharp.IsNumeric(lst[index + 1]);
+                            if (isNumeric)
+                            {
+                                double dd = double.Parse(lst[index + 1].ToString());
+                                if (dd < 0.0)
+                                {
+                                    noOp = true;
+                                    builder.Append(lst[index + 1]);
+                                    index += 1;
+                                }
+                            }                            
+                        }
 
+                        if (!noOp && index != lst.Count-1)
+                        {
+                            builder.Append('+');
+                        }
+                    }
+                    else if (Op.Method.Name.Equals("Multiply"))
+                    {
+                        if (!noOp && index != lst.Count - 1)
+                        {
+                            builder.Append('*');
+                        }
+                    }
+                    index++;
+                }while (index < lst.Count); 
+                builder.Append(')');
                 #endregion
             }
-
             return builder.ToString();
         }
 
@@ -122,6 +171,19 @@ namespace CSharpLogic
                 var variable1 = tuple1.Item1 as Var;
                 if (variable1 != null) return variable1.Equals(variable);
                 return false; //constant
+            }
+
+            var lst = Args as List<object>;
+            if (lst != null)
+            {
+                foreach (var obj in lst)
+                {
+                    var term1 = obj as Term;
+                    if (term1 != null) return term1.ContainsVar(variable);
+                    var variable1 = obj as Var;
+                    if (variable1 != null) return variable1.Equals(variable);
+                }
+                return false;
             }
 
             var tuple2 = Args as Tuple<object, object>;
@@ -187,6 +249,24 @@ namespace CSharpLogic
             term.Args = newlst;
             return term;
         }
+
+        public object ReConstruct()
+        {
+            var lst = Args as List<object>;
+            Debug.Assert(lst != null);
+            if (lst.Count == 1) return lst[0];
+
+            for (var i = 0; i < lst.Count; i++)
+            {
+                var localTerm = lst[i] as Term;
+                if (localTerm != null)
+                {
+                    lst[i] = localTerm.ReConstruct();
+                }
+            }
+            return this;
+        }
+
         #endregion
     }
 }

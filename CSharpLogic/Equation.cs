@@ -13,10 +13,47 @@ namespace CSharpLogic
         public object Lhs { get; set; }
         public object Rhs { get; set; }
         public bool IsExpression { get { return Rhs == null; } }
+        public bool IsGenerated { get; set; }
+
+        public Equation(string label, object lhs, 
+                        object rhs, bool generated = false)
+        {
+            Label = label;
+            Lhs = lhs;
+            Rhs = rhs;
+            IsGenerated = generated;
+        }
+
+        public Equation(object lhs, object rhs) 
+            : this(null, lhs, rhs, false)
+        {}
+
+        public Equation(object lhs)
+            : this(null, lhs, null, false)
+        {}
+
+        public Equation(object lhs, object rhs, bool generated)
+            : this(null, lhs, rhs, generated)
+        {}
 
         #endregion
 
         #region Utility Functions
+
+        public bool ContainsVar()
+        {
+            var lhsVar = Lhs as Var;
+            var rhsVar = Rhs as Var;
+
+            if (lhsVar != null || rhsVar != null) return true;
+
+            var lhsTerm = Lhs as Term;
+            var rhsTerm = Rhs as Term;
+
+            if (lhsTerm != null && lhsTerm.ContainsVar()) return true;
+            if (rhsTerm != null && rhsTerm.ContainsVar()) return true;
+            return false;
+        }
 
         public bool ContainsVar(Var variable)
         {
@@ -35,6 +72,28 @@ namespace CSharpLogic
                 if (result) return true;
             }
             return false;
+        }
+
+        public Equation Clone()
+        {
+            var equation = (Equation)this.MemberwiseClone();
+
+            var lhs = Lhs as Term;
+            if (lhs != null)
+            {
+                equation.Lhs = lhs.Clone();
+            }
+
+            if (IsExpression)
+            {
+                var rhs = Rhs as Term;
+                if (rhs != null)
+                {
+                    equation.Rhs = rhs.Clone();
+                }
+            }
+
+            return equation;
         }
 
         #endregion
@@ -58,7 +117,7 @@ namespace CSharpLogic
 
         public override string ToString()
         {
-            return string.Format("{0}={1}", Lhs, Rhs);
+            return string.Format("{0}={1}", Lhs.ToString(), Rhs.ToString());
         }
 
         #endregion

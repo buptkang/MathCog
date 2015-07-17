@@ -70,5 +70,22 @@ namespace CSharpLogic.Test
             Assert.NotNull(args1);
             Assert.True(args1[0].Equals(1));
         }
+
+        [Test]
+        public void Test_Equal()
+        {
+            var x = new Var('x');
+            var term1 = new Term(Expression.Add, new List<object>() {x, 1});
+            var term2 = new Term(Expression.Add, new List<object>() { x, 1 });
+            Assert.True(term1.Equals(term2));
+        }
+
+        [Test]
+        public void Test_Reconstruct()
+        {
+            var term = new Term(Expression.Add, new List<object>() {1});
+            Assert.True(term.ReConstruct().Equals(1));
+        }
+
     }
 }

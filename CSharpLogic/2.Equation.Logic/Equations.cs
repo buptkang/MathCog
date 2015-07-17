@@ -1,27 +1,67 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace CSharpLogic
 {
-    public interface IEquationLogic : IEval
+    public interface IEquationLogic
     {
-        Equation EvalEquation();
+        bool? EvalEquation(out Equation outputEq);
     }
-
 
     public static class EquationEvalExtension
     {
         /// <summary>
         /// if x = y, then y = x
         /// </summary>
-        /// <param name="goal"></param>
-        /// <param name="gGoal"></param>
+        /// <param name="currentEq"></param>
+        /// <param name="rootEq"></param>
         /// <returns></returns>
-        public static bool SymmetricProperty(this Goal goal, out Goal gGoal)
+        public static Equation ApplySymmetric(this Equation currentEq, Equation rootEq)
         {
-            gGoal = null;
+            Equation localEq = currentEq;
+            object lhs = currentEq.Lhs;
+            object rhs = currentEq.Rhs;
+            if (SatisfySymmetricCondition(lhs, rhs))
+            {
+                var cloneEq = currentEq.Clone();
+                object tempObj = cloneEq.Lhs;
+                cloneEq.Lhs = cloneEq.Rhs;
+                cloneEq.Rhs = tempObj;
+
+                string rule = EquationsRule.Rule(
+                          EquationsRule.EquationRuleType.Symmetric,
+                          localEq, null);
+                rootEq.GenerateTrace(localEq, cloneEq, rule);
+                localEq = cloneEq;
+            }
+            return localEq;
+        }
+
+        private static bool SatisfySymmetricCondition(object lhs, object rhs)
+        {
+            bool lhsNumeric = LogicSharp.IsNumeric(lhs);
+            bool rhsNumeric = LogicSharp.IsNumeric(rhs);
+
+            if (lhsNumeric && !rhsNumeric)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Inverse Properties
+        /// 1. For any number a, there exists a number x such that a+x=0.
+        /// 2. If a is any number except 0, there exists a number x such that ax = 1.
+        /// </summary>
+        /// <param name="currentEq"></param>
+        /// <param name="rootEq"></param>
+        /// <returns></returns>
+        public static bool ApplyInverse(this Equation currentEq, Equation rootEq)
+        {
             return false;
         }
 
@@ -29,40 +69,42 @@ namespace CSharpLogic
         /// if x = y and y = z, then x = z
         /// if x = y, then x + a = y + a
         /// if x = y, then ax = ay
+        /// ax = ay -> x=y 
         /// </summary>
         /// <param name="goal"></param>
         /// <param name="gGoal"></param>
         /// <returns></returns>
-        public static bool TransitiveProperty(this Goal goal, out Goal gGoal)
+        public static Equation ApplyTransitive(this Equation currentEq, Equation rootEq)
         {
-            gGoal = null;
-            return false;
+            Equation localEq = currentEq;
+            object lhs = currentEq.Lhs;
+            object rhs = currentEq.Rhs;
+
+            if (SatisfyTransitiveCondition(lhs, rhs))
+            {
+                var cloneEq = currentEq.Clone();
+                var inverseRhs = new Term(Expression.Multiply, new List<object>() {-1, rhs});                
+                cloneEq.Lhs = new Term(Expression.Add, new List<object>() { lhs, inverseRhs });
+                cloneEq.Rhs = new Term(Expression.Add, new List<object>() {rhs, inverseRhs});
+
+                string rule = EquationsRule.Rule(
+                          EquationsRule.EquationRuleType.Transitive,
+                          localEq, null);
+                rootEq.GenerateTrace(localEq, cloneEq, rule);
+                localEq = cloneEq;
+            }
+            return localEq;
         }
 
-                    //Assert cannot be (Lhs is constant, Rhs contains variable)  
+        private static bool SatisfyTransitiveCondition(object lhs, object rhs)
+        {
+            bool rhsNumeric = LogicSharp.IsNumeric(rhs);
 
-            /*
-                else if(Var.IsVar(x) && Var.IsVar(y))
-                {
-                    var term1 = new Term(RevOp, new Tuple<object, object>(z, y));
-                    return new EqGoal(x, term1);
-                }
-                else if(Var.IsVar(y) && Var.IsVar(z))
-                {
-                    var term1 = new Term(Op, new Tuple<object, object>(x, y));
-                    return new EqGoal(term1, z);
-                }
-                else if(Var.IsVar(x) && Var.IsVar(z))
-                {
-                    //var oper = new Operator(RevOp.Method.Name);
-                    var term1 = new Term(Op, new Tuple<object, object>(x, y));
-                    return new EqGoal(term1, z);
-                }
-            */
-          
-
-            //Apply TransitiveProperty rule for the equality
-            //if x = y, then x + a = y + a
-            //if x = y, then ax = ay
+            if (rhsNumeric && !0.0.Equals(rhs) && !0.Equals(rhs))
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

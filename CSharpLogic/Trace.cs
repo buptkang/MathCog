@@ -24,12 +24,12 @@ namespace CSharpLogic
 
     public static class TraceUtils
     {
-        public static void MoveTraces(Term fromTerm, Term toTerm)
+/*        public static void MoveTraces(Term fromTerm, Term toTerm)
         {
             List<TraceStep> traces = fromTerm.Traces;
             if (traces.Count == 0) return;
             toTerm.Traces.AddRange(traces);
-        }
+        }*/
 
         public static object Generate(this Term term, object obj1, object obj)
         {

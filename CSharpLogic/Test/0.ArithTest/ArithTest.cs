@@ -116,6 +116,23 @@ namespace CSharpLogic
             Assert.True(term1.Traces.Count == 2);
         }
 
+        [Test]
+        public void Term_Algebra_Arith_3()
+        {
+            // 3 + x + 3
+            var x = new Var('x');
+            var lst = new List<object>() { 3, x,3 };
+            var term = new Term(Expression.Add, lst);
+            object obj = term.Eval();
+            Assert.NotNull(obj);
+            var gTerm = obj as Term;
+            Assert.NotNull(gTerm);
+            var glst = gTerm.Args as List<object>;
+            Assert.NotNull(glst);
+            Assert.True(glst.Count == 2);
+            Assert.True(term.Traces.Count == 2);
+        }
+
         #endregion
     }
 }
