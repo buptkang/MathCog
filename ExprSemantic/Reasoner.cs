@@ -1,7 +1,8 @@
-﻿using AlgebraGeometry;
+﻿using System;
+using AlgebraGeometry;
 using AlgebraGeometry.Expr;
+using CSharpLogic;
 using ExprPatternMatch;
-using GeometryLogicInference;
 using starPadSDK.MathExpr;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,12 +17,27 @@ namespace ExprSemantic
     {
         #region Properties and Constructor
 
-        public Reasoner()
+        public RelationGraph RelationGraph { get; set; }
+
+        public static Reasoner _instance;
+
+        public static Reasoner Instance
         {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new Reasoner();
+                }
+                return _instance;
+            }
+        }
+
+        private Reasoner()
+        {
+            RelationGraph = new RelationGraph();
             _cache = new ObservableCollection<KeyValuePair<object, object>>();
             _preCache = new Dictionary<object, object>();
-
-            //GeometryInference.Instance.Cache.CollectionChanged += Cache_CollectionChanged;
         }
 
         /// <summary>
@@ -37,67 +53,31 @@ namespace ExprSemantic
 
         #region Input communication with lower reasoning engine
 
-        public object Load(object obj)
-        {
-            var str = obj as string;
-            if (str != null) return Load(str);
-            var expr = obj as Expr;
-            if (expr != null) return Load(expr);
-            return null;
-        }
-
-        public object Load(object obj, ShapeType st)
+        public object Load(object obj, ShapeType? st = null)
         {
             var str = obj as string;
             if (str != null) return Load(str, st);
             var expr = obj as Expr;
-            if (expr != null) return Load(expr,st);
-            return null;            
+            if (expr != null) return Load(expr, st);
+            return null;
         }
 
-        /// <summary>
-        /// Sketch Input
-        /// </summary>
-        /// <param name="expr"></param>
-        private object Load(Expr expr, ShapeType st)
+        private object Load(Expr expr, ShapeType? st = null)
         {
             var rTemp = ExprVisitor.Instance.Match(expr); //input patter match
             Debug.Assert(rTemp != null);
             object output;
-            bool result = EvalExprPatterns(expr, rTemp, st, out output);
-            if (result)
+
+            EvalExprPatterns(expr, rTemp, st, out output);
+            var iKnowledge = output as IKnowledge;
+            if (iKnowledge != null)
             {
-                var iKnowledge = output as IKnowledge;
-                if (iKnowledge != null)
-                {
-                    _cache.Add(new KeyValuePair<object, object>(expr, iKnowledge));
-                }
+                _cache.Add(new KeyValuePair<object, object>(expr, iKnowledge));
             }
             return output;
         }
 
-        /// <summary>
-        /// Sketch Input
-        /// </summary>
-        /// <param name="expr"></param>
-        private object Load(Expr expr)
-        {
-            var rTemp = ExprVisitor.Instance.Match(expr); //input patter match
-            Debug.Assert(rTemp != null);
-            object output;
-            bool result = EvalExprPatterns(expr, rTemp, out output);
-            if (result)
-            {
-                var iKnowledge = output as IKnowledge;
-                if (iKnowledge != null)
-                {
-                    _cache.Add(new KeyValuePair<object, object>(expr, iKnowledge)); 
-                }
-            }
-            return output;
-        }
-
-        private object Load(string fact, ShapeType st)
+        private object Load(string fact, ShapeType? st = null)
         {
             Expr expr = Text.Convert(fact);
             object result = Load(expr, st);
@@ -106,25 +86,7 @@ namespace ExprSemantic
                 _preCache.Add(fact, expr);
                 return result;
             }
-            else
-            {
-                return null;
-            }
-        }
-
-        private object Load(string fact)
-        {
-            Expr expr = Text.Convert(fact);
-            object result = Load(expr);
-            if (result != null)
-            {
-                _preCache.Add(fact, expr);
-                return result;
-            }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         public void Unload(string fact)

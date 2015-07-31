@@ -1,6 +1,10 @@
 ﻿This library is mainly focus on inference based on the relation graph of 
 geometry entity, relation and properties.
 
+Graph Unification Procedure
+
+Constraint-based Programming
+
 Input Uncertainty
 Fuzzy Logic Versus Bayesian Inference
 
@@ -52,3 +56,13 @@ Input sequence:
 4: User Input to solve uncertainty:
    AB[Label]      => Line
 5: d[Label]       => Label
+
+Inference
+1. Shape Entity:   e.g general form of line
+2. Shape Property: the slope of line
+3. Shape Relation: e.g given slope and intercept, construct the line.
+
+Paramter Goal Constraints:
+1.Parameter: Goal or Label, (optional ShapeType)
+2.Parameter: Goal or ,      (optional ShapeType)
+3.Parameter: (optional Goal or Label), ShapeType

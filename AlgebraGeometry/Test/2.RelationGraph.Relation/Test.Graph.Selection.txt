@@ -1,0 +1,88 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using CSharpLogic;
+using NUnit.Framework;
+
+namespace AlgebraGeometry
+{
+    [TestFixture]
+    public class Test_Graph_Selection
+    {
+        #region Selection Input
+
+        [Test]
+        public void Test_Line_Selection_Deterministic1()
+        {
+           /* var graph = new RelationGraph();
+            //point identity test
+            var A = new Point(2.0, 3.0);
+            var B = new Point(2.0, 3.0);
+            graph.AddNode(A);
+            graph.AddNode(B);
+
+            object output;
+            bool result = graph.AddRelation
+                (new Tuple<object, object>(A, B), ShapeType.Line, out output);
+            Assert.False(result);
+            var str = output as String;
+            Assert.NotNull(str);
+            Assert.True(str.Equals(LineGenerationRule.IdentityPoints));*/
+        }
+
+        [Test]
+        public void Test_Line_Selection_Deterministic2()
+        {
+           /* var graph = new RelationGraph();
+            var A = new Point(2.0, 3.0);
+            var B = new Point(2.0, -1.0);
+            graph.AddShapeNode(A);
+            graph.AddShapeNode(B);
+            object output;
+            bool result = graph.AddRelation(new Tuple<object, object>(A, B), ShapeType.Line, out output);
+            Assert.True(result);
+            var shape = output as Line;
+            Assert.NotNull(shape);
+
+            var shapes = graph.RetrieveShapes();
+            Assert.True(shapes.Count == 3);*/
+        }
+
+        [Test]
+        public void Test_Line_Selection_Deterministic3()
+        {
+          /*  var graph = new RelationGraph();
+            var A = new Point(1.0, -1.0);
+            var B = new Point(2.0, -1.0);
+            graph.AddShapeNode(A);
+            graph.AddShapeNode(B);
+            object output;
+            bool result = graph.AddRelation(new Tuple<object, object>(A, B), ShapeType.Line, out output);
+            Assert.True(result);
+            var shape = output as Line;
+            Assert.NotNull(shape);
+            var shapes = graph.RetrieveShapes();
+            Assert.True(shapes.Count == 3);*/
+        }
+
+        [Test]
+        public void Test_Line_Selection_Deterministic4()
+        {
+          /*  var graph = new RelationGraph();
+            var A = new Point(2.0, -2.0);
+            var B = new Point(2.0, -1.0);
+            graph.AddShapeNode(A);
+            graph.AddShapeNode(B);
+            object output;
+            bool result = graph.AddRelation(new Tuple<object, object>(A, B), ShapeType.Line, out output);
+            Assert.True(result);
+            var shape = output as Line;
+            Assert.NotNull(shape);
+            var shapes = graph.RetrieveShapes();
+            Assert.True(shapes.Count == 3);*/
+        }
+
+        #endregion
+    }
+}

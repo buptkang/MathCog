@@ -51,6 +51,17 @@ namespace CSharpLogic
         public object EvalAlgebra()
         {
             return this.AlgebraLaws(this);
+            //object obj = this.AlgebraLaws(this);
+
+            /*var localTerm = obj as Term;
+            if (localTerm != null)
+            {
+                return localTerm.Beautify();
+            }
+            else
+            {
+                return obj;
+            }*/
         }
 
         #region Evaluation Algorithm 
@@ -142,7 +153,11 @@ namespace CSharpLogic
             return localTerm;
         }
 
-        public void Beautify()
+        /// <summary>
+        /// 1.Undo identity
+        /// </summary>
+        /// <returns></returns>
+        private object Beautify()
         {
             var lst = Args as List<object>;
             Debug.Assert(lst != null);
@@ -152,20 +167,28 @@ namespace CSharpLogic
                 var localTerm = lst[i] as Term;
                 if (localTerm != null)
                 {
-                    localTerm.Beautify();
+                    lst[i] = localTerm.Beautify();
                 }
-                //remove identity and minus
+                //remove identity
                 if (Op.Method.Name.Equals("Multiply"))
                 {
                     if (lst[i].Equals(1))
                     {
-                        lst.RemoveAt(0);
+                        lst.RemoveAt(i);
                     }
                 }
+            }
+
+            if (lst.Count == 1)
+            {
+                return lst[0];
+            }
+            else
+            {
+                return this;
             }
         }
 
         #endregion
-
     }    
 }

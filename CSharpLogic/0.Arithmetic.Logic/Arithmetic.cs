@@ -78,6 +78,10 @@ namespace CSharpLogic
                 return lst.GetRange(0, arithStartIndex);
                 #endregion
             }
+            else if (term.Op.Method.Name.Equals("Divide"))
+            {
+                return lst;
+            }
 
            throw new Exception("Arithmetic.cs: Cannot reach here");
         }

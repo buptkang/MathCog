@@ -33,24 +33,24 @@ namespace AlgebraGeometry
         //            CentralPt = center;
         //        }
 
-        public override void UndoGoal(EqGoal goal, object parent)
-        {
-            throw new NotImplementedException();
-        }
-
         #region IEquatable
         //TODO
         #endregion
     }
 
-    public class CircleSymbol : ShapeSymbol
+    public partial class CircleSymbol : ShapeSymbol
     {
         public CircleSymbol(Shape _shape)
             : base(_shape)
         {
         }
 
-        public override IEnumerable<ShapeSymbol> RetrieveGeneratedShapes()
+        public override object RetrieveConcreteShapes()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override object GetOutputType()
         {
             throw new NotImplementedException();
         }

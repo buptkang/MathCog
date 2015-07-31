@@ -11,7 +11,7 @@ using CSharpLogic;
 
 namespace GeometryLogicInference
 {
-    public class GeometryInference
+    public partial class GeometryInference
     {
         #region Singleton, Constructor and Properties
 
@@ -69,55 +69,86 @@ namespace GeometryLogicInference
 
         #region API to communicate with relation graph
 
+        //  TODO Bayesian Inference upon relation graph
+        /// <summary>
+        /// Constraint Solving Program
+        /// overfitting and underfitting issues
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="constraint"></param>
+        /// <param name="st"></param>
+        /// <param name="isAdd"></param>
+        /// <returns></returns>
+        private object CSP(object constraint, 
+                           ShapeType? st = null, bool isAdd = true)
+        {
+            if (isAdd)
+            {
+                if (constraint == null) return Eval(st);
+                object returnObj = null;
+
+                var label = constraint as string;
+                if (label != null)
+                {
+                    returnObj = Eval(label, st);
+                }
+
+                /*
+                var lst = constraint as List<object>;
+                if (lst != null)
+                {
+                    returnObj = EvalListObjects(lst);
+                }*/
+
+                //CheckUncertaintyOnGraph(constraint); // Uncertainty Analysis
+                return returnObj;
+            }
+            else //delete
+            {               
+                var label = constraint as string;
+                if (label != null)
+                {
+                    UnEval(label);
+                }
+
+                /*  var lst = constraint as List<object>;
+                if (lst != null)
+                {
+                    UnEvalListObjects(lst);
+                }
+
+                CheckUncertaintyOnGraph(obj); // Uncertainty Analysis*/
+                return null;
+            }
+        }
+
         /// <summary>
         /// Take charge of input uncertainty 
         /// </summary>
         /// <param name="obj">Shape, Goal, Label, or list of objects </param>
+        /// <param name="st"></param>
         /// <returns></returns>
-        public object Add(object obj)
+        public object Add(object obj, ShapeType? st = null)
         {
-            object returnObj = null;
-
-            #region Deterministic input
-
+            #region Deterministic Input
             var shape = obj as Shape;
             if (shape != null)
             {
                 Add(shape);
-                ReEvalCach(); //re-check uncertainty
-                returnObj = shape;
+                ReEval(); //re-check uncertainty
+                return shape;
             }
-
-            var goal = obj as Goal;
+            var goal = obj as EqGoal;
             if (goal != null)
             {
                 Add(goal);
-                ReEvalCach();
-                returnObj =  goal;
+                ReEval();
+                return goal;
             }
-
             #endregion
 
-            #region Non-Deterministic input 
-            //TODO Bayesian Inference upon relation graph
-
-            var label = obj as string;
-            if (label != null)
-            {
-                returnObj = EvalLabel(label);
-            }
-
-            var lst = obj as List<object>;
-            if (lst != null)
-            {
-                returnObj =  EvalListObjects(lst);
-            }
-
-            #endregion
-
-            CheckUncertaintyOnGraph(obj); // Uncertainty Analysis
-            
-            return returnObj;
+            //Non-Deterministic Input (Constraint Solving)
+            return CSP(obj, st);
         }
 
         public void Delete(object obj)
@@ -128,279 +159,19 @@ namespace GeometryLogicInference
             if (shape != null)
             {
                 Delete(shape);
-                ReEvalCach();
+                ReEval();
             }
 
             var goal = obj as Goal;
             if (goal != null)
             {
                 Delete(goal);
-                ReEvalCach();
+                ReEval();
             }
 
             #endregion
 
-            #region Non-Deterministic input
-            //TODO Bayesian Inference upon relation graph
-
-            var label = obj as string;
-            if (label != null)
-            {
-                UnEvalLabel(label);
-            }
-
-            var lst = obj as List<object>;
-            if (lst != null)
-            {
-                UnEvalListObjects(lst);
-            }
-
-            #endregion
-
-            CheckUncertaintyOnGraph(obj); // Uncertainty Analysis
-        }
-
-        #endregion
-
-        #region Non-Deterministic Label and List<object>
-
-        #region Label Analysis
-
-        /// <summary>
-        /// User Input
-        /// </summary>
-        /// <param name="label"></param>
-        /// <param name="st"></param>
-        /// <returns></returns>
-        public object SolveAmbiguityByUser(string label, ShapeType st)
-        {
-            Delete(label);
-            return EvalLabel(label, st);
-        }
-
-        private object EvalLabel(string label, ShapeType st)
-        {
-            object obj1;
-            bool result = _relationGraph.InferVariable(label, st, out obj1);
-            if (result)
-            {
-                var unifiedShape = obj1 as Shape;
-                if (unifiedShape != null)
-                {
-                    //object value = Add(unifiedShape);
-                    GraphNode gn = _relationGraph.AddNode(unifiedShape);
-                    _cache.Add(new KeyValuePair<object, object>(label, gn));
-                    return unifiedShape;
-                }
-            }
-            else
-            {
-                var types = obj1 as List<ShapeType>;
-                //User Feedback Required
-                if (types != null) throw new Exception("Cannot reach here");
-            }
-            _cache.Add(new KeyValuePair<object, object>(label, null));
-            return label;
-        }
-
-        private object EvalLabel(string label)
-        {
-            object obj1;
-            bool result = _relationGraph.InferVariable(label, out obj1);
-            if (result)
-            {
-                var unifiedShape = obj1 as Shape;
-                if (unifiedShape != null)
-                {
-                    //object value = Add(unifiedShape);
-                    GraphNode gn = _relationGraph.AddNode(unifiedShape);
-                    _cache.Add(new KeyValuePair<object, object>(label, gn));
-                    return unifiedShape;
-                }
-            }
-            else
-            {
-                var types = obj1 as List<ShapeType>;
-                //User Feedback Required
-                if (types != null)
-                {
-                    _cache.Add(new KeyValuePair<object, object>(label, types));
-                    return types;
-                }
-            }
-            _cache.Add(new KeyValuePair<object, object>(label, null));
-            return label;
-        }
-
-        private void UnEvalLabel(string label)
-        {
-            KeyValuePair<object, object>? resultPair = null;
-            foreach (KeyValuePair<object, object> pair in _cache)
-            {
-                var tempLabel = pair.Key as string;
-                if (tempLabel != null && tempLabel.Equals(label))
-                {
-                    resultPair = pair;
-                }
-            }
-
-            if (resultPair != null)
-            {
-                object obj = resultPair.Value.Value;
-                var shapeNode = obj as ShapeNode;
-                if (shapeNode != null)
-                {
-                    _relationGraph.DeleteShapeNode(shapeNode.Shape);
-                }
-                var goalNode = obj as GoalNode;
-                if (goalNode != null)
-                {
-                    _relationGraph.DeleteGoalNode(goalNode.Goal);
-                }
-                _cache.Remove(resultPair.Value);
-            }
-        }
-
-        private void ReEvalLabel()
-        {
-            string label = null;
-            foreach (KeyValuePair<object, object> pair in _cache.ToList())
-            {
-                var tempLabel = pair.Key as string;
-                if (tempLabel != null)
-                {
-                    label = tempLabel;
-                    var sn = pair.Value as ShapeNode;
-                    if (sn != null)
-                    {
-                        _relationGraph.DeleteShapeNode(sn.Shape);
-                    }
-
-                    var gn = pair.Value as GoalNode;
-                    if (gn != null)
-                    {
-                        _relationGraph.DeleteGoalNode(gn.Goal);
-                    }
-
-                    _cache.Remove(pair);
-                }
-            }
-
-            if (label != null)
-            {
-                EvalLabel(label);
-            }
-        }
-
-        #endregion
-
-        #region List of Object (Goal and Shape)
-
-        private object EvalListObjects(List<object> lst)
-        {
-            object obj1;
-            object inferredObj = null;
-            foreach (object objTemp in lst)
-            {
-                bool exist = _relationGraph.InferVariable(objTemp, out obj1);
-                if (exist) inferredObj = objTemp;
-            }
-
-            if (inferredObj != null) // deterministic
-            {
-                if (inferredObj is Goal || inferredObj is Shape)
-                {
-                    //object result = Add(inferredObj);
-                    GraphNode gn = _relationGraph.AddNode(inferredObj);
-                    _cache.Add(new KeyValuePair<object, object>(lst, gn));
-                    return inferredObj;
-                }
-            }
-            else //non-deterministic
-            {
-                //Heuristic: prefer shape instead of goal
-                foreach (object currObj in lst)
-                {
-                    if (currObj is Shape)
-                    {
-                        //object result = Add(currObj);
-                        GraphNode result = _relationGraph.AddNode(currObj);
-                        _cache.Add(new KeyValuePair<object, object>(lst, result));
-                        return currObj;
-                    }
-                }
-            }
-
-            return lst;
-        }
-
-        private void UnEvalListObjects(List<object> lst)
-        {
-            KeyValuePair<object, object>? resultPair = null;
-            foreach (KeyValuePair<object, object> pair in _cache)
-            {
-                var tempLst = pair.Key as List<object>;
-                if (tempLst != null && tempLst.Equals(lst))
-                {
-                    resultPair = pair;
-                }
-            }
-
-            if (resultPair != null)
-            {
-                object obj = resultPair.Value.Value;
-                var shapeNode = obj as ShapeNode;
-                if (shapeNode != null)
-                {
-                    _relationGraph.DeleteShapeNode(shapeNode.Shape);
-                }
-                var goalNode = obj as GoalNode;
-                if (goalNode != null)
-                {
-                    _relationGraph.DeleteGoalNode(goalNode.Goal);
-                }
-                _cache.Remove(resultPair.Value);
-            }
-        }
-
-        #endregion
-
-        private void ReEvalCach()
-        {
-            ReEvalLabel();
-        }
-
-        /// <summary>
-        /// Case by case heuristics
-        /// </summary>
-        /// <param name="obj"></param>
-        private void CheckUncertaintyOnGraph(object obj)
-        {
-            var lst = RetrieveMultiObjectsPairs();
-            if (lst.Count == 0) return;
-
-            var shape = obj as Shape;
-            if (shape == null) return;
-
-            foreach (KeyValuePair<object, object> pair in lst.ToList())
-            {
-                var alterLst = pair.Key as List<object>;
-                Debug.Assert(alterLst != null);
-
-                var shapeNode = pair.Value as ShapeNode;
-                if (shapeNode != null)
-                {
-                    _relationGraph.DeleteShapeNode(shapeNode.Shape);
-                }
-                var goalNode = pair.Value as GoalNode;
-                if (goalNode != null)
-                {
-                    _relationGraph.DeleteGoalNode(goalNode.Goal);
-                }
-
-                _cache.Remove(pair);
-                Add(alterLst);
-            }
+            CSP(obj, null, false);
         }
 
         #endregion
@@ -475,33 +246,6 @@ namespace GeometryLogicInference
                 }
             }
             return lst;
-        }
-
-        #endregion
-
-        #region Graph Node Selections
-
-        public void SelectNode(GraphNode gn)
-        {
-            if(!_relationGraph.Nodes.Contains(gn)) 
-                throw new Exception("Root graph needs to contain select node!");
-
-            _selectedNode.Add(gn);
-        }
-
-        public void DeSelectNode(GraphNode gn)
-        {
-            if (!_relationGraph.Nodes.Contains(gn))
-            {
-                throw new Exception("Root graph needs to contain select node!");
-            }
-                
-            if (!_selectedNode.Contains(gn))
-            {
-                throw new Exception("The node should be selected before.");
-            }
-
-            _selectedNode.Remove(gn);
         }
 
         #endregion

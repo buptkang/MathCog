@@ -102,15 +102,23 @@ namespace CSharpLogic
                     return lst[0].ToString();
                 }
 
-                builder.Append('(');
+                //builder.Append('(');
+                int innerVisualElement = 0;
                 int index = 0;
-
                 do
                 {
                     bool noOp = false;
+                    if (lst[index].Equals(1) && Op.Method.Name.Equals("Multiply"))
+                    {
+                        index++;
+                        if (index < lst.Count) continue;
+                        else break;
+                    }
                     builder.Append(lst[index]);
+                    innerVisualElement++;
                     if (Op.Method.Name.Equals("Add"))
                     {
+                        #region Add Format
                         if (index + 1 < lst.Count)
                         {
                             bool isNumeric = LogicSharp.IsNumeric(lst[index + 1]);
@@ -122,6 +130,7 @@ namespace CSharpLogic
                                     noOp = true;
                                     builder.Append(lst[index + 1]);
                                     index += 1;
+                                    innerVisualElement++;
                                 }
                             }                            
                         }
@@ -130,19 +139,37 @@ namespace CSharpLogic
                         {
                             builder.Append('+');
                         }
+                        #endregion
                     }
                     else if (Op.Method.Name.Equals("Multiply"))
                     {
-                        if (!noOp && index != lst.Count - 1)
+                        if (index != lst.Count - 1)
                         {
                             builder.Append('*');
                         }
                     }
+                    else if (Op.Method.Name.Equals("Divide"))
+                    {
+                        if (index != lst.Count - 1)
+                        {
+                            builder.Append('/');
+                        }                        
+                    }
                     index++;
                 }while (index < lst.Count); 
-                builder.Append(')');
+                
+                //builder.Append(')');
+                if (innerVisualElement > 1)
+                {
+                    var str = builder.ToString();
+                    var bb = new StringBuilder();
+                    bb.Append('(').Append(str).Append(')');
+                    return bb.ToString();
+                }
                 #endregion
             }
+
+
             return builder.ToString();
         }
 

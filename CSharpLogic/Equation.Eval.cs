@@ -8,8 +8,9 @@ namespace CSharpLogic
 {
     public partial class Equation : DyLogicObject, IEquationLogic
     {
-        public bool? Eval(out Equation outputEq)
+        public bool? Eval(out Equation outputEq, bool withTransitive = true)
         {
+            #region Term Proprocessing
             var lhsTerm = Lhs as Term;
             if (lhsTerm != null)
             {
@@ -19,24 +20,24 @@ namespace CSharpLogic
                     TransformTermTrace(true);
                 }
             }
-            if (!IsExpression)
+
+            var rhsTerm = Rhs as Term;
+            if (rhsTerm != null)
             {
-                var rhsTerm = Rhs as Term;
-                if (rhsTerm != null)
+                object rhs = rhsTerm.Eval();
+                if (!rhsTerm.Equals(rhs))
                 {
-                    object rhs = rhsTerm.Eval();
-                    if (!rhsTerm.Equals(rhs))
-                    {
-                        TransformTermTrace(false);
-                    }
+                    TransformTermTrace(false);
                 }
             }
-            return EvalEquation(out outputEq);
+            #endregion
+
+            return EvalEquation(out outputEq, withTransitive);
         }
 
-        public bool? EvalEquation(out Equation outputEq)
+        public bool? EvalEquation(out Equation outputEq, bool withEqRule = true)
         {
-            return EquationLaws(this, out outputEq);           
+            return EquationLaws(this, withEqRule, out outputEq);
         }
 
         private Equation EvalLeftSide(Equation rootEq)
@@ -72,8 +73,6 @@ namespace CSharpLogic
 
         private Equation EvalRightSide(Equation rootEq)
         {
-            if (IsExpression) return this;
-
             Equation localEq = this;
             var rhsTerm = Rhs as Term;
             if (rhsTerm != null)
@@ -102,7 +101,7 @@ namespace CSharpLogic
             return localEq;
         }
 
-        private bool? EquationLaws(Equation rootEq, out Equation outputEq)
+        private bool? EquationLaws(Equation rootEq, bool withEqRule, out Equation outputEq)
         {
             Equation currentEq;
             if (Traces.Count == 0)
@@ -111,7 +110,7 @@ namespace CSharpLogic
             }
             else
             {
-                currentEq = Traces[Traces.Count - 1].Target as Equation; 
+                currentEq = Traces[Traces.Count - 1].Target as Equation;
             }
             outputEq = currentEq;
 
@@ -138,37 +137,27 @@ namespace CSharpLogic
                     hasChange = true;
                     currentEq = localEq0;
                 }
-                var localEq1 = currentEq.ApplyTransitive(rootEq);
-                if (!localEq1.Equals(currentEq))
+
+                if (withEqRule)
                 {
-                    hasChange = true;
-                    currentEq = localEq1;
+                    var localEq1 = currentEq.ApplyTransitive(rootEq);
+                    if (!localEq1.Equals(currentEq))
+                    {
+                        hasChange = true;
+                        currentEq = localEq1;
+                    }
+                    var localEq2 = localEq1.ApplySymmetric(rootEq);
+                    if (!localEq2.Equals(localEq1))
+                    {
+                        hasChange = true;
+                        currentEq = localEq2;
+                    }
                 }
-                var localEq2 = localEq1.ApplySymmetric(rootEq);
-                if (!localEq2.Equals(localEq1))
-                {
-                    hasChange = true;
-                    currentEq = localEq2;
-                }
+
             } while (hasChange);
 
-            PostProcessing(currentEq);
             outputEq = currentEq;
             return null;
-        }
-
-        private void PostProcessing(Equation currentEq)
-        {
-            var lhsTerm = currentEq.Lhs as Term;
-            if (lhsTerm != null)
-            {
-               // lhsTerm.Beautify();
-            }
-            var rhsTerm = currentEq.Rhs as Term;
-            if (rhsTerm != null)
-            {
-               // rhsTerm.Beautify();
-            }
         }
 
         /// <summary>
@@ -184,19 +173,21 @@ namespace CSharpLogic
             {
                 return equation.Lhs.Equals(equation.Rhs);
             }
-            var leftVar  = equation.Lhs as Var;
+            var leftVar = equation.Lhs as Var;
             var rightVar = equation.Rhs as Var;
             if (leftVar != null && rightVar != null)
             {
-                return leftVar.Equals(rightVar);                
+                bool result = leftVar.Equals(rightVar);
+                if (result) return true;
+                return null;
             }
-/*            var leftTerm  = equation.Lhs as Term;
-            var rightTerm = equation.Rhs as Term;
-            if (leftTerm != null && rightTerm != null)
-            {
+            /*            var leftTerm  = equation.Lhs as Term;
+                        var rightTerm = equation.Rhs as Term;
+                        if (leftTerm != null && rightTerm != null)
+                        {
 
-                return leftTerm.Equals(rightTerm);
-            }*/
+                            return leftTerm.Equals(rightTerm);
+                        }*/
             return null;
         }
     }

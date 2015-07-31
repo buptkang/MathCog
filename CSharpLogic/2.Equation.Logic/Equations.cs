@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -8,7 +9,7 @@ namespace CSharpLogic
 {
     public interface IEquationLogic
     {
-        bool? EvalEquation(out Equation outputEq);
+        bool? EvalEquation(out Equation outputEq, bool withEqRules = true);
     }
 
     public static class EquationEvalExtension
@@ -83,8 +84,27 @@ namespace CSharpLogic
             if (SatisfyTransitiveCondition(lhs, rhs))
             {
                 var cloneEq = currentEq.Clone();
-                var inverseRhs = new Term(Expression.Multiply, new List<object>() {-1, rhs});                
-                cloneEq.Lhs = new Term(Expression.Add, new List<object>() { lhs, inverseRhs });
+                var inverseRhs = new Term(Expression.Multiply, new List<object>() {-1, rhs});
+
+                var lhsTerm = cloneEq.Lhs as Term;
+                if (lhsTerm != null)
+                {
+                    var cloneLst = lhsTerm.Args as List<object>;
+                    Debug.Assert(cloneLst != null);
+                    if (lhsTerm.Op.Method.Name.Equals("Add"))
+                    {
+                        cloneLst.Add(inverseRhs);                        
+                    }
+                    else
+                    {
+                        cloneEq.Lhs = new Term(Expression.Add, new List<object>() { lhs, inverseRhs });
+                    }
+                }
+                else
+                {
+                    cloneEq.Lhs = new Term(Expression.Add, new List<object>() { lhs, inverseRhs });
+                }
+
                 cloneEq.Rhs = new Term(Expression.Add, new List<object>() {rhs, inverseRhs});
 
                 string rule = EquationsRule.Rule(

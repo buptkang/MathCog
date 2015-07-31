@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CSharpLogic;
 
 namespace AlgebraGeometry
 {
-    public class Ellipse : QuadraticCurve
+    public partial class Ellipse : QuadraticCurve
     {
         //        public Ellipse(string label, double a, double b, double d, double e, double f)
         //            : base(label, ShapeType.Ellipse, a, b, 0.0, d, e, f)
@@ -43,7 +44,12 @@ namespace AlgebraGeometry
         {
         }
 
-        public override IEnumerable<ShapeSymbol> RetrieveGeneratedShapes()
+        public override object RetrieveConcreteShapes()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override object GetOutputType()
         {
             throw new NotImplementedException();
         }

@@ -9,7 +9,6 @@ using AlgebraGeometry;
 using AlgebraGeometry.Expr;
 using CSharpLogic;
 using ExprPatternMatch;
-using GeometryLogicInference;
 using NUnit.Framework;
 using starPadSDK.MathExpr;
 
@@ -19,25 +18,8 @@ namespace ExprSemantic
     {
         #region Input Eval and UnEval
 
-        private void UnEvalExprPatterns(object obj)
-        {
-            if (_cache.Count == 0) return;
-
-            var shapeSymExpr = obj as AGShapeExpr;
-            if (shapeSymExpr != null)
-            {
-                GeometryInference.Instance.Delete(shapeSymExpr.ShapeSymbol.Shape);
-            }
-
-            var termExpr = obj as AGPropertyExpr;
-            if (termExpr != null)
-            {
-                GeometryInference.Instance.Delete(termExpr.Goal);
-            }
-        }
-
         private bool EvalExprPatterns(Expr expr, object obj, 
-                                ShapeType st, out object output)
+                                ShapeType? st, out object output)
         {
             output = null;
 
@@ -49,40 +31,26 @@ namespace ExprSemantic
             var goal = obj as EqGoal;
             if (goal != null) return EvalExprPatterns(expr, goal, out output);
 
-            //non-deterministic
+            var query = obj as Query;
+            if (query != null) return EvalExprPatterns(expr, query, out output);
+
+            var equation = obj as Equation;
+            if (equation != null) throw new Exception("TODO");
+
+            //non-deterministic            
             var str = obj as string;
-            if (str != null) return EvalExprPatterns(expr, str, st, out output);
+            var gQuery = new Query(str, st);
+            if (str != null) return EvalExprPatterns(expr, gQuery, out output);  
 
             //non-deterministic
             var dict = obj as Dictionary<PatternEnum, object>;
             //ambiguity of input pattern
-            if (dict != null) return EvalExprPatterns(expr, dict, out output);
-
-            return false;
-        }
-
-        private bool EvalExprPatterns(Expr expr, object obj, 
-                                      out object output)
-        {
-            output = null;
-
-            //deterministic
-            var ss = obj as ShapeSymbol;
-            if (ss != null) return EvalExprPatterns(expr, ss, out output);
-
-            //deterministic
-            var goal = obj as EqGoal;
-            if (goal != null) return EvalExprPatterns(expr, goal, out output);
-
-            //non-deterministic
-            var str = obj as string;
-            if (str != null) return EvalExprPatterns(expr, str, out output);
-
-            //non-deterministic
-            var dict = obj as Dictionary<PatternEnum, object>;
-            //ambiguity of input pattern
-            if (dict != null) return EvalExprPatterns(expr, dict, out output);
-
+            if (dict != null)
+            {
+                return false;
+                //throw new Exception("TODO");
+                //return EvalExprPatterns(expr, dict, out output);
+            }
             return false;
         }
 
@@ -96,7 +64,9 @@ namespace ExprSemantic
         private bool EvalExprPatterns(Expr expr, Dictionary<PatternEnum, object> dict,
             out object output)
         {
-            List<object> objs = dict.Values.ToList();
+            output = null;
+            return false;
+/*            List<object> objs = dict.Values.ToList();
             //convert shapesymbol to shape
             var lst = new List<object>();
             foreach (object obj in objs)
@@ -111,8 +81,8 @@ namespace ExprSemantic
                     lst.Add(obj);
                 }
             }
-            object obj1 = GeometryInference.Instance.Add(lst);
-            return EvalNonDeterministic(expr, obj1, out output);
+            object obj1 = RelationGraph.Add(lst);
+            return EvalNonDeterministic(expr, obj1, out output);*/
         }
 
         private bool EvalNonDeterministic(Expr expr, object obj, out object output)
@@ -171,30 +141,18 @@ namespace ExprSemantic
         /// </summary>
         /// <param name="expr"></param>
         /// <param name="str"></param>
-        /// <param name="output"></param>
-        /// <returns></returns>
-        private bool EvalExprPatterns(Expr expr, string str,
-            out object output)
-        {
-            object obj = GeometryInference.Instance.Add(str);
-            return EvalNonDeterministic(expr, obj, out output);
-        }
-
-        /// <summary>
-        /// Relation Input Pattern Match
-        /// </summary>
-        /// <param name="expr"></param>
-        /// <param name="str"></param>
         /// <param name="st"></param>
+        /// <param name="query"></param>
         /// <param name="output"></param>
         /// <returns></returns>
-        private bool EvalExprPatterns(Expr expr, string str,
-            ShapeType st, out object output)
+        private bool EvalExprPatterns(Expr expr, Query query, out object output)
         {
-            object obj = GeometryInference.Instance.SolveAmbiguityByUser(str, st);
-            return EvalNonDeterministic(expr, obj, out output);
+            output = null;
+            var obj = RelationGraph.AddNode(query);
+            output = new AGQueryExpr(expr, query);
+            return obj != null;
+            //return EvalNonDeterministic(expr, obj, out output);
         }
-
 
         /// <summary>
         /// ShapeSymbol Input Pattern Match
@@ -203,10 +161,9 @@ namespace ExprSemantic
         /// <param name="ss"></param>
         /// <param name="output"></param>
         /// <returns></returns>
-        private bool EvalExprPatterns(Expr expr, ShapeSymbol ss,
-            out object output)
+        private bool EvalExprPatterns(Expr expr, ShapeSymbol ss, out object output)
         {
-            object obj = GeometryInference.Instance.Add(ss.Shape);
+            object obj = RelationGraph.AddNode(ss);
             Debug.Assert(obj != null);
             output = new AGShapeExpr(expr, ss);
             return true;
@@ -219,45 +176,51 @@ namespace ExprSemantic
         /// <param name="goal"></param>
         /// <param name="output"></param>
         /// <returns></returns>
-        private bool EvalExprPatterns(Expr expr, EqGoal goal,
-            out object output)
+        private bool EvalExprPatterns(Expr expr, EqGoal goal, out object output)
         {
-            object obj = GeometryInference.Instance.Add(goal);
-            Debug.Assert(obj != null);
+            object obj = RelationGraph.AddNode(goal);
             output = new AGPropertyExpr(expr, goal);
+            Debug.Assert(obj != null);
             return true;
+        }
+
+        private void UnEvalExprPatterns(object obj)
+        {
+            if (_cache.Count == 0) return;
+            var shapeSymExpr = obj as AGShapeExpr;
+            if (shapeSymExpr != null)
+            {
+                RelationGraph.DeleteNode(shapeSymExpr.ShapeSymbol);
+            }
+            var termExpr = obj as AGPropertyExpr;
+            if (termExpr != null)
+            {
+                RelationGraph.DeleteNode(termExpr.Goal);
+            }
+            var queryExpr = obj as AGQueryExpr;
+            if (queryExpr != null)
+            {
+                RelationGraph.DeleteNode(queryExpr.QueryTag);
+            }
         }
 
         #endregion
 
         #region cache utilities
 
+        private List<AGQueryExpr> GetQueryFacts()
+        {
+            return _cache.Select(pair => pair.Value).OfType<AGQueryExpr>().ToList();
+        }
+
         private List<AGPropertyExpr> GetTermFacts()
         {
-            var lst = new List<AGPropertyExpr>();
-            foreach (KeyValuePair<object, object> pair in _cache)
-            {
-                var temp = pair.Value as AGPropertyExpr;
-                if (temp != null)
-                {
-                    lst.Add(temp);
-                }
-            }
-            return lst;     
+            return _cache.Select(pair => pair.Value).OfType<AGPropertyExpr>().ToList();
         }
 
         private List<AGShapeExpr> GetShapeFacts()
         {
-            var lst = new List<AGShapeExpr>();
-            foreach (KeyValuePair<object, object> pair in _cache)
-            {
-                var temp = pair.Value as AGShapeExpr;
-                if (temp != null)
-                {
-                    lst.Add(temp);
-                }
-            }
-            return lst;
+            return _cache.Select(pair => pair.Value).OfType<AGShapeExpr>().ToList();
         }
 
         #endregion
@@ -272,6 +235,11 @@ namespace ExprSemantic
         public List<AGPropertyExpr> TestGetProperties()
         {
             return GetTermFacts();
+        }
+
+        public List<AGQueryExpr> TestGetQuerys()
+        {
+            return GetQueryFacts();
         }
 
         #endregion

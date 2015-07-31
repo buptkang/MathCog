@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using NUnit.Framework;
 
 namespace CSharpLogic
 {
@@ -107,6 +108,27 @@ namespace CSharpLogic
 
                     var term = obj2 as Term;
                     if (term != null && term.ContainsVar()) return true;
+                }
+
+                //(2*y)+(2*x) -> (2*x)+(2*y)
+                var term2= obj2 as Term;
+                if (term1 != null && term2 != null)
+                {
+                    var term1Lst = term1.Args as List<object>;
+                    Debug.Assert(term1Lst != null);
+                    var term1Var = term1Lst[1] as Var;
+
+                    var term2Lst = term2.Args as List<object>;
+                    Debug.Assert(term2Lst != null);
+                    var term2Var = term2Lst[1] as Var;
+                    if (term1Var != null && term2Var != null)
+                    {
+                        bool condition1 = term1Var.ToString().Equals("Y") ||
+                                          term1Var.ToString().Equals("y");
+                        bool condition2 = term2Var.ToString().Equals("X") ||
+                                          term2Var.ToString().Equals("x");
+                        if (condition1 && condition2) return true;
+                    }
                 }
             }
             else if (inTerm.Op.Method.Name.Equals("Multiply"))
@@ -348,23 +370,40 @@ namespace CSharpLogic
             if (list == null) throw new Exception("Cannot be null");
             if (list.Count < 2) return localTerm;
 
-            object obj1;
-            if (SatisfyDistributiveCondition(term, list[0], list[1], out obj1))
+            bool madeChanges;
+            do
             {
-                var cloneTerm = localTerm.Clone();
-                var cloneLst = cloneTerm.Args as List<object>;
-                Debug.Assert(cloneLst != null);
-                cloneLst[0] = obj1;
-                cloneLst.RemoveAt(1);
+                list = localTerm.Args as List<object>;
+                if (list == null) throw new Exception("Cannot be null");
+                int itemCount = list.Count;
+                madeChanges = false;
+                itemCount--;
+                for (var i = 0; i < itemCount; i++)
+                {
+                    list = localTerm.Args as List<object>;
+                    Debug.Assert(list != null);
+                    itemCount = list.Count;
+                    object obj1;
+                    if (i + 1 >= list.Count) break;
+                    if (SatisfyDistributiveCondition(term, list[i], list[i+1], out obj1))
+                    {
+                        var cloneTerm = localTerm.Clone();
+                        var cloneLst = cloneTerm.Args as List<object>;
+                        Debug.Assert(cloneLst != null);
+                        cloneLst[i] = obj1;
+                        cloneLst.RemoveAt(i+1);
 
-                //generate trace rule
-                string rule = AlgebraRule.Rule(
-                    AlgebraRule.AlgebraRuleType.Distributive,
-                    list[0], list[1]);
+                        //generate trace rule
+                        string rule = AlgebraRule.Rule(
+                            AlgebraRule.AlgebraRuleType.Distributive,
+                            list[i], list[i+1]);
 
-                rootTerm.GenerateTrace(localTerm, cloneTerm, rule);
-                localTerm = cloneTerm;
-            }
+                        rootTerm.GenerateTrace(localTerm, cloneTerm, rule);
+                        localTerm = cloneTerm;
+                        madeChanges = true;
+                    }
+                }
+            } while (madeChanges);
             return localTerm;
         }
 

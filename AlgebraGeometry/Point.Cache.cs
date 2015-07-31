@@ -9,32 +9,113 @@ using CSharpLogic;
 
 namespace AlgebraGeometry
 {
-    public partial class Point : Shape
+    public partial class PointSymbol : ShapeSymbol
     {
+        /// <summary>
+        /// This method quarantees that the substitution term is unique toward each variable.
+        /// 
+        /// dict: {{x:3},{x:4}} is not allowed 
+        /// dict: {{x:3}, {y:4}} is allowed
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="dict"></param>
+        /// <param name="ps"></param>
+        /// <param name="goal"></param>
+        /// <returns></returns>
+        public bool Reify(EqGoal goal)
+        {
+            var point = Shape as Point;
+            Debug.Assert(point != null);
+
+            EqGoal tempGoal = goal.GetLatestDerivedGoal();
+            bool cond1 = Var.IsVar(tempGoal.Lhs) && LogicSharp.IsNumeric(tempGoal.Rhs);
+            bool cond2 = Var.IsVar(tempGoal.Rhs) && LogicSharp.IsNumeric(tempGoal.Lhs);
+            Debug.Assert(cond1 || cond2);
+
+            if (point.Concrete) return false;
+
+            object xResult = EvalGoal(point.XCoordinate, tempGoal);
+            object yResult = EvalGoal(point.YCoordinate, tempGoal);
+
+            //Atomic operation
+            if (!point.XCoordinate.Equals(xResult))
+            {
+                GenerateXCacheSymbol(xResult, goal);
+                return true;
+            }
+            else if (!point.YCoordinate.Equals(yResult))
+            {
+                GenerateYCacheSymbol(yResult, goal);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool UnReify(EqGoal goal)
+        {
+            var point = Shape as Point;
+            Debug.Assert(point != null);
+            if (!ContainGoal(goal)) return false;
+            var updateLst = new HashSet<ShapeSymbol>();
+            var unchangedLst = new HashSet<ShapeSymbol>();
+            foreach (var shape in CachedSymbols.ToList())
+            {
+                var pt = shape as PointSymbol;
+                if (pt == null) continue;
+                if (pt.ContainGoal(goal))
+                {
+                    pt.UndoGoal(goal, point);
+                    if (pt.CachedGoals.Count != 0)
+                    {
+                        updateLst.Add(pt);
+                    }
+                }
+                else
+                {
+                    unchangedLst.Add(shape);
+                }
+            }
+
+            if (unchangedLst.Count != 0)
+            {
+                CachedSymbols = unchangedLst;
+            }
+            else
+            {
+                CachedSymbols = updateLst;
+            }
+
+            RemoveGoal(goal);
+            return true;
+        }
+
         #region Reify Utilities
 
         public void GenerateXCacheSymbol(object obj, EqGoal goal)
-        {
+        {        
+            var point = Shape as Point;
+            Debug.Assert(point != null);
             CachedGoals.Add(new KeyValuePair<object, EqGoal>(PointAcronym.X,goal));
-
             if (CachedSymbols.Count == 0)
             {
                 #region generate new object
 
-                var gPoint = new Point(Label, obj, YCoordinate);
-                gPoint.CachedGoals.Add(new KeyValuePair<object, EqGoal>(PointAcronym.X, goal));
-                CachedSymbols.Add(gPoint);
+                var gPoint = new Point(point.Label, obj, point.YCoordinate);
+                var gPointSymbol = new PointSymbol(gPoint);
+                gPointSymbol.CachedGoals.Add(new KeyValuePair<object, EqGoal>(PointAcronym.X, goal));
+                CachedSymbols.Add(gPointSymbol);
 
                 //Transform goal trace
                 for (int i = goal.Traces.Count - 1; i >= 0; i--)
                 {
                     gPoint.Traces.Insert(0, goal.Traces[i]);
-                }              
+                }
 
                 //Substitution trace
-                var ts = new TraceStep(new PointSymbol(this), 
-                    new PointSymbol(gPoint), 
-                    SubstitutionRule.ApplySubstitute(this, goal));
+                var ts = new TraceStep(this,gPointSymbol, SubstitutionRule.ApplySubstitute(this, goal));
                 gPoint.Traces.Insert(0,ts);
                 #endregion
             }
@@ -42,9 +123,9 @@ namespace AlgebraGeometry
             {
                 #region Iterate existing point object 
 
-                foreach (Shape shape in CachedSymbols.ToList())
+                foreach (ShapeSymbol ss in CachedSymbols.ToList())
                 {
-                    var pt = shape as Point;
+                    var pt = ss.Shape as Point;
                     if (pt != null)
                     {
                         var xResult = LogicSharp.Reify(pt.XCoordinate, goal.ToDict());
@@ -54,7 +135,7 @@ namespace AlgebraGeometry
 
                             //substitute
                             pt.XCoordinate = xResult;
-                            pt.CachedGoals.Add(new KeyValuePair<object, EqGoal>(PointAcronym.X, goal));
+                            ss.CachedGoals.Add(new KeyValuePair<object, EqGoal>(PointAcronym.X, goal));
 
                             //transform goal trace
                             for (int i = goal.Traces.Count - 1; i >= 0; i--)
@@ -71,15 +152,16 @@ namespace AlgebraGeometry
                         {
                             //generate
                             var gPoint = new Point(pt.Label, obj, pt.YCoordinate);
-                            gPoint.CachedGoals.Add(new KeyValuePair<object, EqGoal>(PointAcronym.X, goal));
-                            foreach (KeyValuePair<object, EqGoal> pair in pt.CachedGoals)
+                            var gPointSymbol = new PointSymbol(gPoint);
+                            gPointSymbol.CachedGoals.Add(new KeyValuePair<object, EqGoal>(PointAcronym.X, goal));
+                            foreach (KeyValuePair<object, EqGoal> pair in CachedGoals)
                             {
                                 if (pair.Key.Equals(PointAcronym.Y))
                                 {
-                                    gPoint.CachedGoals.Add(new KeyValuePair<object, EqGoal>(PointAcronym.Y, pair.Value));
+                                    gPointSymbol.CachedGoals.Add(new KeyValuePair<object, EqGoal>(PointAcronym.Y, pair.Value));
                                 }
-                            } 
-                            CachedSymbols.Add(gPoint);
+                            }
+                            CachedSymbols.Add(gPointSymbol);
 
                             //substitute
                             //Add traces from pt to gPoint
@@ -92,11 +174,8 @@ namespace AlgebraGeometry
                             for (int i = goal.Traces.Count - 1; i >= 0; i--)
                             {
                                 gPoint.Traces.Insert(0, goal.Traces[i]);
-                            } 
-
-                            var ts = new TraceStep(new PointSymbol(pt), 
-                                new PointSymbol(gPoint), 
-                                SubstitutionRule.ApplySubstitute(pt, goal));
+                            }
+                            var ts = new TraceStep(ss, gPointSymbol, SubstitutionRule.ApplySubstitute(ss, goal));
                             gPoint.Traces.Insert(0,ts);
                         }
                     }
@@ -107,81 +186,74 @@ namespace AlgebraGeometry
 
         public void GenerateYCacheSymbol(object obj, EqGoal goal)
         {
+            var point = Shape as Point;
+            Debug.Assert(point != null);
             CachedGoals.Add(new KeyValuePair<object, EqGoal>(PointAcronym.Y, goal));
             if (CachedSymbols.Count == 0)
             {
-                var gPoint = new Point(Label, XCoordinate, obj);
-                gPoint.CachedGoals.Add(new KeyValuePair<object, EqGoal>(PointAcronym.Y, goal));
-                CachedSymbols.Add(gPoint);
+                var gPoint = new Point(point.Label, point.XCoordinate, obj);
+                var gPointSymbol = new PointSymbol(gPoint);
+                gPointSymbol.CachedGoals.Add(new KeyValuePair<object, EqGoal>(PointAcronym.Y, goal));
+                CachedSymbols.Add(gPointSymbol);
 
                 //transform goal trace
                 for (int i = goal.Traces.Count - 1; i >= 0; i--)
                 {
                     gPoint.Traces.Insert(0, goal.Traces[i]);
-                } 
-
+                }
                 //Substitution trace
-                var ts = new TraceStep(new PointSymbol(this), 
-                    new PointSymbol(gPoint), SubstitutionRule.ApplySubstitute(this, goal));
+                var ts = new TraceStep(this, gPointSymbol, SubstitutionRule.ApplySubstitute(this, goal));
                 gPoint.Traces.Insert(0, ts);
             }
             else
             {
-                foreach (Shape shape in CachedSymbols.ToList())
+                foreach (ShapeSymbol ss in CachedSymbols.ToList())
                 {
-                    var pt = shape as Point;
+                    var pt = ss.Shape as Point;
                     if (pt != null)
                     {
                         var yResult = LogicSharp.Reify(pt.YCoordinate, goal.ToDict());
                         if (!pt.YCoordinate.Equals(yResult))
                         {
                             var gPt = new Point(pt.Label, pt.XCoordinate, pt.YCoordinate);
-
+                            var gPointSymbol = new PointSymbol(gPt);
                             //substitute
                             pt.YCoordinate = yResult;
-                            pt.CachedGoals.Add(new KeyValuePair<object, EqGoal>(PointAcronym.Y, goal));
-
+                            ss.CachedGoals.Add(new KeyValuePair<object, EqGoal>(PointAcronym.Y, goal));
                             //transform goal trace
                             for (int i = goal.Traces.Count - 1; i >= 0; i--)
                             {
                                 pt.Traces.Insert(0, goal.Traces[i]);
-                            } 
-
-                            var ts = new TraceStep(new PointSymbol(pt), 
-                                new PointSymbol(gPt), 
-                                SubstitutionRule.ApplySubstitute(pt, goal));
+                            }
+                            var ts = new TraceStep(ss,gPointSymbol,SubstitutionRule.ApplySubstitute(ss, goal));
                             pt.Traces.Insert(0, ts);
                         }
                         else
                         {
                             //generate
                             var gPoint = new Point(pt.Label, pt.XCoordinate, obj);
-                            gPoint.CachedGoals.Add(new KeyValuePair<object, EqGoal>(PointAcronym.Y, goal));
-                            foreach (KeyValuePair<object, EqGoal> pair in pt.CachedGoals)
+                            var gPointSymbol = new PointSymbol(gPoint);
+                            gPointSymbol.CachedGoals.Add(new KeyValuePair<object, EqGoal>(PointAcronym.Y, goal));
+                            foreach (KeyValuePair<object, EqGoal> pair in ss.CachedGoals)
                             {
                                 if (pair.Key.Equals(PointAcronym.X))
                                 {
-                                    gPoint.CachedGoals.Add(new KeyValuePair<object, EqGoal>(PointAcronym.X, pair.Value));
+                                    gPointSymbol.CachedGoals.Add(new KeyValuePair<object, EqGoal>(PointAcronym.X, pair.Value));
                                 }
-                            } 
-                            CachedSymbols.Add(gPoint);
-
+                            }
+                            CachedSymbols.Add(gPointSymbol);
                             //substitute
                             //Add traces from pt to gPoint
                             for (int i = pt.Traces.Count - 1; i >= 0; i--)
                             {
                                 gPoint.Traces.Insert(0, pt.Traces[i]);
                             }
-
                             //transform goal trace
                             for (int i = goal.Traces.Count - 1; i >= 0; i--)
                             {
                                 gPoint.Traces.Insert(0, goal.Traces[i]);
                             } 
-
-                            var ts = new TraceStep(new PointSymbol(pt), 
-                                new PointSymbol(gPoint), 
-                                SubstitutionRule.ApplySubstitute(pt, goal));
+                            var ts = new TraceStep(ss, gPointSymbol, SubstitutionRule.ApplySubstitute(ss, goal));
                             gPoint.Traces.Insert(0, ts);
                         }
                     }
@@ -203,6 +275,9 @@ namespace AlgebraGeometry
             var parent = p as Point;
             if (parent == null) return;
 
+            var current = Shape as Point;
+            Debug.Assert(current != null);
+
             string field = null;
             foreach (KeyValuePair<object, EqGoal> eg in CachedGoals)
             {
@@ -214,94 +289,16 @@ namespace AlgebraGeometry
 
             if (PointAcronym.X.Equals(field))
             {
-                this.XCoordinate = parent.XCoordinate;
+                current.XCoordinate = parent.XCoordinate;
             }
             else if (PointAcronym.Y.Equals(field))
             {
-                this.YCoordinate = parent.YCoordinate;
+                current.YCoordinate = parent.YCoordinate;
             }
 
             this.RemoveGoal(goal);
         }
 
         #endregion
-    }
-
-    public static class PointExtension
-    {
-        /// <summary>
-        /// This method quarantees that the substitution term is unique toward each variable.
-        /// 
-        /// dict: {{x:3},{x:4}} is not allowed 
-        /// dict: {{x:3}, {y:4}} is allowed
-        /// </summary>
-        /// <param name="point"></param>
-        /// <param name="dict"></param>
-        /// <returns></returns>
-
-        public static bool Reify(this Point point, EqGoal goal)
-        {
-            EqGoal tempGoal = goal.GetLatestDerivedGoal();
-            bool cond1 = Var.IsVar(tempGoal.Lhs) && LogicSharp.IsNumeric(tempGoal.Rhs);
-            bool cond2 = Var.IsVar(tempGoal.Rhs) && LogicSharp.IsNumeric(tempGoal.Lhs);
-            Debug.Assert(cond1 || cond2);
-
-            if (point.Concrete) return false;
-
-            object xResult = point.EvalGoal(point.XCoordinate, tempGoal);
-            object yResult = point.EvalGoal(point.YCoordinate, tempGoal);
-
-            //Atomic operation
-            if (!point.XCoordinate.Equals(xResult))
-            {
-                point.GenerateXCacheSymbol(xResult,goal);
-                return true;                
-            }
-            else if (!point.YCoordinate.Equals(yResult))
-            {
-                point.GenerateYCacheSymbol(yResult,goal);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public static bool UnReify(this Point point, EqGoal goal)
-        {
-            if (!point.ContainGoal(goal)) return false;
-            var updateLst = new HashSet<Shape>();
-            var unchangedLst = new HashSet<Shape>();
-            foreach (var shape in point.CachedSymbols.ToList())
-            {
-                var pt = shape as Point;
-                if (pt == null) continue;
-                if (pt.ContainGoal(goal))
-                {
-                    pt.UndoGoal(goal, point);
-                    if (pt.CachedGoals.Count != 0)
-                    {
-                        updateLst.Add(pt);
-                    }
-                }
-                else
-                {
-                    unchangedLst.Add(shape);
-                }
-            }
-
-            if (unchangedLst.Count != 0)
-            {
-                point.CachedSymbols = unchangedLst;
-            }
-            else
-            {
-                point.CachedSymbols = updateLst;
-            }
-            
-            point.RemoveGoal(goal); 
-            return true;
-        }
     }
 }

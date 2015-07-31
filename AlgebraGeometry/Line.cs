@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -55,6 +56,9 @@ namespace AlgebraGeometry
             }
         }
 
+        public LineType InputType { get; set; }
+        public override object GetInputType() { return InputType; } 
+
         #endregion
 
         #region Entity Constructors
@@ -62,6 +66,7 @@ namespace AlgebraGeometry
         public Line(string label, object a, object b, object c)
             : base(ShapeType.Line, label)
         {
+            InputType = LineType.GeneralForm;
             _a = a;
             _b = b;
             _c = c;
@@ -99,6 +104,8 @@ namespace AlgebraGeometry
             {
                 _c = 0.0d;
             }
+            Calc_General_SlopeIntercept();
+            PropertyChanged += Line_PropertyChanged;
         }
 
         public Line(object a, object b, object c): 
@@ -108,13 +115,22 @@ namespace AlgebraGeometry
 
         #endregion
 
-        #region Relation Constructors
-
+        #region Relation based
         // relation based line
         public Line(string label)
             : base(ShapeType.Line, label)
         {
-            RelationStatus = true;
+            InputType = LineType.Relation;
+        }
+
+        public Line(Point p1, Point p2)
+        {
+            InputType = LineType.Relation;
+        }
+
+        public Line(string label, Point p1, Point p2)
+        {
+            InputType = LineType.Relation;
         }
 
         #endregion
@@ -146,6 +162,16 @@ namespace AlgebraGeometry
 
         #region IEqutable
 
+        public override bool Equals(object obj)
+        {
+            var shape = obj as Shape;
+            if (shape != null)
+            {
+                return Equals(shape);
+            }
+            return false;
+        }
+
         public override bool Equals(Shape other)
         {
             if (other == null) return false;
@@ -176,26 +202,32 @@ namespace AlgebraGeometry
                    ^ C.GetHashCode();
         }
 
-        #endregion
+        #endregion       
     }
 
-    public class LineSymbol : ShapeSymbol
+    public enum LineType
     {
-        public override IEnumerable<ShapeSymbol> RetrieveGeneratedShapes()
+        Relation,
+        GeneralForm,
+        SlopeIntercept,
+        PointSlope
+    }
+
+    public partial class LineSymbol : ShapeSymbol
+    {
+        //IEnumerable<ShapeSymbol>
+        public override object RetrieveConcreteShapes()
         {
-            if (Shape.Concrete) return null;
-            if (Shape.CachedSymbols.Count == 0) return null;
-            var lst = new List<LineSymbol>();
-            foreach (Shape s in Shape.CachedSymbols)
-            {
-                var line = s as Line;
-                lst.Add(new LineSymbol(line));
-            }
-            return lst;
+            var line = Shape as Line;
+            Debug.Assert(line != null);
+            if (line.Concrete) return this;
+            if (CachedSymbols.Count == 0) return null;
+            return CachedSymbols.ToList();
         }
 
         public LineSymbol(Line line) : base(line)
         {
+            OutputType = line.InputType;
         }
 
         #region Symbolic Elements
@@ -445,17 +477,33 @@ namespace AlgebraGeometry
 
         #endregion
 
+        #region Utils
+
+        public LineType OutputType { get; set; }
+
+        public override object GetOutputType() { return OutputType; }
+
         public override string ToString()
         {
-            if (Shape.Label != null)
+            var line = this.Shape as Line;
+            Debug.Assert(line != null);
+            if (OutputType == LineType.SlopeIntercept)
             {
-                return String.Format("{0}({1})", Shape.Label, GeneralForm);
+                return String.Format("{0}", SlopeInterceptForm);                
             }
             else
             {
-                return String.Format("{0}", GeneralForm);
+                if (Shape.Label != null)
+                {
+                    return String.Format("{0}({1})", Shape.Label, GeneralForm);
+                }
+                else
+                {
+                    return String.Format("{0}", GeneralForm);
+                }                
             }
-
         }
+
+        #endregion
     }
 }

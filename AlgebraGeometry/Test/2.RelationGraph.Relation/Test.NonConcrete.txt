@@ -1,0 +1,156 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using CSharpLogic;
+using NUnit.Framework;
+
+namespace AlgebraGeometry
+{
+    [TestFixture]
+    public class TestRelation_NonConcrete
+    {
+        #region CRUD Input
+
+        [Test]
+        public void Test_Line_1()
+        {
+            /*
+             * Input 1: A(2.0,3.0) 
+             * Input 2: B(2.0,a)
+             * Input 3: AB
+             * Input 4: a=2
+             * Input 5: a=4
+             */
+            var graph = new RelationGraph();
+
+            var variable = new Var('a');
+            //point identity test
+            var A = new Point("A", 2.0, 3.0);
+            var B = new Point("B", 2.0, variable);
+            graph.AddNode(A);
+            graph.AddNode(B);
+            var line = new Line("AB"); //Implicit Define
+            graph.AddNode(line);
+
+            var lines = graph.RetrieveSpecicShapes(ShapeType.Line);
+            Assert.True(lines.Count == 1);
+            var lineImpl = lines[0];
+            Assert.NotNull(lineImpl);
+            Assert.True(lineImpl.CachedSymbols.Count == 0);
+
+            var shapeNodes = graph.RetrieveShapeNodes();
+
+            foreach (ShapeNode node in shapeNodes)
+            {
+                var tempLine = node.Shape as Line;
+                if (tempLine != null)
+                {
+                    Assert.True(node.InEdges.Count == 2);
+                }
+                var tempPoint = node.Shape as Point;
+                if (tempPoint != null)
+                {
+                    Assert.True(node.OutEdges.Count == 1);
+                }
+            }
+
+            var goal = new EqGoal(variable, 2);
+            graph.AddNode(goal);
+
+            lines = graph.RetrieveSpecicShapes(ShapeType.Line);
+            Assert.True(lines.Count == 1);
+            lineImpl = lines[0];
+            Assert.NotNull(lineImpl);
+
+            Assert.True(lineImpl.CachedSymbols.Count == 1);
+
+            var goal2 = new EqGoal(variable, 10);
+            graph.AddNode(goal2);
+            lines = graph.RetrieveSpecicShapes(ShapeType.Line);
+            Assert.True(lines.Count == 1);
+            lineImpl = lines[0];
+            Assert.NotNull(lineImpl);
+
+            Assert.True(lineImpl.CachedSymbols.Count == 1);
+
+        }
+
+        [Test]
+        public void Test_Line_2()
+        {
+            /*
+           * Input 1: A(2.0,3.0) 
+           * Input 2: B(3.0,a)
+           * Input 3: AB
+           * Input 4: a=2
+           * Input 5: a=4
+           */
+            var graph = new RelationGraph();
+
+            var variable = new Var('a');
+            //point identity test
+            var A = new Point("A", 2.0, 3.0);
+            var B = new Point("B", 3.0, variable);
+            graph.AddNode(A);
+            graph.AddNode(B);
+            var line = new Line("AB");
+            graph.AddNode(line);
+
+            var lines = graph.RetrieveSpecicShapes(ShapeType.Line);
+            Assert.True(lines.Count == 1);
+            var lineImpl = lines[0];
+            Assert.NotNull(lineImpl);
+            Assert.True(lineImpl.CachedSymbols.Count == 0);
+
+            var shapeNodes = graph.RetrieveShapeNodes();
+
+            foreach (ShapeNode node in shapeNodes)
+            {
+                var tempLine = node.Shape as Line;
+                if (tempLine != null)
+                {
+                    Assert.True(node.InEdges.Count == 2);
+                }
+                var tempPoint = node.Shape as Point;
+                if (tempPoint != null)
+                {
+                    Assert.True(node.OutEdges.Count == 1);
+                }
+            }
+
+            var goal = new EqGoal(variable, 2);
+            graph.AddNode(goal);
+
+            lines = graph.RetrieveSpecicShapes(ShapeType.Line);
+            Assert.True(lines.Count == 1);
+            lineImpl = lines[0];
+            Assert.NotNull(lineImpl);
+
+            Assert.True(lineImpl.CachedSymbols.Count == 1);
+
+            var goal2 = new EqGoal(variable, 4);
+            graph.AddNode(goal2);
+            lines = graph.RetrieveSpecicShapes(ShapeType.Line);
+            Assert.True(lines.Count == 1);
+            lineImpl = lines[0];
+            Assert.NotNull(lineImpl);
+
+            Assert.True(lineImpl.CachedSymbols.Count == 2);
+
+            graph.DeleteNode(goal);
+            lines = graph.RetrieveSpecicShapes(ShapeType.Line);
+            Assert.True(lines.Count == 1);
+            lineImpl = lines[0];
+            Assert.NotNull(lineImpl);
+
+            Assert.True(lineImpl.CachedSymbols.Count == 1);
+        }
+
+        #endregion
+
+        #region Selection Input
+
+        #endregion
+    }
+}

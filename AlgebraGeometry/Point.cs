@@ -99,6 +99,19 @@ namespace AlgebraGeometry
 
         #region IEqutable
 
+        public override bool Equals(object obj)
+        {
+            var shape = obj as Shape;
+            if (shape != null)
+            {
+                return Equals(shape);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public override bool Equals(Shape other)
         {
             if (other is Point)
@@ -131,21 +144,24 @@ namespace AlgebraGeometry
         }
 
         #endregion
+
+        public PointType InputType { get; set; } 
+        public override object GetInputType() { return InputType;  }        
     }
 
-    public class PointSymbol : ShapeSymbol
+    public enum PointType
     {
-        public override IEnumerable<ShapeSymbol> RetrieveGeneratedShapes()
+        Relation,
+        General
+    }
+
+    public partial class PointSymbol : ShapeSymbol
+    {
+        public override object RetrieveConcreteShapes()
         {
-            if (Shape.Concrete) return null;
-            if (Shape.CachedSymbols.Count == 0) return null;
-            var lst = new List<PointSymbol>();
-            foreach (Shape s in Shape.CachedSymbols)
-            {
-                var pt = s as Point;
-                lst.Add(new PointSymbol(pt));
-            }
-            return lst;
+            if (Shape.Concrete) return this;
+            if (CachedSymbols.Count == 0) return null;
+            return CachedSymbols.ToList();
         }
 
         public PointSymbol(Point pt) : base(pt)
@@ -198,5 +214,8 @@ namespace AlgebraGeometry
                 return String.Format("({0},{1})", SymXCoordinate, SymYCoordinate);
             }
         }
+
+        public PointType OutputType { get; set; }
+        public override object GetOutputType() { return OutputType; }
     }
 }

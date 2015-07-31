@@ -1,6 +1,8 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using CSharpLogic;
 using NUnit.Framework;
@@ -116,44 +118,53 @@ namespace GeometryLogicInference
              * 1: A(2,3) [Point] => Point
              * 2: B(3,4) [Point] => Point
              * 3: AB [Label]     => [Line, LineSegment]
-             * 4: User Input to solve uncertainty
+             * 4: ask slope = ?
              */
             var ptA = new Point("A", 2, 3);
             var ptB = new Point("B", 3, 4);
 
             GeometryInference.Instance.Add(ptA);
             GeometryInference.Instance.Add(ptB);
-            string label = "AB";
-            object objs = GeometryInference.Instance.Add(label);
-            var types = objs as List<ShapeType>;
-            Assert.NotNull(types);
-            object obj = GeometryInference.Instance.SearchCacheValue(label);
-            Assert.NotNull(obj);
-            Assert.True(obj.Equals(objs));
+
+            //API 1:
+            object line = GeometryInference.Instance.Add(null, ShapeType.Line);
+            Assert.NotNull(line);
 
             List<Shape> shapes = GeometryInference.Instance.CurrentGraph.RetrieveShapes();
+            Assert.True(shapes.Count == 3);
+
+            GeometryInference.Instance.Delete(line);
+            shapes = GeometryInference.Instance.CurrentGraph.RetrieveShapes();
             Assert.True(shapes.Count == 2);
 
-            //4. user input to solve ambiguity
-            object obj1 = GeometryInference.Instance.SolveAmbiguityByUser(label, ShapeType.Line);
-            var gLine = obj1 as Line;
+            const string label = "AB"; //label constraint
+            //API 2:
+            line = GeometryInference.Instance.Add(label);
+            var types = line as List<ShapeType>;
+            Assert.NotNull(types);
+            Assert.True(types.Count == 2);
+            shapes = GeometryInference.Instance.CurrentGraph.RetrieveShapes();
+            Assert.True(shapes.Count == 2);
+            //API 3:
+            line = GeometryInference.Instance.Add(label, ShapeType.Line);
+            var gLine = line as Line;
             Assert.NotNull(gLine);
-
+            object obj = GeometryInference.Instance.SearchCacheValue(label);
+            Assert.NotNull(obj);
             shapes = GeometryInference.Instance.CurrentGraph.RetrieveShapes();
             Assert.True(shapes.Count == 3);
-
-            obj1 = GeometryInference.Instance.SolveAmbiguityByUser(label, ShapeType.LineSegment);
-            var gLingSeg = obj1 as LineSegment;
-            Assert.NotNull(gLingSeg);
-
-            shapes = GeometryInference.Instance.CurrentGraph.RetrieveShapes();
-            Assert.True(shapes.Count == 3);
-
-            GeometryInference.Instance.Delete(ptA);
-            Assert.True(GeometryInference.Instance.CurrentGraph.Nodes.Count == 1);
-
-            obj = GeometryInference.Instance.SearchCacheValue(label);
-            Assert.Null(obj);
+/*            GeometryInference.Instance.Delete(ptA);
+            Assert.True(GeometryInference.Instance.CurrentGraph.Nodes.Count == 1);*/
+            //API 4:
+            var variable = new Var('s');
+            var query = new EqGoal(variable, null);
+            var answer = GeometryInference.Instance.Add(query);
+            var answerGoal = answer as EqGoal;
+            Assert.NotNull(answerGoal);
+            var cachedGoal = answerGoal.CachedEntities.ToList()[0] as EqGoal;
+            Assert.True(cachedGoal!= null);
+            Assert.True(cachedGoal.Lhs.Equals(variable));
+            Assert.True(cachedGoal.Rhs.Equals(1));
         }
 
         [Test]
@@ -197,6 +208,47 @@ namespace GeometryLogicInference
 
             List<Shape> shapes = GeometryInference.Instance.CurrentGraph.RetrieveShapes();
             Assert.True(shapes.Count == 3); 
+        }
+
+        [Test]
+        public void TestScenario4()
+        {
+            var m = new Var('m');
+            var k = new Var('k');
+            var eqGoal1 = new EqGoal(m, 3); //m=3
+            var eqGoal2 = new EqGoal(k, 2); //k=2
+            GeometryInference.Instance.Add(eqGoal1);
+            GeometryInference.Instance.Add(eqGoal2);
+
+            object obj = GeometryInference.Instance.Add(null, ShapeType.Line);
+            var line = obj as Line;
+            Assert.NotNull(line);
+            Assert.True(line.InputType == LineType.Relation);
+        }
+
+        [Test]
+        public void TestScenario5()
+        {
+            var m = new Var('m');
+            var k = new Var('k');
+            var eqGoal1 = new EqGoal(m, 3); //m=3
+            var eqGoal3 = new EqGoal(m, 4); //m=4
+            var eqGoal2 = new EqGoal(k, 2); //k=2
+            GeometryInference.Instance.Add(eqGoal1);
+            GeometryInference.Instance.Add(eqGoal2);
+            GeometryInference.Instance.Add(eqGoal3);
+
+            object obj;
+            bool result = GeometryInference.Instance.CurrentGraph.Infer(null, ShapeType.Line, out obj);
+            Assert.True(result);
+            var dict = obj as Dictionary<Tuple<GraphNode, GraphNode>, object>;
+            Assert.NotNull(dict);
+            Assert.True(dict.Count == 2);
+            foreach (var tempObj in dict.Values.ToList())
+            {
+                var line = tempObj as Line;
+                Assert.NotNull(line);
+            }
         }
     }
 }

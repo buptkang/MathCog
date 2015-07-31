@@ -24,19 +24,19 @@ namespace AlgebraGeometry
 
         public LineSegment(string label) : base(ShapeType.LineSegment, label)
         {
-            RelationStatus = true;
+            InputType = LineSegmentType.Relation;
         }
 
         public LineSegment(string label, Point pt1, Point pt2) : base(ShapeType.LineSegment, label)
         {
-            if(pt1.Equals(pt2)) 
+            if (pt1.Equals(pt2))
                 throw new Exception("Two points are identical");
-            RelationStatus = true;
+            InputType = LineSegmentType.Relation;
             ExtractRelationLabel(pt1.Label, pt2.Label);
         }
 
         public LineSegment(Point pt1, Point pt2) : this(null, pt1, pt2)
-        {            
+        {
         }
 
         private void ExtractRelationLabel(string label1, string label2)
@@ -116,15 +116,22 @@ namespace AlgebraGeometry
         }
 
         #endregion
+
+        public LineSegmentType InputType { get; set; }        
+        public override object GetInputType() { return InputType; }
+    }
+
+    public enum LineSegmentType
+    {
+        Relation
     }
 
     public class LineSegmentSymbol : ShapeSymbol
     {
-        public override IEnumerable<ShapeSymbol> RetrieveGeneratedShapes()
+        public override object RetrieveConcreteShapes()
         {
-            if (Shape.CachedSymbols.Count == 0) return null;
-            return Shape.CachedSymbols.Select(s => s as LineSegment)
-                .Select(lineSeg => new LineSegmentSymbol(lineSeg)).ToList();
+            if (CachedSymbols.Count == 0) return null;
+            return CachedSymbols.ToList();
         }
 
         public LineSegmentSymbol(LineSegment _seg) : base(_seg)
@@ -135,5 +142,9 @@ namespace AlgebraGeometry
         {
             return "LineSegment";
         }
+
+        public LineSegmentType OutputType { get; set; }
+
+        public override object GetOutputType() { return OutputType; }
     }
 }

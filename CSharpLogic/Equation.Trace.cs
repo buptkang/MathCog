@@ -59,7 +59,7 @@ namespace CSharpLogic
             {
                 if (!source.Equals(currentEq.Lhs))
                 {
-                    throw new Exception("Equation.Trace.cs: Must be equal.");
+                    //throw new Exception("Equation.Trace.cs 1: Must be equal.");
                 }
                 cloneEq.Lhs = target;
             }
@@ -67,7 +67,7 @@ namespace CSharpLogic
             {
                 if (!source.Equals(currentEq.Rhs))
                 {
-                    throw new Exception("Equation.Trace.cs: Must be equal.");
+                    throw new Exception("Equation.Trace.cs 2: Must be equal.");
                 }
                 cloneEq.Rhs = target;
             }

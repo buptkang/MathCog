@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CSharpLogic
 {
@@ -91,6 +92,16 @@ namespace CSharpLogic
             if (obj is Var)
             {
                 return true;
+            }
+            else if (obj is List<object>)
+            {
+                var lst = obj as List<object>;
+                return lst.Select(ContainsVar).Any(result => result);
+            }
+            else if(obj is Term)
+            {
+                var term = obj as Term;
+                return ContainsVar(term.Args);
             }
             else if (obj is Tuple<object>)
             {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ExprGenerator;
 using CSharpLogic;
 
@@ -20,25 +21,31 @@ namespace AlgebraGeometry.Expr
             GenerateTrace(ss.Shape);
         }
 
-        public IEnumerable<IKnowledge> RetrieveGeneratedShapes()
+        public List<IKnowledge> RetrieveRenderKnowledge()
         {
-            IEnumerable<ShapeSymbol> symbols = 
-               _shapeSymbol.RetrieveGeneratedShapes();
-            var shapes = new List<AGShapeExpr>();
+            var symbols = _shapeSymbol.RetrieveConcreteShapes();
+            var shapes = new List<IKnowledge>();
             if (symbols != null)
             {
-                foreach (ShapeSymbol symbol in symbols)
+                var shapeSymbol = symbols as ShapeSymbol;
+                var ssLst       = symbols as IEnumerable<ShapeSymbol>;
+
+                if (shapeSymbol != null)
                 {
-                    starPadSDK.MathExpr.Expr expr = ExprG.Generate(symbol);
-                    var agShape = new AGShapeExpr(expr, symbol);
-                    shapes.Add(agShape);
+                    starPadSDK.MathExpr.Expr expr = ExprG.Generate(shapeSymbol);
+                    var agShape = new AGShapeExpr(expr, shapeSymbol);
+                    shapes.Add(agShape);   
+                }
+
+                if (ssLst != null)
+                {
+                    shapes.AddRange(from symbol in ssLst 
+                                    let expr = ExprG.Generate(symbol) 
+                                    select new AGShapeExpr(expr, symbol));
                 }
                 return shapes;
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
     }
 }

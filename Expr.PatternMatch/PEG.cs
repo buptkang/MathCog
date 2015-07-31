@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
-using AlgebraExpression;
 using AlgebraGeometry;
 using CSharpLogic;
 using ExprSemantic;
@@ -76,62 +76,66 @@ namespace ExprPatternMatch
         /// <param name="expr"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static bool IsWordTerm(this starPadSDK.MathExpr.Expr expr, out object obj)
+        public static bool IsWordTerm(this Expr expr, out object obj)
         {
             obj = null;
-            if (expr is LetterSym) return false;
+            if (expr is LetterSym)
+            {
+                var letter = expr as LetterSym;
+                obj = letter.Letter.ToString(CultureInfo.InvariantCulture);
+                return true;
+            }
 
-            //Check negative
             Expr outputExpr;
-            bool isNegative = false;
-
             if (expr.IsNegativeTerm(out outputExpr))
             {
                 expr = outputExpr;
-                isNegative = true;
-            }
-
-            var wordExpr = expr as WordSym;
-            if (wordExpr == null) return false;
-
-            string[] strs = Regex.Split(wordExpr.Word, "(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
-
-            if (strs.Length == 1) //xx, mm, axy, xy
-            {
-                return false;
-            }
-            else if (strs.Length == 2) // 2xy, 39x, 
-            {
-                var headStr = strs[0];
-                var tailStr = strs[1];
-
-                if (LogicSharp.IsNumeric(headStr))
+                bool innerTerm = expr.IsWordTerm(out obj);
+                if (innerTerm)
                 {
-                    double dNum;
-                    LogicSharp.IsDouble(headStr, out dNum);
-                    int iNum;
-                    bool result = LogicSharp.IsInt(headStr, out iNum);
-                    if (result)
-                    {
-                        if (isNegative)
-                        {
-                            iNum = -1*iNum;
-                        }
-                        obj = new Term(Expression.Multiply, new Tuple<object, object>(iNum, new Var(tailStr)));
-                    }
-                    else
-                    {
-                        if (isNegative)
-                        {
-                            dNum = -1 * dNum;
-                        }
-                        obj = new Term(Expression.Multiply, new Tuple<object, object>(dNum, new Var(tailStr)));
-                    }
+                    var str = obj as string;
+                    Debug.Assert(str != null);
+                    obj = "-"+ str;
                     return true;
                 }
-                else
+                return false;
+            }
+
+            if (expr is WellKnownSym)
+            {
+                var comma = expr as WellKnownSym;
+                if (comma.Equals(WellKnownSym.comma))
                 {
                     return false;
+                }
+            }
+
+            if (expr is WordSym)
+            {
+                var word = expr as WordSym;
+                if (word.Word.Equals("comma") || word.Word.Equals(""))
+                {
+                    return false;
+                }
+                obj = word.Word;
+                return true;
+            }
+            
+            if (expr is CompositeExpr) // merge labels
+            {
+                var composite = expr as CompositeExpr;
+                if (composite.Head.Equals(WellKnownSym.times))
+                {
+                    var builder = new StringBuilder();
+                    foreach (Expr tempExpr in composite.Args)
+                    {
+                        object tempObj;
+                        bool result = tempExpr.IsLabel(out tempObj);
+                        if (!result) return false;
+                        builder.Append(tempObj);
+                    }
+                    obj = builder.ToString();
+                    return true;
                 }
             }
 
@@ -181,7 +185,8 @@ namespace ExprPatternMatch
             return false;
         }
 
-        public static bool IsNegativeTerm(this starPadSDK.MathExpr.Expr expr, out starPadSDK.MathExpr.Expr outputExpr)
+        public static bool IsNegativeTerm(this Expr expr
+                                          , out Expr outputExpr)
         {
             outputExpr = null;
             var compositeExpr = expr as CompositeExpr;
@@ -191,7 +196,6 @@ namespace ExprPatternMatch
                 outputExpr = compositeExpr.Args[0];
                 return true;
             }
-
             return false;
         }
     }
@@ -213,17 +217,18 @@ namespace ExprPatternMatch
                 bool result = expr1.IsLabel(out obj);
                 if (result)
                 {
-                    property = new KeyValuePair<string, object>("Label", new Var(obj));
+                    //property = new KeyValuePair<string, object>("Label", new Var(obj));
+                    property = new Query(new Var(obj));
                     return true;
                 }
-
                 result = expr1.IsExpression(out obj);
                 if (result)
                 {
-                    property = new KeyValuePair<string, object>("Term", obj);
+                    //TODO
+                    //property = new KeyValuePair<string, object>("Term", obj);
+                    property = new Equation(obj, null);
                     return true;
                 }
-
                 return false;                
             }
             else if (composite.Args.Length == 2)
@@ -237,17 +242,18 @@ namespace ExprPatternMatch
                     bool result = expr1.IsLabel(out obj);
                     if (result)
                     {
-                        property = new KeyValuePair<string, object>("Label", new Var(obj));
+                        //property = new KeyValuePair<string, object>("Label", new Var(obj));
+                        property = new Query(new Var(obj));
                         return true;
                     }
 
                     result = expr1.IsExpression(out obj);
                     if (result)
                     {
-                        property = new KeyValuePair<string, object>("Term", obj);
+                        //property = new KeyValuePair<string, object>("Term", obj);
+                        property = new Equation(obj, null);
                         return true;
                     }
-
                     return false;
                 }
                 else
@@ -255,25 +261,20 @@ namespace ExprPatternMatch
                     return false;
                 }
             }
-
             return false;
         }
     }
 
-    public static class ExpressionPatternExtensions
+    public static partial class ExpressionPatternExtensions
     {
-        private static bool IsExpressionLabel(this Expr expr, out object obj)
+        private static bool IsExpressionTerm(this Expr expr, out object obj)
         {
-            if (expr.IsLabel(out obj))
+            bool result = expr.IsWordTerm(out obj);
+            if (result)
             {
-                object iObj;
-                bool isTerm = expr.IsWordTerm(out iObj);
-                if (isTerm)
-                {
-                    obj = iObj;
-                    return true;
-                }
-                obj = new Var((string)obj);
+                var str = obj as string;
+                Debug.Assert(str != null);
+                obj = TransformString(str);
                 return true;
             }
             return false;
@@ -283,7 +284,7 @@ namespace ExprPatternMatch
         {
             obj = null;
             if (expr.IsNumeric(out obj)) return true;
-            if (expr.IsExpressionLabel(out obj)) return true;
+            if (expr.IsExpressionTerm(out obj)) return true;
 
             var root = expr as CompositeExpr;
             if (root == null) return false;
@@ -322,7 +323,7 @@ namespace ExprPatternMatch
 
                     if (arg1Expr && arg2Expr)
                     {
-                        obj = new Term(Expression.Multiply, new Tuple<object, object>(obj1, obj2));
+                        obj = new Term(Expression.Multiply, new List<object>(){obj1, obj2});
                         return true;
                     }
                     return false;
@@ -336,13 +337,13 @@ namespace ExprPatternMatch
 
                     if (arg1Expr && arg2Expr)
                     {
-                        obj = new Term(Expression.Multiply, new Tuple<object, object>(obj1, obj2));
+                        obj = new Term(Expression.Multiply, new List<object>(){obj1, obj2});
                         object tempObj;
                         for (int i = 2; i < argCount; i++)
                         {
                             if (root.Args[i].IsExpression(out tempObj))
                             {
-                                obj = new Term(Expression.Multiply, new Tuple<object, object>(obj, tempObj));
+                                obj = new Term(Expression.Multiply, new List<object>(){obj, tempObj});
                             }
                         }
                         return true;
@@ -359,7 +360,41 @@ namespace ExprPatternMatch
         }
     }
 
-    public static class GoalPatternExtensions
+    public static class EquationPatternExtensions
+    {
+        public static bool IsEquation(this Expr expr, out object obj)
+        {
+            obj = null;
+            var compExpr = expr as CompositeExpr;
+            if (compExpr == null) return false;
+
+            if (compExpr.Head.Equals(WellKnownSym.equals) &&
+                compExpr.Args.Count() == 2)
+            {
+                Expr lhsExpr = compExpr.Args[0];
+                Expr rhsExpr = compExpr.Args[1];
+
+                object obj1, obj2;
+
+                if (lhsExpr.IsExpression(out obj1)
+                    && rhsExpr.IsExpression(out obj2))
+                {
+                    obj = new Equation(obj1, obj2);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
+    public static class PointPatternExtensions
     {
         /// <summary>
         /// Pattern for Coordinate, such as "Y=3", "x=4.0"
@@ -401,46 +436,6 @@ namespace ExprPatternMatch
             return false;
         }
 
-        /// <summary>
-        /// X + 1 = 2+3
-        /// </summary>
-        /// <param name="expr"></param>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public static bool IsGoal(this starPadSDK.MathExpr.Expr expr, out object obj)
-        {
-            obj = null;
-            var compExpr = expr as CompositeExpr;
-            if (compExpr == null) return false;
-
-            if (compExpr.Head.Equals(WellKnownSym.equals) &&
-                compExpr.Args.Count() == 2)
-            {
-                Expr lhsExpr = compExpr.Args[0];
-                Expr rhsExpr = compExpr.Args[1];
-
-                object obj1, obj2;
-
-                if (lhsExpr.IsExpression(out obj1)
-                    && rhsExpr.IsExpression(out obj2))
-                {
-                    obj = new EqGoal(obj1, obj2);
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
-    }
-
-    public static class PointPatternExtensions
-    {
         /// <summary>
         /// Pattern for Coordinate of the point, 
         /// such as "Y=3", "x=4.0", "x+1=2", -5.0
@@ -610,36 +605,6 @@ namespace ExprPatternMatch
 
     public static class LinePatternExtensions
     {
-        public static bool IsLine(this starPadSDK.MathExpr.Expr expr, out LineSymbol ls)
-        {
-            ls = null;
-            var compExpr = expr as CompositeExpr;
-            if (compExpr == null) return false;
-
-            if (compExpr.Head.Equals(WellKnownSym.equals) &&
-                compExpr.Args.Count() == 2)
-            {
-                Expr lhsExpr = compExpr.Args[0];
-                Expr rhsExpr = compExpr.Args[1];
-                object obj1, obj2;
-
-                bool result1 = lhsExpr.IsExpression(out obj1);
-                bool result2 = rhsExpr.IsExpression(out obj2);
-
-                if (result1 && result2)
-                {
-                    Line line;
-                    bool result = LineEvaluator.Unify(obj1, obj2, out line);
-                    if (result)
-                    {
-                        ls = new LineSymbol(line);
-                        return true;
-                    } 
-                }
-            }
-            return false;
-        }
-
         public static bool IsLineRel(this starPadSDK.MathExpr.Expr expr, out LineSymbol ls)
         {
             ls = null;
@@ -1017,134 +982,6 @@ namespace ExprPatternMatch
 
     public static class NotInUse
     {
-        public static bool IsXTerm(this starPadSDK.MathExpr.Expr expr, out object coeffExpr)
-        {
-            //Check negative
-            Expr outputExpr;
-            bool isNegative = false;
-
-            if (expr.IsNegativeTerm(out outputExpr))
-            {
-                expr = outputExpr;
-                isNegative = true;
-            }
-
-            if (expr is LetterSym)
-            {
-                var letter = expr as LetterSym;
-                if (letter.Letter.Equals('X') || letter.Letter.Equals('x'))
-                {
-                    coeffExpr = isNegative ? new DoubleNumber(-1.0) : new DoubleNumber(1.0);
-                    return true;
-                }
-            }
-
-            if (expr is WordSym)
-            {
-                var wordExpr = expr as WordSym;
-                if (wordExpr.Word.Last().Equals('x') || wordExpr.Word.Last().Equals('X'))
-                {
-                    try
-                    {
-                        int number = int.Parse(wordExpr.Word.Substring(0, wordExpr.Word.Length - 1));
-                        coeffExpr = isNegative ? new DoubleNumber(-1 * number) : new DoubleNumber(number);
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
-            }
-
-            if (expr is CompositeExpr)
-            {
-                var compositeExpr = expr as CompositeExpr;
-                if (compositeExpr.Head.Equals(WellKnownSym.times) && compositeExpr.Args.Length == 2)
-                {
-                    Expr coeff = compositeExpr.Args[0];
-                    Expr letterX = compositeExpr.Args[1];
-                    if (letterX is LetterSym)
-                    {
-                        var letter = letterX as LetterSym;
-                        if (letter.Letter.Equals('X') || letter.Letter.Equals('x'))
-                        {
-                            //TODO
-                            //coeff.IsConstantTerm(out coeffExpr);
-                            //coeffExpr = isNegative ? new DoubleNumber(coeffExpr.Num*-1.0) : coeffExpr;
-                            coeffExpr = null;
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            coeffExpr = null;
-            return false;
-        }
-
-        public static bool IsYTerm(this starPadSDK.MathExpr.Expr expr, out object coeffExpr)
-        {
-            //Check negative
-            Expr outputExpr;
-            bool isNegative = false;
-
-            if (expr.IsNegativeTerm(out outputExpr))
-            {
-                expr = outputExpr;
-                isNegative = true;
-            }
-
-            if (expr is LetterSym)
-            {
-                var letter = expr as LetterSym;
-                if (letter.Letter.Equals('Y') || letter.Letter.Equals('y'))
-                {
-                    coeffExpr = isNegative ? new DoubleNumber(-1.0) : new DoubleNumber(1.0);
-                    return true;
-                }
-            }
-
-            if (expr is WordSym)
-            {
-                var wordExpr = expr as WordSym;
-                if (wordExpr.Word.Last().Equals('y') || wordExpr.Word.Last().Equals('Y'))
-                {
-                    try
-                    {
-                        int number = int.Parse(wordExpr.Word.Substring(0, wordExpr.Word.Length - 1));
-                        coeffExpr = isNegative ? new DoubleNumber(-1 * number) : new DoubleNumber(number);
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
-            }
-
-            if (expr is CompositeExpr)
-            {
-                var compositeExpr = expr as CompositeExpr;
-                if (compositeExpr.Head.Equals(WellKnownSym.times) && compositeExpr.Args.Length == 2)
-                {
-                    Expr coeff = compositeExpr.Args[0];
-                    Expr letterY = compositeExpr.Args[1];
-                    if (letterY is LetterSym)
-                    {
-                        var letter = letterY as LetterSym;
-                        if (letter.Letter.Equals('Y') || letter.Letter.Equals('y'))
-                        {
-                            //TODO
-                            //coeff.IsConstantTerm(out coeffExpr);
-                            //coeffExpr = isNegative ? new DoubleNumber(coeffExpr.Num * -1.0) : coeffExpr;
-                            coeffExpr = null;
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            coeffExpr = null;
-            return false;
-        }
-
         private static bool IsPowerYForm(this starPadSDK.MathExpr.Expr expr)
         {
             if (!(expr is CompositeExpr))

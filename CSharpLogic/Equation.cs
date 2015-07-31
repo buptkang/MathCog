@@ -7,34 +7,44 @@ namespace CSharpLogic
 {
     public partial class Equation : DyLogicObject, IEquationLogic
     {
-        #region Properties and Constructors 
+        #region Properties and Constructors
 
-        public string Label { get; set; }
+        public string EqLabel { get; set; }
         public object Lhs { get; set; }
         public object Rhs { get; set; }
-        public bool IsExpression { get { return Rhs == null; } }
         public bool IsGenerated { get; set; }
 
-        public Equation(string label, object lhs, 
+        public Equation() { }
+
+        public Equation(string label, object lhs,
                         object rhs, bool generated = false)
         {
-            Label = label;
+            EqLabel = label;
             Lhs = lhs;
             Rhs = rhs;
             IsGenerated = generated;
         }
 
-        public Equation(object lhs, object rhs) 
+        public Equation(object lhs, object rhs)
             : this(null, lhs, rhs, false)
-        {}
+        { }
 
         public Equation(object lhs)
             : this(null, lhs, null, false)
-        {}
+        { }
 
         public Equation(object lhs, object rhs, bool generated)
             : this(null, lhs, rhs, generated)
-        {}
+        { }
+
+        //copy constructor
+        public Equation(Equation eq)
+        {
+            EqLabel = eq.EqLabel;
+            Lhs = eq.Lhs;
+            Rhs = eq.Rhs;
+            IsGenerated = eq.IsGenerated;
+        }
 
         #endregion
 
@@ -84,13 +94,11 @@ namespace CSharpLogic
                 equation.Lhs = lhs.Clone();
             }
 
-            if (IsExpression)
+
+            var rhs = Rhs as Term;
+            if (rhs != null)
             {
-                var rhs = Rhs as Term;
-                if (rhs != null)
-                {
-                    equation.Rhs = rhs.Clone();
-                }
+                equation.Rhs = rhs.Clone();
             }
 
             return equation;
@@ -117,7 +125,15 @@ namespace CSharpLogic
 
         public override string ToString()
         {
-            return string.Format("{0}={1}", Lhs.ToString(), Rhs.ToString());
+            if (Rhs != null)
+            {
+                return string.Format("{0}={1}", Lhs.ToString(), Rhs.ToString());                
+            }
+            else
+            {
+                return Lhs.ToString();
+            }
+
         }
 
         #endregion

@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CSharpLogic;
 
 namespace AlgebraGeometry
 {
-    public class QuadraticCurve : Shape
+    public partial class QuadraticCurve : Shape
     {
         public object A { get; set; } // coefficient for the X^2
         public object B { get; set; } // coefficient for the Y^2
@@ -55,6 +56,14 @@ namespace AlgebraGeometry
         //        }
 
         #endregion
+
+        public QuadraticCurveType InputType { get; set; } 
+        public override object GetInputType() { return InputType; }
+    }
+
+    public enum QuadraticCurveType
+    {
+        Relation
     }
 
     public class QuadraticCurveSymbol : ShapeSymbol
@@ -63,10 +72,13 @@ namespace AlgebraGeometry
         {
         }
 
-        public override IEnumerable<ShapeSymbol> RetrieveGeneratedShapes()
+        public override object RetrieveConcreteShapes()
         {
             throw new NotImplementedException();
         }
+
+        public QuadraticCurveType OutputType { get; set; }
+        public override object GetOutputType() { return OutputType; }
 
         //        #region Symbolic Format
 

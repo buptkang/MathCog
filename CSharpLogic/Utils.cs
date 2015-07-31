@@ -74,13 +74,28 @@ namespace CSharpLogic
             {
                 var lst1 = obj1 as List<object>;
                 var lst2 = obj2 as List<object>;
-                return lst1.SequenceEqual(lst2);
+                if (lst1.Count != lst2.Count) return false;
+
+                for (var i = 0; i < lst1.Count; i++)
+                {
+                    bool result = lst1[i].Equals(lst2[i]);
+                    if (!result) return false;
+                }
+                return true;
             }
             else if (obj1 is Tuple<object> && obj2 is Tuple<object>)
             {
                 var tuple1 = obj1 as Tuple<object>;
                 var tuple2 = obj2 as Tuple<object>;
                 return tuple1.Equals(tuple2);
+            }
+            else if (obj1 is Tuple<object, object> && obj2 is Tuple<object, object>)
+            {
+                var tuple1 = obj1 as Tuple<object, object>;
+                var tuple2 = obj2 as Tuple<object, object>;
+
+                return tuple1.Item1.Equals(tuple2.Item1)
+                       && tuple1.Item2.Equals(tuple2.Item2);
             }
             else if (obj1 is Dictionary<object, object>
                 && obj2 is Dictionary<object, object>)
@@ -92,6 +107,13 @@ namespace CSharpLogic
                 if (dict1.Keys.Except(dict2.Keys).Any()) return false;
                 if (dict2.Keys.Except(dict1.Keys).Any()) return false;
                 return dict1.All(pair => equal_test(pair.Value, dict2[pair.Key]));
+            }
+            else if (obj1 is Term && obj2 is Term)
+            {
+                var term1 = obj1 as Term;
+                var term2 = obj2 as Term;
+                if (!term1.Op.Equals(term2.Op)) return false;
+                return equal_test(term1.Args, term2.Args);
             }
             else
             {
