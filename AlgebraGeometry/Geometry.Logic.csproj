@@ -48,12 +48,11 @@
     <Compile Include="Ellipse.Eval.cs" />
     <Compile Include="IShape.Rel.Unary.Unify.cs" />
     <Compile Include="Line.Eval.cs" />
-    <Compile Include="Line.Extension.cs" />
-    <Compile Include="Line.Rel.Unary.Unify.cs" />
-    <Compile Include="Line.Rel.Binary.Unify.cs" />
+    <Compile Include="Line.Rel.Unify.cs" />
+    <Compile Include="Line.Trace.cs" />
     <Compile Include="QuadraticCurve.cs" />
     <Compile Include="QuadraticCurve.Eval.cs" />
-    <Compile Include="RelationGraph.Constraint\Line.Unify.Constraint.cs" />
+    <Compile Include="RelationGraph.UserModel\Graph.UserModel.cs" />
     <Compile Include="RelationGraph\Graph.Unify.Search.cs" />
     <Content Include="RelationGraph.Constraint\Inference.ConstraintEval.txt" />
     <Compile Include="RelationGraph\Graph.Unify.cs" />
@@ -63,7 +62,7 @@
     <Compile Include="Circle.cs" />
     <Compile Include="LineSegment.cs" />
     <Compile Include="RelationGraph.Logic\Relation.Reify.cs" />
-    <Compile Include="Line.Rel.Binary.Rule.cs" />
+    <Compile Include="Line.Rel.Rule.cs" />
     <Compile Include="LineSegment.Rel.Rule.cs" />
     <Compile Include="Point.Rule.cs" />
     <Compile Include="Line.Cache.cs" />
@@ -71,8 +70,8 @@
     <Compile Include="Point.Cache.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RelationGraph\Graph.Unify.BinaryConstraint.cs" />
-    <Compile Include="RelationGraph\Graph.Unify.UnaryConstraint.cs" />
+    <Compile Include="RelationGraph\Constraint.Binary.cs" />
+    <Compile Include="RelationGraph\Constraint.Unary.cs" />
     <Compile Include="RelationGraph\GraphEdge.cs" />
     <Compile Include="RelationGraph\Graph.cs" />
     <Compile Include="RelationGraph\Graph.Reify.cs" />

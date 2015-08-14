@@ -5,10 +5,10 @@ using System.Text;
 
 namespace CSharpLogic
 {
-    public partial class Equation : DyLogicObject, IEquationLogic
+    public partial class Equation : DyLogicObject, IEquationLogic,IEval
     {
         /// <summary>
-        /// Transform Term trace to the Equation trace
+        /// Transform Term trace -> Equation trace
         /// </summary>
         public void TransformTermTrace(bool isLhs)
         {
@@ -39,7 +39,7 @@ namespace CSharpLogic
                 foreach (var ts in term.Traces)
                 {
                     var cloneEq = Generate(localEq, ts.Source, ts.Target, isLhs);
-                    var eqTraceStep = new TraceStep(localEq, cloneEq, ts.Rule);
+                    var eqTraceStep = new TraceStep(localEq, cloneEq, ts.Rule, ts.AppliedRule);
                     Traces.Add(eqTraceStep);
                     localEq = cloneEq;
                 }
@@ -74,10 +74,10 @@ namespace CSharpLogic
             return cloneEq;
         }
 
-        public void GenerateTrace(Equation currentEq, Equation cloneEq, string rule)
+        public void GenerateTrace(Equation currentEq, Equation cloneEq, string rule, string appliedRule)
         {
-            var ts = new TraceStep(currentEq, cloneEq, rule);
+            var ts = new TraceStep(currentEq, cloneEq, rule, appliedRule);
             Traces.Add(ts);
-        }       
+        }
     }
 }

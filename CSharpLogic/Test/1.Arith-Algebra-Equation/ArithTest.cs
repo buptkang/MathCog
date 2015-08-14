@@ -91,7 +91,7 @@ namespace CSharpLogic
         public void Term_Algebra_Arith_1()
         {
             var x = new Var('x');
-            //x- 2*5
+            //x-2*5
             var lst = new List<object>() { 2, 5 };
             var term = new Term(Expression.Multiply, lst);
             var lst1 = new List<object>() { x, term };
@@ -130,7 +130,7 @@ namespace CSharpLogic
         {
             // 3 + x + 3
             var x = new Var('x');
-            var lst = new List<object>() { 3, x,3 };
+            var lst = new List<object>() { 3, x, 3 };
             var term = new Term(Expression.Add, lst);
             object obj = term.Eval();
             Assert.NotNull(obj);
@@ -140,6 +140,24 @@ namespace CSharpLogic
             Assert.NotNull(glst);
             Assert.True(glst.Count == 2);
             Assert.True(term.Traces.Count == 2);
+        }
+       
+        #endregion
+
+        #region With Algebra and Reification
+
+        [Test]
+        public void Term_Algebra_Reify_1()
+        {
+/*            var a = new Var('a');
+            var term = new Term(Expression.Add, new List<object>() { a, 1 });
+
+            var goal = new EqGoal(a, 1);
+            term.Reify(goal);
+
+            var obj = term.Eval();
+            Assert.NotNull(obj);
+            Assert.True(obj.Equals(2));*/
         }
 
         #endregion

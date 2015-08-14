@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using AlgebraGeometry;
 using AlgebraGeometry.Expr;
+using MathReason;
 using NUnit.Framework;
 using CSharpLogic;
 using ExprSemantic;
@@ -12,7 +13,7 @@ using System.Linq.Expressions;
 namespace ExprSemanticTest
 {
     [TestFixture]
-    public class TestQuery
+    public partial class TestQuery
     {
         #region Explicit Query
 
@@ -228,5 +229,69 @@ namespace ExprSemanticTest
         }
 
         #endregion
+
+        [Test]
+        public void Test_Equation_1()
+        {
+            const string input1 = "a=1";
+            const string query = "a=";
+
+            Reasoner.Instance.Load(input1);
+            object obj = Reasoner.Instance.Load(query);
+        }
+
+        [Test]
+        public void Test_Equation_2()
+        {
+            const string input1 = "1+1=";
+            var obj = Reasoner.Instance.Load(input1);
+            var queryExpr = obj as AGQueryExpr;
+            Assert.NotNull(queryExpr);
+
+            queryExpr.RetrieveRenderKnowledge();
+            Assert.NotNull(queryExpr.RenderKnowledge);
+            Assert.True(queryExpr.RenderKnowledge.Count == 1);
+
+            var eqExpr = queryExpr.RenderKnowledge[0] as AGEquationExpr;
+            Assert.NotNull(eqExpr);
+            Assert.True(eqExpr.Equation.Rhs.Equals(2));
+/*
+            queryExpr.GenerateSolvingTrace();
+            Assert.Null(queryExpr.AutoTrace);
+*/
+            eqExpr.GenerateSolvingTrace();
+            Assert.Null(queryExpr.AutoTrace);
+
+            eqExpr.IsSelected = true;
+            eqExpr.GenerateSolvingTrace();
+            Assert.NotNull(eqExpr.AutoTrace);
+            Assert.True(eqExpr.AutoTrace.Count == 1);
+        }
+
+        [Test]
+        public void Test_Equation_2_Tutor()
+        {
+            const string input1 = "1+1=";
+            var obj = Reasoner.Instance.Load(input1);
+            var queryExpr = obj as AGQueryExpr;
+            Assert.NotNull(queryExpr);
+
+            Reasoner.Instance.TutorSession = true;
+            const string input2 = "1+1=2";
+            var obj1 = Reasoner.Instance.Load(input2);
+
+            var eqExpr = obj1 as AGEquationExpr;
+            //TODO
+        }
+
+        [Test]
+        public void Test_Equation_3()
+        {
+            const string input1 = "a=1";
+            const string query = "a+1=";
+
+            Reasoner.Instance.Load(input1);
+            object obj = Reasoner.Instance.Load(query);
+        }
     }
 }

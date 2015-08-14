@@ -12,7 +12,7 @@ namespace CSharpLogic
     /// Substitution or term
     /// </summary>
     public partial class Term : DyLogicObject
-        , IArithmeticLogic, IAlgebraLogic
+                              , IAlgebraLogic, IEval
     {
         /// <summary>
         /// Evaluation Pipeline: 
@@ -28,21 +28,27 @@ namespace CSharpLogic
         {
             var lst = Args as List<object>;
             if (lst == null) throw new Exception("Cannot be null");
-
-            //Evaluation Loop Algorithm:
-            //1: Outer Loop Algebra Eval
-            //2: Inner Loop Arithmetic Eval
             return EvalAlgebra();
         }
 
         /// <summary>
-        /// Arithmetic Evaluation
+        /// Uneval the term, reset the trace cache.
         /// </summary>
-        /// <returns></returns>
-        public object EvalArithmetic()
+        public void UnEval()
         {
-            return this.Arithmetic(this);
+            ClearTrace();
+            var lst = Args as List<object>;
+            foreach (var obj in lst)
+            {
+                var term = obj as Term;
+                if (term != null)
+                {
+                    term.UnEval();
+                }
+            }
         }
+
+        #region Evaluation Algorithm 
 
         /// <summary>
         /// Algebra Evaluation, it embed Arithmetic Evaluation
@@ -50,28 +56,22 @@ namespace CSharpLogic
         /// <returns>The latest derived term</returns>
         public object EvalAlgebra()
         {
-            return this.AlgebraLaws(this);
-            //object obj = this.AlgebraLaws(this);
-
-            /*var localTerm = obj as Term;
-            if (localTerm != null)
-            {
-                return localTerm.Beautify();
-            }
-            else
-            {
-                return obj;
-            }*/
+            //Evaluation Loop Algorithm:
+            //1: Outer Loop Algebra Eval
+            //2: Inner Loop Arithmetic Eval
+            object obj = AlgebraLaws(this);
+            //Undo indentity law
+            var term = obj as Term;
+            if (term != null) return term.Beautify();
+            return obj;
         }
-
-        #region Evaluation Algorithm 
 
         /// <summary>
         /// BFS
         /// </summary>
         /// <param name="rootTerm"></param>
         /// <returns></returns>
-        public object AlgebraLaws(Term rootTerm)
+         object AlgebraLaws(Term rootTerm)
         {
             bool hasChange;
             object localObj;
@@ -178,15 +178,11 @@ namespace CSharpLogic
                     }
                 }
             }
-
             if (lst.Count == 1)
             {
                 return lst[0];
             }
-            else
-            {
-                return this;
-            }
+            return this;
         }
 
         #endregion

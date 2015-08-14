@@ -5,8 +5,10 @@ using CSharpLogic;
 
 namespace AlgebraGeometry.Expr
 {
-    public class AGShapeExpr : IKnowledge
+    public class AGShapeExpr : AGEquationExpr
     {
+        #region Properties and Regions
+
         private ShapeSymbol _shapeSymbol;
         public ShapeSymbol ShapeSymbol
         {
@@ -18,13 +20,17 @@ namespace AlgebraGeometry.Expr
             :base(expr)
         {
             _shapeSymbol = ss;
-            GenerateTrace(ss.Shape);
         }
 
-        public List<IKnowledge> RetrieveRenderKnowledge()
+        #endregion
+
+        #region Override functions
+
+        public override void RetrieveRenderKnowledge()
         {
             var symbols = _shapeSymbol.RetrieveConcreteShapes();
             var shapes = new List<IKnowledge>();
+            RenderKnowledge = null;
             if (symbols != null)
             {
                 var shapeSymbol = symbols as ShapeSymbol;
@@ -43,9 +49,39 @@ namespace AlgebraGeometry.Expr
                                     let expr = ExprG.Generate(symbol) 
                                     select new AGShapeExpr(expr, symbol));
                 }
-                return shapes;
+                RenderKnowledge = shapes;
             }
-            return null;
         }
+
+        public override void GenerateSolvingTrace()
+        {
+            if (IsSelected)
+            {
+                var traces = _shapeSymbol.Shape.Traces;
+                if (traces.Count == 0) return;
+                var lst = new List<TraceStepExpr>();
+                TraceStepExpr tse;
+                for (int i = 0; i < traces.Count; i++)
+                {
+                    var ts = traces[i];
+                    tse = new TraceStepExpr(ts);
+                    lst.Add(tse);
+                }
+                AutoTrace = lst;
+                return;
+            }
+
+            if (RenderKnowledge == null) return;
+
+            foreach (var temp in RenderKnowledge)
+            {
+                if (temp.IsSelected)
+                {
+                    temp.GenerateSolvingTrace();
+                }
+            }
+        }
+
+        #endregion
     }
 }

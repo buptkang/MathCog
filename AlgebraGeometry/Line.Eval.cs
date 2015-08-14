@@ -29,14 +29,14 @@ namespace AlgebraGeometry
             bool matched = SatisfyLineGeneralForm(outputEq, out line);
             if (matched)
             {
-                //TODO line.Traces = eq.Traces;
+                line.Traces = eq.CloneTrace();
                 ls = new LineSymbol(line);
                 return true;
             }
             matched = SatisfyLineSlopeInterceptForm(outputEq, out line);
             if (matched)
             {
-                //TODO line.Traces = eq.Traces;
+                line.Traces = eq.CloneTrace();
                 ls = new LineSymbol(line);
                 return true;
             }

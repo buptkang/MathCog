@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CSharpLogic
 {
-    public partial class Equation : DyLogicObject, IEquationLogic
+    public partial class Equation : DyLogicObject, IEquationLogic, IEval
     {
         #region Properties and Constructors
 
@@ -14,7 +14,11 @@ namespace CSharpLogic
         public object Rhs { get; set; }
         public bool IsGenerated { get; set; }
 
-        public Equation() { }
+        public Equation() 
+        {
+            CachedEntities = new HashSet<object>();
+            CachedObjects = new HashSet<KeyValuePair<object, object>>();
+        }
 
         public Equation(string label, object lhs,
                         object rhs, bool generated = false)
@@ -23,6 +27,8 @@ namespace CSharpLogic
             Lhs = lhs;
             Rhs = rhs;
             IsGenerated = generated;
+            CachedEntities = new HashSet<object>();
+            CachedObjects = new HashSet<KeyValuePair<object, object>>();
         }
 
         public Equation(object lhs, object rhs)
@@ -41,8 +47,35 @@ namespace CSharpLogic
         public Equation(Equation eq)
         {
             EqLabel = eq.EqLabel;
-            Lhs = eq.Lhs;
-            Rhs = eq.Rhs;
+            var lhsVar  = eq.Lhs as Var;
+            var lhsTerm = eq.Lhs as Term;
+            if (lhsVar != null)
+            {
+                Lhs = lhsVar.Clone();
+            }
+            else if (lhsTerm != null)
+            {
+                Lhs = lhsTerm.Clone();
+            }
+            else
+            {
+                Lhs = eq.Lhs;
+            }
+
+            var rhsVar  = eq.Rhs as Var;
+            var rhsTerm = eq.Rhs as Term;
+            if (rhsVar != null)
+            {
+                Rhs = rhsVar.Clone();
+            }
+            else if (rhsTerm != null)
+            {
+                Rhs = rhsTerm.Clone();
+            }
+            else
+            {
+                Rhs = eq.Rhs;
+            }
             IsGenerated = eq.IsGenerated;
         }
 
@@ -93,7 +126,6 @@ namespace CSharpLogic
             {
                 equation.Lhs = lhs.Clone();
             }
-
 
             var rhs = Rhs as Term;
             if (rhs != null)

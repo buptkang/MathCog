@@ -31,6 +31,20 @@ namespace CSharpLogic
             return null;
         }
 
+        public static string Rule(EquationRuleType ruleType)
+        {
+            switch (ruleType)
+            {
+                case EquationRuleType.Inverse:
+                    return "TODO";
+                case EquationRuleType.Symmetric:
+                    return string.Format("Symmetric law on equation x=y -> y=x");
+                case EquationRuleType.Transitive:
+                    return "TODO";
+            }
+            return null;
+        }
+
         public static string ApplyTransitiveProperty(Func<Expression, Expression, BinaryExpression> op, object obj)
         {
             Debug.Assert(op.Method != null);

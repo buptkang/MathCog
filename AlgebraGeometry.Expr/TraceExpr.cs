@@ -7,18 +7,25 @@ namespace AlgebraGeometry.Expr
 {
     public class TraceStepExpr
     {
-        public string AppliedRule { get; set; }
+        #region Properties and Constructors
+
+        public string MetaRule { get; set; } //Tutor Mode
+        public string AppliedRule { get; set; } //Demonstration Mode
 
         public starPadSDK.MathExpr.Expr Source { get; set; }
-
         public starPadSDK.MathExpr.Expr Target { get; set; }
+        public starPadSDK.MathExpr.Expr StepExpr { get; set; }
 
         public TraceStepExpr(TraceStep ts)
         {
-            AppliedRule = ts.Rule as string;
+            MetaRule = ts.Rule as string;
+            AppliedRule = ts.AppliedRule as string;
             Source = ExprG.Generate(ts.Source);
             Target = ExprG.Generate(ts.Target);
+            StepExpr = ExprG.Derive(Source, Target);
         }
+
+        #endregion
 
         public override bool Equals(object obj)
         {

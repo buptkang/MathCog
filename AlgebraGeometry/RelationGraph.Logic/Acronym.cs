@@ -61,6 +61,19 @@ namespace AlgebraGeometry
         };
     }
 
+    public static class LineSegmentAcronym
+    {
+        public const string Distance1 = "d";
+        public const string Distance2 = "D";
+
+        public static bool EqualDistanceLabel(string label)
+        {
+            Debug.Assert(label != null);
+            return label.Equals(Distance1) ||
+                   label.Equals(Distance2);
+        }
+    }
+
     public static class DefaultLabels
     {
         public const string LineDefault = "line";

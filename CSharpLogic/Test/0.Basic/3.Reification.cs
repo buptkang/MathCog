@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
-namespace CSharpLogic.Test
+namespace CSharpLogic
 {
     [TestFixture]
     public class TestReification

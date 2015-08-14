@@ -56,13 +56,19 @@ namespace ExprPatternMatch
                 var eq = obj as Equation;
                 Debug.Assert(eq != null);
 
+/*                Equation outputEq;
+                bool? result1 = eq.Eval(out outputEq, false);
+                if (result1 != null) return false;*/
+
                 LineSymbol ls;
                 result = eq.IsLineEquation(out ls); //Algebraic line form
-                if (result) dict.Add(PatternEnum.Line, ls); //LineSymbol                
+                if (result) dict.Add(PatternEnum.Line, ls); //LineSymbol
+                eq.UnEval();
 
                 EqGoal eqGoal;
                 result = eq.IsEqGoal(out eqGoal); //Property form
                 if (result) dict.Add(PatternEnum.Goal, eqGoal); //EqGoal
+                eq.UnEval();
 
                 QuadraticCurveSymbol qcs;
                 result = eq.IsQuadraticCurveEquation(out qcs);
@@ -75,6 +81,11 @@ namespace ExprPatternMatch
                     EllipseSymbol es;
                     result = qcs.IsEllipseEquation(out es);
                     if(result) dict.Add(PatternEnum.Ellipse, es);
+                }
+
+                if (dict.Count == 0)
+                {
+                    dict.Add(PatternEnum.Equation, eq);
                 }
             }
 
@@ -90,6 +101,7 @@ namespace ExprPatternMatch
     public enum PatternEnum
     {
         Query,
+        Equation,
         Numeric,
         Label,
         Expression,

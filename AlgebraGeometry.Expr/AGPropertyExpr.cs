@@ -12,8 +12,10 @@ namespace AlgebraGeometry.Expr
     /// <summary>
     /// such as S= 5.0, m = 4, x=2+1
     /// </summary>
-    public class AGPropertyExpr : IKnowledge
+    public class AGPropertyExpr : AGEquationExpr
     {
+        #region Properties and Constructors
+
         private EqGoal _goal;
         public EqGoal Goal
         {
@@ -25,7 +27,46 @@ namespace AlgebraGeometry.Expr
             :base(expr)
         {
             _goal = goal;
-            GenerateTrace(_goal);
         }
+
+        #endregion
+
+        #region Override functions
+
+        public override void GenerateSolvingTrace()
+        {
+            if (IsSelected)
+            {
+                var traces = _goal.Traces;
+                if (traces.Count == 0) return;
+                var lst = new List<TraceStepExpr>();
+                TraceStepExpr tse;
+                for (int i = 0; i < traces.Count; i++)
+                {
+                    var ts = traces[i];
+                    tse = new TraceStepExpr(ts);
+                    lst.Add(tse);
+                }
+                AutoTrace = lst;
+                return;
+            }
+
+            if (RenderKnowledge == null) return;
+
+            foreach (var temp in RenderKnowledge)
+            {
+                if (temp.IsSelected)
+                {
+                    temp.GenerateSolvingTrace();
+                }
+            }
+        }
+
+        public override void RetrieveRenderKnowledge()
+        {
+            base.RetrieveRenderKnowledge();
+        }
+
+        #endregion
     }
 }

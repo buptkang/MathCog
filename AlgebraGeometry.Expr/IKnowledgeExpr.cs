@@ -11,8 +11,10 @@ namespace AlgebraGeometry.Expr
     /// <summary>
     /// Knowledge Interface with parsing support(starPadSDK.MathExpr)
     /// </summary>
-    public abstract class IKnowledge
+    public class IKnowledge
     {
+        #region Properties and Constructors
+
         private starPadSDK.MathExpr.Expr _inputExpr;
         public starPadSDK.MathExpr.Expr Expr
         {
@@ -20,24 +22,35 @@ namespace AlgebraGeometry.Expr
             set { _inputExpr = value; }
         }
 
-        protected IKnowledge(starPadSDK.MathExpr.Expr exp)
+        public bool IsSelected { get; set; } // query handler
+
+        public List<IKnowledge> RenderKnowledge { get; set; }
+
+        public List<TraceStepExpr> AutoTrace { get; set; }
+
+        public IKnowledge(starPadSDK.MathExpr.Expr exp)
         {
             _inputExpr = exp;
-            KnowledgeTrace = new List<TraceStepExpr>();
         }
 
-        protected void GenerateTrace(DyLogicObject obj)
+        #endregion
+
+        #region Virtual Functions and Utils
+
+        public virtual void GenerateSolvingTrace()
         {
-            TraceStepExpr tse;
-            for (int i = obj.Traces.Count - 1; i >= 0; i--)
-            {
-                var ts = obj.Traces[i] as TraceStep;
-                tse = new TraceStepExpr(ts);
-                KnowledgeTrace.Add(tse);
-            }
         }
 
-        //declarative trace to record computation path 
-        public List<TraceStepExpr> KnowledgeTrace { get; set; } 
+        public virtual void RetrieveRenderKnowledge()
+        {
+        }
+
+        public IKnowledge FindSelectedKnowledge()
+        {
+            if (IsSelected) return this;
+            return RenderKnowledge.FirstOrDefault(tempKnowledge => tempKnowledge.IsSelected);
+        }
+
+        #endregion
     }
 }

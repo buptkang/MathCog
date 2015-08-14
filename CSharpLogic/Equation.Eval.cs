@@ -6,8 +6,31 @@ using System.Text;
 
 namespace CSharpLogic
 {
-    public partial class Equation : DyLogicObject, IEquationLogic
+    public partial class Equation : DyLogicObject, IEquationLogic, IEval
     {
+        public object Eval()
+        {
+            //verification purpose
+            Equation outputEq;
+
+            bool? result = Eval(out outputEq, false);
+            if (result != null)
+            {
+                CachedEntities.Add(result);
+            }
+
+            return null;
+        }
+
+        public void UnEval()
+        {
+            var lhsTerm = Lhs as Term;
+            var rhsTerm = Rhs as Term;
+            if(lhsTerm != null) lhsTerm.UnEval();
+            if(rhsTerm != null) rhsTerm.UnEval();
+            ClearTrace();
+        }
+
         public bool? Eval(out Equation outputEq, bool withTransitive = true)
         {
             #region Term Proprocessing
@@ -58,7 +81,7 @@ namespace CSharpLogic
                         foreach (var ts in lhsTerm.Traces)
                         {
                             var cloneEq1 = Generate(localEq, ts.Source, ts.Target, true);
-                            var eqTraceStep = new TraceStep(localEq, cloneEq1, ts.Rule);
+                            var eqTraceStep = new TraceStep(localEq, cloneEq1, ts.Rule, ts.AppliedRule);
                             rootEq.Traces.Add(eqTraceStep);
                             localEq = cloneEq1;
                         }
@@ -88,7 +111,7 @@ namespace CSharpLogic
                         foreach (var ts in rhsTerm.Traces)
                         {
                             var cloneEq1 = Generate(localEq, ts.Source, ts.Target, false);
-                            var eqTraceStep = new TraceStep(localEq, cloneEq1, ts.Rule);
+                            var eqTraceStep = new TraceStep(localEq, cloneEq1, ts.Rule, ts.AppliedRule);
                             rootEq.Traces.Add(eqTraceStep);
                             localEq = cloneEq1;
                         }

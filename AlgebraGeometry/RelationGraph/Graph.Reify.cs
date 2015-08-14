@@ -9,10 +9,17 @@ using CSharpLogic;
 namespace AlgebraGeometry
 {
     /// <summary>
-    /// Symbolic Reification
+    /// Symbolic Reification, bottom-up process
     /// </summary>
     public partial class RelationGraph
     {
+        private void Reify(EquationNode eqNode)
+        {
+            //TODO
+            var equation = eqNode.Equation;
+            equation.Eval();
+        }
+
         private void Reify(ShapeNode shapeNode)
         {
             if (shapeNode.ShapeSymbol.Shape.Concrete) return;

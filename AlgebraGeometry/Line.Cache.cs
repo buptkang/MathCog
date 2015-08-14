@@ -109,9 +109,9 @@ namespace AlgebraGeometry
                 }
 
                 //Substitution trace
-                var ts = new TraceStep(this,
-                                       new LineSymbol(gLine),
-                                       SubstitutionRule.ApplySubstitute(this, goal));
+                string rule  = SubstitutionRule.ApplySubstitute();
+                string appliedRule = SubstitutionRule.ApplySubstitute(this, goal);
+                var ts = new TraceStep(this,new LineSymbol(gLine),rule, appliedRule);
                 gLine.Traces.Insert(0, ts);
                 #endregion
             }
@@ -138,10 +138,11 @@ namespace AlgebraGeometry
                             {
                                 line.Traces.Insert(0, goal.Traces[i]);
                             }
-
+                            string rule = SubstitutionRule.ApplySubstitute();
+                            string appliedRule = SubstitutionRule.ApplySubstitute(line, goal);
                             var ts = new TraceStep(new LineSymbol(gline),
                                                    new LineSymbol(line),
-                                                   SubstitutionRule.ApplySubstitute(line, goal));
+                                                   rule, appliedRule);
                             line.Traces.Insert(0, ts);
                         }
                         else
@@ -174,7 +175,10 @@ namespace AlgebraGeometry
                             {
                                 gLine.Traces.Insert(0, goal.Traces[i]);
                             }
-                            var ts = new TraceStep(ls,gLineSymbol,SubstitutionRule.ApplySubstitute(line, goal));
+                            string rule = SubstitutionRule.ApplySubstitute();
+                            string appliedRule = SubstitutionRule.ApplySubstitute(line, goal);
+
+                            var ts = new TraceStep(ls,gLineSymbol,rule, appliedRule);
                             gLine.Traces.Insert(0, ts);
                         }
                     }
@@ -205,7 +209,9 @@ namespace AlgebraGeometry
                     gLine.Traces.Insert(0, goal.Traces[i]);
                 }
                 //Substitution trace
-                var ts = new TraceStep(this, gLineSymbol, SubstitutionRule.ApplySubstitute(gLineSymbol, goal));
+                string rule = SubstitutionRule.ApplySubstitute();
+                string appliedRule = SubstitutionRule.ApplySubstitute(gLineSymbol, goal);
+                var ts = new TraceStep(this, gLineSymbol, rule, appliedRule);
                 gLine.Traces.Insert(0, ts);
 
                 #endregion
@@ -236,8 +242,10 @@ namespace AlgebraGeometry
                             {
                                 line.Traces.Insert(0, goal.Traces[i]);
                             }
+                            string rule = SubstitutionRule.ApplySubstitute();
+                            string appliedRule = SubstitutionRule.ApplySubstitute(ls, goal);
 
-                            var ts = new TraceStep(ls,gLineSymbol, SubstitutionRule.ApplySubstitute(ls, goal));
+                            var ts = new TraceStep(ls,gLineSymbol, rule, appliedRule);
                             line.Traces.Insert(0, ts);
                         }
                         else
@@ -270,7 +278,9 @@ namespace AlgebraGeometry
                             {
                                 gLine.Traces.Insert(0, goal.Traces[i]);
                             }
-                            var ts = new TraceStep(ls,gLineSymbol,SubstitutionRule.ApplySubstitute(line, goal));
+                            string rule = SubstitutionRule.ApplySubstitute();
+                            string appliedRule = SubstitutionRule.ApplySubstitute(line, goal);
+                            var ts = new TraceStep(ls,gLineSymbol,rule, appliedRule);
                             gLine.Traces.Insert(0, ts);
                         }
                     }
@@ -302,7 +312,9 @@ namespace AlgebraGeometry
                 }
 
                 //Substitution trace
-                var ts = new TraceStep(this, gLineSymbol, SubstitutionRule.ApplySubstitute(this, goal));
+                string rule = SubstitutionRule.ApplySubstitute();
+                string appliedRule = SubstitutionRule.ApplySubstitute(this, goal);
+                var ts = new TraceStep(this, gLineSymbol, rule, appliedRule);
                 gLine.Traces.Insert(0, ts);
 
                 #endregion
@@ -331,7 +343,9 @@ namespace AlgebraGeometry
                                 line.Traces.Insert(0, goal.Traces[i]);
                             }
 
-                            var ts = new TraceStep(gLineSymbol,ss, SubstitutionRule.ApplySubstitute(line, goal));
+                            string rule = SubstitutionRule.ApplySubstitute();
+                            string appliedRule = SubstitutionRule.ApplySubstitute(line, goal);
+                            var ts = new TraceStep(gLineSymbol,ss, rule, appliedRule);
                             line.Traces.Insert(0, ts);
                         }
                         else
@@ -364,7 +378,9 @@ namespace AlgebraGeometry
                             {
                                 gLine.Traces.Insert(0, goal.Traces[i]);
                             }
-                            var ts = new TraceStep(ss, gLineSymbol,SubstitutionRule.ApplySubstitute(line, goal));
+                            string rule = SubstitutionRule.ApplySubstitute();
+                            string appliedRule = SubstitutionRule.ApplySubstitute(line, goal);
+                            var ts = new TraceStep(ss, gLineSymbol,rule, appliedRule);
                             gLine.Traces.Insert(0, ts);
                         }
                     }

@@ -342,7 +342,6 @@ namespace CSharpLogic
 
         #endregion
 
-
         #region Integrated
 
         [Test]
@@ -380,7 +379,19 @@ namespace CSharpLogic
             var gTerm = obj as Term;
         }
 
+        [Test]
+        public void Test_Simple_1()
+        {
+            var variable = new Var('x');
+            var term1 = new Term(Expression.Multiply, new List<object>() { 2, variable });
+            var term2 = new Term(Expression.Multiply, new List<object>() { -1, variable});
+            //2x-x -> x
+            var term = new Term(Expression.Add, new List<object>() { term1, term2 });
+            var obj = term.Eval();
+            Assert.True(obj.Equals(variable));
+        }
+
+
         #endregion
     }
-
 }

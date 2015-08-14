@@ -14,11 +14,19 @@ namespace CSharpLogic
 
         public object Rule { get; set; }
 
-        public TraceStep(object source, object target, object rule)
+        public object AppliedRule { get; set; }
+
+        public TraceStep(object source, object target, object rule, object appliedRule)
         {
             Source = source;
             Target = target;
             Rule = rule;
+            AppliedRule = appliedRule;
+        }
+
+        public TraceStep Clone()
+        {
+            return new TraceStep(Source, Target, Rule, AppliedRule);
         }
     }
 

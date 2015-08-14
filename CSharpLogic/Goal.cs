@@ -33,6 +33,23 @@ namespace CSharpLogic
             Debug.Assert(Rhs != null);
             Functor = LogicSharp.Equal()(Lhs, Rhs);
         }
+
+        public override bool Equals(object obj)
+        {
+            var eq = obj as EqGoal;
+            if (eq != null)
+            {
+                if (Rhs == null) return Lhs.Equals(eq.Lhs);
+                return Lhs.Equals(eq.Lhs) && Rhs.Equals(eq.Rhs);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            if (Rhs == null) return Lhs.GetHashCode();
+            return Lhs.GetHashCode() ^ Rhs.GetHashCode();
+        }
     }
 
     public static class EqGoalExtension

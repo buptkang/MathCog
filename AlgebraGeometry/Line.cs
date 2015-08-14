@@ -6,6 +6,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using CSharpLogic;
+using System.ComponentModel;
+using System.Linq.Expressions;
 
 namespace AlgebraGeometry
 {
@@ -55,6 +57,35 @@ namespace AlgebraGeometry
                 NotifyPropertyChanged("C");
             }
         }
+
+        private object _slope;
+        public object Slope
+        {
+            get
+            {
+                return _slope;
+            }
+            set
+            {
+                _slope = value;
+                NotifyPropertyChanged("Slope");
+            }
+        }
+        private object _intercept;
+        public object Intercept
+        {
+            get { return _intercept; }
+            set
+            {
+                _intercept = value;
+                NotifyPropertyChanged("Intercept");
+            }
+        }
+
+        /*
+                public Point XIntercept { get; set; }
+                public Point YIntercept { get; set; }
+        */
 
         public LineType InputType { get; set; }
         public override object GetInputType() { return InputType; } 
@@ -111,6 +142,46 @@ namespace AlgebraGeometry
         public Line(object a, object b, object c): 
             this(null, a,b,c)
         {
+        }
+
+        public Line(object slope, object intercept)
+            : this(null, slope, intercept)
+        {
+        }
+
+        public Line(string label, object slope, object intercept)
+            : base(ShapeType.Line, label)
+        {
+            InputType = LineType.SlopeIntercept;
+
+            _slope = slope;
+            _intercept = intercept;
+
+            double d;
+            if (LogicSharp.IsDouble(_slope, out d))
+            {
+                _slope = Math.Round(d, 1);
+            }
+            if (LogicSharp.IsDouble(_intercept, out d))
+            {
+                _intercept = Math.Round(d, 1);
+            }
+
+            if (_slope is string)
+            {
+                _slope = new Var(_slope);
+            }
+            if (_intercept is string)
+            {
+                _intercept = new Var(_intercept);
+            }
+            if (_intercept == null)
+            {
+                _intercept = 0.0d;
+            }
+
+            Calc_SlopeIntercept_General();
+            PropertyChanged += Line_PropertyChanged;
         }
 
         #endregion
@@ -203,6 +274,73 @@ namespace AlgebraGeometry
         }
 
         #endregion       
+
+        #region Transformations
+
+        private void Calc_SlopeIntercept_General()
+        {
+            //slope and intercept known
+            Debug.Assert(Slope != null);
+            Debug.Assert(Intercept != null);
+            A = Slope;
+            B = -1;
+            C = Intercept;
+        }
+
+        private void Calc_General_SlopeIntercept()
+        {
+            //A, B, C known ax+by+c=0
+            //Slope     = (-1*a)/b
+            //Intercept = (-1*c)/b
+            /*            
+             * Debug.Assert(A != null);
+            Debug.Assert(B != null);*/
+            Debug.Assert(C != null);
+
+            if (B == null)
+            {
+                Slope = double.NaN;
+                Intercept = double.NaN;
+                return;
+            }
+            if (A == null)
+            {
+                //by+c=0
+                Slope = 0.0d;
+                var term31 = new Term(Expression.Multiply, new List<object>() { -1, C });
+                var term41 = new Term(Expression.Divide, new List<object>() { term31, B });
+                Intercept = term41.Eval();
+                return;
+            }
+
+            var term1 = new Term(Expression.Multiply, new List<object>() { -1, A });
+            var term2 = new Term(Expression.Divide, new List<object>() { term1, B });
+            var term3 = new Term(Expression.Multiply, new List<object>() { -1, C });
+            var term4 = new Term(Expression.Divide, new List<object>() { term3, B });
+            Slope = term2.Eval();
+            Intercept = term4.Eval();
+        }
+
+        void Line_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "A":
+                    break;
+                case "B":
+                    break;
+                case "C":
+                    break;
+                case "Slope":
+                    break;
+                case "Intercept":
+                    break;
+            }
+        }
+
+
+
+        #endregion
     }
 
     public enum LineType
@@ -474,6 +612,172 @@ namespace AlgebraGeometry
                 return string.Format("{0}{1}{2}=0", TermX, TermY, TermC);
             }
         }
+
+        #endregion
+
+        #region Line Format
+
+        public string SymSlope
+        {
+            get
+            {
+                var line = Shape as Line;
+                Debug.Assert(line != null);
+                return line.Slope != null ? line.Slope.ToString() : null;
+            }
+        }
+
+        public string TermSlope
+        {
+            get
+            {
+                var line = Shape as Line;
+                Debug.Assert(line != null);
+                if (LogicSharp.IsNumeric(line.Slope))
+                {
+                    double d;
+                    LogicSharp.IsDouble(line.Slope, out d);
+
+                    //d = 0, d = -1, d= 1, others
+
+                    double dd = Math.Abs(d);
+
+                    if (dd - 0.0 < 0.0000001) //d = 0
+                    {
+                        return "";
+                    }
+                    else if (Math.Abs(dd - 1.0) < 0.0000001) //d = 1 or -1
+                    {
+                        if (d < 0)
+                        {
+                            return string.Format("-x");
+                        }
+                        else
+                        {
+                            return string.Format("x");
+                        }
+
+                    }
+                    else
+                    {
+                        return string.Format("{0}x", SymSlope);
+                    }
+                }
+                else
+                {
+                    return string.Format("{0}x", SymSlope);
+                }
+            }
+        }
+
+        public string SymIntercept
+        {
+            get
+            {
+                var line = Shape as Line;
+                Debug.Assert(line != null);
+                return line.Intercept != null ? line.Intercept.ToString() : null;
+            }
+        }
+
+        private string NegSymIntercept
+        {
+            get
+            {
+                var line = Shape as Line;
+                Debug.Assert(line != null);
+                if (LogicSharp.IsNumeric(line.Intercept))
+                {
+                    double d;
+                    LogicSharp.IsDouble(line.Intercept, out d);
+                    double negC = -d;
+                    if ((negC % 1).Equals(0))
+                    {
+                        return Int32.Parse(negC.ToString(CultureInfo.InvariantCulture))
+                            .ToString(CultureInfo.InvariantCulture);
+                    }
+                    else
+                    {
+                        return negC.ToString(CultureInfo.InvariantCulture);
+                    }
+                }
+                else
+                {
+                    return line.Intercept.ToString();
+                }
+            }
+        }
+
+        public string TermIntercept
+        {
+            get
+            {
+                var line = Shape as Line;
+                Debug.Assert(line != null);
+                if (LogicSharp.IsNumeric(line.Intercept))
+                {
+                    #region Numerics
+
+                    double d;
+                    LogicSharp.IsDouble(line.Intercept, out d);
+
+                    double dd = Math.Abs(d);
+
+                    if (dd - 0.0 < 0.0000001)
+                    {
+                        return "";
+                    }
+
+                    if (d > 0.0)
+                    {
+                        return string.Format("+{0}", SymIntercept);
+                    }
+                    else
+                    {
+                        return string.Format("-{0}", NegSymIntercept);
+                    }
+
+                    #endregion
+                }
+                else
+                {
+                    return string.Format("+{0}", SymIntercept);
+                }
+            }
+        }
+
+        public string SlopeInterceptForm
+        {
+            get
+            {
+                if (SymIntercept != null)
+                {
+                    return string.Format("y={0}{1}", TermSlope, TermIntercept);
+                }
+                else
+                {
+                    return string.Format("y={0}", TermSlope);
+                }
+            }
+        }
+
+        //        public string LinePointSlopeForm
+        //        {
+        //            get
+        //            {
+        //                if (Intercept.Equals(0d))
+        //                {
+        //                    return string.Format("y={0}x", SymSlope);
+        //                }
+        //                else
+        //                {
+        //                    return string.Format("y{0}={1}（x{2}）",
+        //                        YIntercept.YCoordinate > 0d ? String.Format("- {0}", YIntercept.YCoordinate) : String.Format("+ {0}", YIntercept.NegSymYCoordinate), 
+        //                        SymSlope,
+        //                        YIntercept.XCoordinate > 0d ? String.Format("- {0}", YIntercept.XCoordinate) : String.Format("+ {0}", YIntercept.NegSymXCoordinate));
+        //                }               
+        //            }
+        //        }
 
         #endregion
 

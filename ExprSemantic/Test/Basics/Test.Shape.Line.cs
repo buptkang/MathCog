@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ExprSemantic;
+using MathReason;
 using NUnit.Framework;
 using AlgebraGeometry;
 using AlgebraGeometry.Expr;
@@ -136,7 +137,8 @@ namespace ExprSemanticTest
             Assert.NotNull(lineSymbol);
             line = lineSymbol.Shape as Line;
             Assert.NotNull(line);
-            var lst = ls.RetrieveRenderKnowledge();
+            ls.RetrieveRenderKnowledge();
+            var lst = ls.RenderKnowledge;
             Assert.True(lst.Count == 1);
             var gShapeExpr = lst[0] as AGShapeExpr;
             Assert.NotNull(gShapeExpr);
@@ -157,8 +159,8 @@ namespace ExprSemanticTest
             Assert.NotNull(lineSymbol);
             line = lineSymbol.Shape as Line;
             Assert.NotNull(line);
-            List<IKnowledge> iEnum = ls.RetrieveRenderKnowledge();
-            Assert.Null(iEnum);
+            ls.RetrieveRenderKnowledge();
+            Assert.Null(ls.RenderKnowledge);
         }
 
         [Test]
@@ -199,7 +201,8 @@ namespace ExprSemanticTest
             Assert.NotNull(lineSymbol);
             line = lineSymbol.Shape as Line;
             Assert.NotNull(line);
-            var lst = ls.RetrieveRenderKnowledge();
+            ls.RetrieveRenderKnowledge();
+            var lst = ls.RenderKnowledge;
             Assert.True(lst.Count == 1);
             var gShapeExpr = lst[0] as AGShapeExpr;
             Assert.NotNull(gShapeExpr);
@@ -221,7 +224,8 @@ namespace ExprSemanticTest
             Assert.NotNull(lineSymbol);
             line = lineSymbol.Shape as Line;
             Assert.NotNull(line);
-            lst = ls.RetrieveRenderKnowledge();
+            ls.RetrieveRenderKnowledge();
+            lst = ls.RenderKnowledge;
             Assert.True(lst.Count == 1);
             gShapeExpr = lst[0] as AGShapeExpr;
             Assert.NotNull(gShapeExpr);
@@ -238,7 +242,8 @@ namespace ExprSemanticTest
             Assert.True(result.Count == 1);
             ls = result[0];
             Assert.NotNull(ls);
-            lst = ls.RetrieveRenderKnowledge();
+            ls.RetrieveRenderKnowledge();
+            lst = ls.RenderKnowledge;
             Assert.True(lst.Count == 1);
             gShapeExpr = lst[0] as AGShapeExpr;
             Assert.NotNull(gShapeExpr);
@@ -255,8 +260,8 @@ namespace ExprSemanticTest
             Assert.True(result.Count == 1);
             ls = result[0];
             Assert.NotNull(ls);
-            List<IKnowledge> iEnum = ls.RetrieveRenderKnowledge();
-            Assert.Null(iEnum);
+            ls.RetrieveRenderKnowledge();
+            Assert.Null(ls.RenderKnowledge);
         }
 
         [Test]
@@ -289,9 +294,9 @@ namespace ExprSemanticTest
             Assert.True(result.Count == 1);
             ls = result[0];
             Assert.NotNull(ls);
-            var lst = ls.RetrieveRenderKnowledge();
-            Assert.True(lst.Count == 1);
-            var gShapeExpr = lst[0] as AGShapeExpr;
+            ls.RetrieveRenderKnowledge();
+            Assert.True(ls.RenderKnowledge.Count == 1);
+            var gShapeExpr = ls.RenderKnowledge[0] as AGShapeExpr;
             Assert.NotNull(gShapeExpr);
             var shape = gShapeExpr.ShapeSymbol.Shape as Line;
             Assert.NotNull(shape);
@@ -307,8 +312,8 @@ namespace ExprSemanticTest
             Assert.True(result.Count == 1);
             ls = result[0];
             Assert.NotNull(ls);
-            IEnumerable<IKnowledge> iEnum = ls.RetrieveRenderKnowledge();
-            Assert.Null(iEnum);
+            ls.RetrieveRenderKnowledge();
+            Assert.Null(ls.RenderKnowledge);
         }
 
         [Test]
@@ -347,7 +352,8 @@ namespace ExprSemanticTest
             Assert.NotNull(lineSymbol);
             line = lineSymbol.Shape as Line;
             Assert.NotNull(line);
-            var lst = ls.RetrieveRenderKnowledge();
+            ls.RetrieveRenderKnowledge();
+            var lst = ls.RenderKnowledge;
             Assert.True(lst.Count == 1);
             var gShapeExpr = lst[0] as AGShapeExpr;
             Assert.NotNull(gShapeExpr);
@@ -368,8 +374,8 @@ namespace ExprSemanticTest
             Assert.NotNull(lineSymbol);
             line = lineSymbol.Shape as Line;
             Assert.NotNull(line);
-            List<IKnowledge> iEnum = ls.RetrieveRenderKnowledge();
-            Assert.Null(iEnum);
+            ls.RetrieveRenderKnowledge();
+            Assert.Null(ls.RenderKnowledge);
         }
 
         #endregion

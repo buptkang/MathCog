@@ -8,5 +8,7 @@ namespace CSharpLogic
     public interface IEval
     {
         object Eval();
+
+        void UnEval();
     }
 }

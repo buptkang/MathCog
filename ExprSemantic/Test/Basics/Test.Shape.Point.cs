@@ -5,6 +5,7 @@ using System.Text;
 using AlgebraGeometry;
 using AlgebraGeometry.Expr;
 using ExprSemantic;
+using MathReason;
 using NUnit.Framework;
 using starPadSDK.MathExpr;
 using Text = starPadSDK.MathExpr.Text;
@@ -14,7 +15,7 @@ namespace ExprSemanticTest
     [TestFixture]
     public class TestPoint
     {
-        #region Point Pattern Match
+        #region Point Pattern Match (Unification)
 
         [Test]
         public void Test_PatternMatch0()
@@ -86,7 +87,7 @@ namespace ExprSemanticTest
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
             ps = result[0];
-            var lst = ps.RetrieveRenderKnowledge() as List<IKnowledge>;
+            var lst = ps.RenderKnowledge;
             Assert.NotNull(lst);
             Assert.True(lst.Count == 1);
             var gShapeExpr = lst[0] as AGShapeExpr;
@@ -98,9 +99,11 @@ namespace ExprSemanticTest
 
             //Trace checking         
             //Expect substitute goal from given shape (x,y) as (2,y)
+/*
             var traceLst = gShapeExpr.KnowledgeTrace;
             Assert.True(traceLst.Count == 1);
             var trace = traceLst[0];
+*/ 
             //Assert.True(trace.Source.ToString().Equals("(x,y)"));
             //Assert.True(trace.Target.ToString().Equals("(2,y)"));
 
@@ -112,8 +115,8 @@ namespace ExprSemanticTest
             Assert.True(result.Count == 1);
             ps = result[0] as AGShapeExpr;
             Assert.NotNull(ps);
-            var ks = ps.RetrieveRenderKnowledge();
-            Assert.Null(ks);
+            ps.RetrieveRenderKnowledge();
+            Assert.Null(ps.RenderKnowledge);
         }
 
         [Test]
@@ -137,7 +140,8 @@ namespace ExprSemanticTest
             Assert.True(result.Count == 1);
             ps = result[0] as AGShapeExpr;
 
-            var lst = ps.RetrieveRenderKnowledge() as List<IKnowledge>;
+            ps.RetrieveRenderKnowledge();
+            var lst = ps.RenderKnowledge;
             Assert.True(lst.Count == 1);
             var gShapeExpr = lst[0] as AGShapeExpr;
             Assert.NotNull(gShapeExpr);
@@ -148,8 +152,8 @@ namespace ExprSemanticTest
             Assert.True(shape.XCoordinate.Equals(1.0));
 
             //Trace checking         
-            var traceLst = gShapeExpr.KnowledgeTrace;
-            Assert.True(traceLst.Count == 3);
+            //var traceLst = gShapeExpr.KnowledgeTrace;
+            //Assert.True(traceLst.Count == 3);
         }
 
         [Test]
@@ -181,12 +185,13 @@ namespace ExprSemanticTest
 
             foreach (AGShapeExpr se in lst)
             {
-                var gShapes = se.RetrieveRenderKnowledge() as IEnumerable<IKnowledge>;
+                se.RetrieveRenderKnowledge();
+                var gShapes = se.RenderKnowledge;
                 Assert.NotNull(gShapes);
                 var gShapeLst = gShapes as IList<IKnowledge> ?? gShapes.ToList();
                 Assert.True(gShapeLst.Count() == 1);
                 var gShape = gShapeLst[0];
-                Assert.True(gShape.KnowledgeTrace.Count == 1);
+                //Assert.True(gShape.KnowledgeTrace.Count == 1);
             }
         }
 

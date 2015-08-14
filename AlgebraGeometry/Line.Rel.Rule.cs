@@ -89,6 +89,6 @@ namespace AlgebraGeometry
             return line;
         }
 
-        public static string IdentityPoints = "Cannot build the line as two identify points!";
+        public static string IdentityPoints = "Cannot build the line as two identify points!"; 
     }
 }

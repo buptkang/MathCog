@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace CSharpLogic
 {
-    public interface IAlgebraLogic : IEval
+    public interface IAlgebraLogic
     {
         /// <summary>
         // 1.1 Distributive law a(b+c) <=> ab+ac
@@ -70,11 +70,12 @@ namespace CSharpLogic
                         madeChanges = true;
 
                         //generate trace rule
-                        string rule = AlgebraRule.Rule(
+                        string rule = AlgebraRule.Rule(AlgebraRule.AlgebraRuleType.Commutative);
+                        string appliedRule = AlgebraRule.Rule(
                             AlgebraRule.AlgebraRuleType.Commutative,
                             list[i], list[i + 1]);
 
-                        rootTerm.GenerateTrace(localTerm, cloneTerm, rule);
+                        rootTerm.GenerateTrace(localTerm, cloneTerm, rule, appliedRule);
                         localTerm = cloneTerm;
                     }
                 }
@@ -196,11 +197,13 @@ namespace CSharpLogic
 
                     cloneLst[i] = gobj;
                     //generate trace rule
+                    /*
                     string rule = AlgebraRule.Rule(
                         AlgebraRule.AlgebraRuleType.Identity,
                         list[i], null);
 
                     rootTerm.GenerateTrace(localTerm, cloneTerm, rule);
+                     */ 
                     localTerm = cloneTerm;
                 }                
             }
@@ -214,13 +217,14 @@ namespace CSharpLogic
                     Debug.Assert(cloneLst != null);
                     cloneLst[0] = gobj;
                     cloneLst.Remove(lst[1]);
-
                     //generate trace rule
+                    /*
                     string rule = AlgebraRule.Rule(
                         AlgebraRule.AlgebraRuleType.Identity,
                         list[0], null);
 
                     rootTerm.GenerateTrace(localTerm, cloneTerm, rule);
+                     */ 
                     localTerm = cloneTerm;
                 }
             }
@@ -303,10 +307,12 @@ namespace CSharpLogic
                 if (localTerm.Op.Method.Name.Equals("Multiply"))
                 {
                     string rule = AlgebraRule.Rule(
+                        AlgebraRule.AlgebraRuleType.Identity);
+                    String appliedRule = AlgebraRule.Rule(
                            AlgebraRule.AlgebraRuleType.Identity,
                            localTerm, null);
 
-                    rootTerm.GenerateTrace(localTerm, 0, rule);
+                    rootTerm.GenerateTrace(localTerm, 0, rule, appliedRule);
                     return 0;
                 }
                 if (localTerm.Op.Method.Name.Equals("Add"))
@@ -317,10 +323,12 @@ namespace CSharpLogic
                     RemoveZero(ref cloneLst);
                     //generate trace rule
                     string rule = AlgebraRule.Rule(
+                        AlgebraRule.AlgebraRuleType.Identity);
+                    string appliedRule = AlgebraRule.Rule(
                         AlgebraRule.AlgebraRuleType.Identity,
                         localTerm, null);
 
-                    rootTerm.GenerateTrace(localTerm, cloneTerm, rule);
+                    rootTerm.GenerateTrace(localTerm, cloneTerm, rule, appliedRule);
                     localTerm = cloneTerm;
                 }
             }
@@ -395,10 +403,12 @@ namespace CSharpLogic
 
                         //generate trace rule
                         string rule = AlgebraRule.Rule(
+                            AlgebraRule.AlgebraRuleType.Distributive);
+                        string appliedRule = AlgebraRule.Rule(
                             AlgebraRule.AlgebraRuleType.Distributive,
                             list[i], list[i+1]);
 
-                        rootTerm.GenerateTrace(localTerm, cloneTerm, rule);
+                        rootTerm.GenerateTrace(localTerm, cloneTerm, rule, appliedRule);
                         localTerm = cloneTerm;
                         madeChanges = true;
                     }
@@ -482,10 +492,13 @@ namespace CSharpLogic
 
                 //generate trace rule
                 string rule = AlgebraRule.Rule(
+                    AlgebraRule.AlgebraRuleType.Associative);
+                    
+                String appliedRule = AlgebraRule.Rule(
                     AlgebraRule.AlgebraRuleType.Associative,
                     list[0], list[1]);
 
-                rootTerm.GenerateTrace(localTerm, cloneTerm, rule);
+                rootTerm.GenerateTrace(localTerm, cloneTerm, rule, appliedRule);
                 localTerm = cloneTerm;
             }
 

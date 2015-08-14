@@ -6,7 +6,7 @@ using System.Text;
 using CSharpLogic;
 using NUnit.Framework;
 using Text = starPadSDK.MathExpr.Text;
-using ExprSemantic;
+using System.Linq.Expressions;
 
 namespace ExprPatternMatch
 {
@@ -32,14 +32,13 @@ namespace ExprPatternMatch
             expr = Text.Convert(txt2);
             result = expr.IsQuery(out obj);
             Assert.True(result);
-            var equation = obj as Equation;
-            Assert.NotNull(equation);
-            Assert.Null(equation.Rhs);
-            var term = equation.Lhs as Term;
-            Assert.NotNull(term);
-            var list = term.Args as List<object>;
-            Assert.NotNull(list);
-            Assert.True(list[1].Equals(1));
+
+            var variable = new Var('x');
+            var term = new Term(Expression.Add, new List<object>() { variable, 1 });
+
+            query = obj as Query;
+            Assert.NotNull(query);
+            Assert.True(query.Constraint1.Equals(term));
         }
     }
 }

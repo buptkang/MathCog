@@ -32,7 +32,22 @@ namespace ExprGeneratorTest
             Assert.True(str.Equals("A(3x+y+1=0)"));
 
             Expr expr = lineSymbol.ToExpr();
-                        
+
+
+
+        }
+
+        [Test]
+        public void Test_Point_1()
+        {
+            var point = new Point(1.0, 2.0);
+            var pointSymbol = new PointSymbol(point);
+            string str = pointSymbol.ToString();
+            Assert.True(str.Equals("(1,2)"));
+            Expr expr = pointSymbol.ToExpr();
+
+            var str1 = expr.ToString();
+            Assert.True(str.Equals("(1,2)"));
         }
     }
 }

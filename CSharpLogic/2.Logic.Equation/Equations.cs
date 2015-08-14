@@ -32,10 +32,12 @@ namespace CSharpLogic
                 cloneEq.Lhs = cloneEq.Rhs;
                 cloneEq.Rhs = tempObj;
 
-                string rule = EquationsRule.Rule(
+                string rule = EquationsRule.Rule(EquationsRule.EquationRuleType.Symmetric);
+
+                string appliedRule = EquationsRule.Rule(
                           EquationsRule.EquationRuleType.Symmetric,
                           localEq, null);
-                rootEq.GenerateTrace(localEq, cloneEq, rule);
+                rootEq.GenerateTrace(localEq, cloneEq, rule, appliedRule);
                 localEq = cloneEq;
             }
             return localEq;
@@ -107,10 +109,13 @@ namespace CSharpLogic
 
                 cloneEq.Rhs = new Term(Expression.Add, new List<object>() {rhs, inverseRhs});
 
-                string rule = EquationsRule.Rule(
+                string rule = EquationsRule.Rule(EquationsRule.EquationRuleType.Transitive);
+
+                string appliedRule = EquationsRule.Rule(
                           EquationsRule.EquationRuleType.Transitive,
                           localEq, null);
-                rootEq.GenerateTrace(localEq, cloneEq, rule);
+
+                rootEq.GenerateTrace(localEq, cloneEq, rule, appliedRule);
                 localEq = cloneEq;
             }
             return localEq;

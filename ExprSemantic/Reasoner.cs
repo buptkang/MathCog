@@ -1,17 +1,14 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
 using AlgebraGeometry;
 using AlgebraGeometry.Expr;
 using CSharpLogic;
 using ExprPatternMatch;
 using starPadSDK.MathExpr;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Diagnostics;
-using System.Linq;
-using Text = starPadSDK.MathExpr.Text;
 
-namespace ExprSemantic
+namespace MathReason
 {
     public partial class Reasoner
     {
@@ -38,6 +35,7 @@ namespace ExprSemantic
             RelationGraph = new RelationGraph();
             _cache = new ObservableCollection<KeyValuePair<object, object>>();
             _preCache = new Dictionary<object, object>();
+            _tutorSession = false;
         }
 
         /// <summary>
@@ -49,15 +47,24 @@ namespace ExprSemantic
         /// </summary>
         private Dictionary<object, object> _preCache;
 
+        private bool _tutorSession;
+
+        public bool TutorSession
+        {
+            get { return _tutorSession; }
+            set { _tutorSession = value; }
+        }
+
         #endregion
 
         #region Input communication with lower reasoning engine
 
-        public object Load(object obj, ShapeType? st = null)
+        public object Load(object obj, ShapeType? st = null, bool tutorSession = false)
         {
-            var str = obj as string;
+            _tutorSession = tutorSession;
+            var str = obj as string;     // text input
             if (str != null) return Load(str, st);
-            var expr = obj as Expr;
+            var expr = obj as Expr;      // sketch input
             if (expr != null) return Load(expr, st);
             return null;
         }
@@ -112,6 +119,13 @@ namespace ExprSemantic
                 UnEvalExprPatterns(fact[0].Value);
                 _cache.Remove(fact[0]);
             }
+        }
+
+        public void Reset()
+        {
+            RelationGraph = new RelationGraph();
+            _cache = new ObservableCollection<KeyValuePair<object, object>>();
+            _preCache = new Dictionary<object, object>();
         }
 
         #endregion

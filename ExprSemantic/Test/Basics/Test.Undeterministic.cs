@@ -4,16 +4,28 @@ using System.Linq;
 using System.Text;
 using AlgebraGeometry;
 using AlgebraGeometry.Expr;
-using CSharpLogic;
 using ExprSemantic;
+using MathReason;
 using NUnit.Framework;
 using starPadSDK.MathExpr;
+using Text = starPadSDK.MathExpr.Text;
+using CSharpLogic;
 
 namespace ExprSemanticTest
 {
-    [TestFixture]
-    public class TestRelation
+    public class TestProperty
     {
+        [Test]
+        public void Test0()
+        {
+            //x = 1
+            const string fact1 = "x = 1";
+            Reasoner.Instance.Load(fact1);
+            var result = Reasoner.Instance.TestGetProperties();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 0);
+        }
+
         [Test]
         public void Test1()
         {
@@ -30,8 +42,8 @@ namespace ExprSemanticTest
             object result = Reasoner.Instance.Load(query);
             var types = result as List<ShapeType>;
             Assert.NotNull(types);
-            
-            var expr = new CompositeExpr(WellKnownSym.times, new Expr[]{new LetterSym('A'), new LetterSym('B')});
+
+            var expr = new CompositeExpr(WellKnownSym.times, new Expr[] { new LetterSym('A'), new LetterSym('B') });
             result = Reasoner.Instance.Load(expr);
             types = result as List<ShapeType>;
             Assert.NotNull(types);

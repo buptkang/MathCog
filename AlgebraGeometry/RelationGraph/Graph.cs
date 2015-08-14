@@ -49,7 +49,11 @@ namespace AlgebraGeometry
 
         public GraphNode AddNode(object obj)
         {
-            var shape = obj as ShapeSymbol;
+            var shape    = obj as ShapeSymbol;
+            var goal     = obj as Goal;
+            var query    = obj as Query;
+            var equation = obj as Equation;
+
             if (shape != null)
             {
                 var shapeNode = AddShapeNode(shape);
@@ -57,7 +61,6 @@ namespace AlgebraGeometry
                 ReAddQueryNode();
                 return shapeNode;
             }
-            var goal = obj as Goal;
             if (goal != null)
             {
                 var goalNode = AddGoalNode(goal);
@@ -65,7 +68,6 @@ namespace AlgebraGeometry
                 ReAddQueryNode();
                 return goalNode;
             }
-            var query = obj as Query;
             if (query != null)
             {
                 query.Success = false;
@@ -78,6 +80,13 @@ namespace AlgebraGeometry
                 var qn = obj as QueryNode;
                 Debug.Assert(qn != null);
                 return qn;
+            }
+            if (equation != null)
+            {
+                var eqNode = AddEquationNode(equation);
+                _preCache.Add(equation, eqNode);
+                ReAddQueryNode();
+                return eqNode;
             }
             throw new Exception("Cannot reach here");
         }
@@ -94,6 +103,14 @@ namespace AlgebraGeometry
             UpdateRelation(sn); //build connection
             _nodes.Add(sn);
             return sn;
+        }
+
+        private EquationNode AddEquationNode(Equation equation)
+        {
+            var en = new EquationNode(equation);
+            Reify(en);
+            _nodes.Add(en);
+            return en;
         }
 
         /// <summary>
@@ -290,18 +307,40 @@ namespace AlgebraGeometry
             var shape = obj as ShapeSymbol;
             if (shape != null)
             {
-                return (from gn in _nodes let shapeNode = gn as ShapeNode 
-                        where shapeNode != null && 
-                              shapeNode.ShapeSymbol.Equals(shape) select gn)
-                        .FirstOrDefault();
+                foreach (var gn in _nodes)
+                {
+                    var shapeNode = gn as ShapeNode;
+                    if (shapeNode != null)
+                    {
+                        if (shapeNode.ShapeSymbol.Equals(shape)) return gn;
+                    }
+
+                    var queryNode = gn as QueryNode;
+                    if (queryNode != null)
+                    {
+                        object returnObj = queryNode.SearchInternalNode(obj);
+                        if (returnObj != null) return (GraphNode)returnObj;
+                    }
+                }
             }
             var goal = obj as EqGoal;
             if (goal != null)
             {
-                return (from gn in _nodes let goalNode = gn as GoalNode 
-                        where goalNode != null && 
-                              goalNode.Goal.Equals(goal) select gn)
-                        .FirstOrDefault();
+                foreach (var gn in _nodes)
+                {
+                    var goalNode = gn as GoalNode;
+                    if (goalNode != null)
+                    {
+                        if (goalNode.Goal.Equals(goal)) return gn;
+                    }
+
+                    var queryNode = gn as QueryNode;
+                    if (queryNode != null)
+                    {
+                        object returnObj = queryNode.SearchInternalNode(obj);
+                        if (returnObj != null) return (GraphNode)returnObj;
+                    }
+                }
             }
             var query = obj as Query;
             if (query != null)
@@ -313,6 +352,7 @@ namespace AlgebraGeometry
                         return qn;
                 }
             }
+
             return null;
         }
 

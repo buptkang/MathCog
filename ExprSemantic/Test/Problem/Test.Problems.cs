@@ -1,31 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using AlgebraGeometry;
 using AlgebraGeometry.Expr;
 using CSharpLogic;
 using ExprSemantic;
 using NUnit.Framework;
 
-namespace ExprSemanticTest
+namespace MathReason
 {
     [TestFixture]
-    public class Problems
+    public class TestProblems
     {
         [Test]
         public void Test_Problem_1()
         {
             /*
-             * Problem 1: Find the distance betweeen A(2,3) and B(7,4)?
+             * Problem 1: Find the distance betweeen A(2,0) and B(5,4)?
              */
-            const string input1 = "A(2,3)";
-            const string input2 = "B(7,4)";
-            const string query = "d=";
+            const string input1 = "A(2,0)";
+            const string input2 = "B(5,4)";
+            const string query  = "d=";
+
+            Reasoner.Instance.Load(input1);
+            Reasoner.Instance.Load(input2);
+
+            var obj = Reasoner.Instance.Load(query);
+            Assert.NotNull(obj);
+            var agQueryExpr = obj as AGQueryExpr;
+            Assert.NotNull(agQueryExpr);
+            var queryTag = agQueryExpr.QueryTag;
+            Assert.NotNull(queryTag);
+            Assert.True(queryTag.Success);
+            Assert.True(queryTag.CachedEntities.Count == 2);            
+            Assert.True(Reasoner.Instance.RelationGraph.Nodes.Count == 3);
+
+            var eqGoal = queryTag.CachedEntities.ToList()[1] as EqGoal;
+            Assert.NotNull(eqGoal);
+            Assert.True(eqGoal.Rhs.Equals(5.0));
         }
 
         [Test]
         public void Test_Problem_2()
+        {
+            /*
+             * There exists two points A(3,4) and B(4,v), the distance between A and B is 5. What is the value of v?
+             */
+            const string input1 = "A(3,4)";
+            const string input2 = "B(4,v)";
+            const string input3 = "d=5";
+            const string query  = "v=";
+
+            Reasoner.Instance.Load(input1);
+            Reasoner.Instance.Load(input2);
+
+            var obj = Reasoner.Instance.Load(query);
+            Assert.NotNull(obj);
+            var agQueryExpr = obj as AGQueryExpr;
+            Assert.NotNull(agQueryExpr);
+            var queryTag = agQueryExpr.QueryTag;
+            Assert.NotNull(queryTag);
+            Assert.False(queryTag.Success);
+
+            Reasoner.Instance.Load(input3);
+            obj = Reasoner.Instance.Load(query);
+            Assert.NotNull(obj);
+            agQueryExpr = obj as AGQueryExpr;
+            Assert.NotNull(agQueryExpr);
+            queryTag = agQueryExpr.QueryTag;
+            Assert.NotNull(queryTag);
+            Assert.True(queryTag.Success);
+        }
+
+        [Test]
+        public void Test_Problem_3()
         {
             /*
              * Problem 2: A line passes through two points A(2,0), B(0,3) respectively. 1) What is the slope of this line?  2) What is the standard form of this line?
@@ -52,18 +98,6 @@ namespace ExprSemanticTest
 
             //TODO build relations
 
-        }
-
-        [Test]
-        public void Test_Problem_3()
-        {
-            /*
-             * There exists two points A(3,4) and B(4,v), the distance between A and B is 5. What is the value of v?
-             */
-            const string input1 = "A(3,4)";
-            const string input2 = "B(4,v)";
-            const string input3 = "d=5";
-            const string query  = "v=";
         }
 
         [Test]
@@ -172,7 +206,8 @@ namespace ExprSemanticTest
         public void Test_Problem_5()
         {
             /*
-             * Given an equation 2y+2x-y+2x+4=0, graph this equation's corresponding shape? What is the slope of this line? 
+             * Given an equation 2y+2x-y+2x+4=0, graph this equation's corresponding shape?
+             * What is the slope of this line? 
              */
             const string input1 = "2y+2x-y+2x+4=0";
             const string input2 = "m=";
@@ -183,24 +218,36 @@ namespace ExprSemanticTest
             Assert.NotNull(lineSymbol);
             Assert.True(lineSymbol.ToString().Equals("4x+y+4=0"));
 
+            shapeExpr.GenerateSolvingTrace();
+            Assert.Null(shapeExpr.AutoTrace);
+
+            shapeExpr.IsSelected = true;
+            shapeExpr.GenerateSolvingTrace();
+            Assert.NotNull(shapeExpr.AutoTrace);
+          
             obj = Reasoner.Instance.Load(input2);
             Assert.NotNull(obj);
             var agQueryExpr = obj as AGQueryExpr;
             Assert.NotNull(agQueryExpr);
-            var query = agQueryExpr.QueryTag;
-            Assert.NotNull(query);
-            Assert.True(query.Success);
-            Assert.True(query.CachedEntities.Count == 1);
-            var eqGoal = query.CachedEntities.ToList()[0] as EqGoal;
+
+            agQueryExpr.RetrieveRenderKnowledge();
+            Assert.True(agQueryExpr.RenderKnowledge.Count == 1);
+
+            var agPropertyExpr = agQueryExpr.RenderKnowledge[0] as AGPropertyExpr;
+            Assert.True(agPropertyExpr != null);
+
+            //Query answer
+            agPropertyExpr.IsSelected = true;
+
+            var eqGoal = agPropertyExpr.Goal;
             Assert.NotNull(eqGoal);
             Assert.True(eqGoal.Rhs.Equals(-4));
-        }
 
-        public void Test()
-        {
-            /*
-             * Given an equation 2y+2x-y+2x+4=0, graph this equation's corresponding shape? What is the slope of this line? 
-             */
+            //Trace
+            agPropertyExpr.GenerateSolvingTrace();
+            Assert.True(agPropertyExpr.AutoTrace != null);
+
+
         }
     }
 }

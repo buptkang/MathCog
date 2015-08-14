@@ -226,7 +226,7 @@ namespace ExprPatternMatch
                 {
                     //TODO
                     //property = new KeyValuePair<string, object>("Term", obj);
-                    property = new Equation(obj, null);
+                    property = new Query(obj);
                     return true;
                 }
                 return false;                
@@ -251,7 +251,7 @@ namespace ExprPatternMatch
                     if (result)
                     {
                         //property = new KeyValuePair<string, object>("Term", obj);
-                        property = new Equation(obj, null);
+                        property = new Query(obj, null);
                         return true;
                     }
                     return false;

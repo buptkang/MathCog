@@ -12,7 +12,7 @@ namespace CSharpLogic
         public Guid QueryQuid { get; set; }
 
         private object _constraint1;
-        public object Constraint1 
+        public object Constraint1 //can be term or string
         {
             get{ return _constraint1;}
             set
@@ -41,8 +41,6 @@ namespace CSharpLogic
         {
             Constraint1 = constraint1;
             Constraint2 = constraint2;
-            CachedEntities = new HashSet<object>();
-            CachedObjects = new HashSet<KeyValuePair<object, object>>();
             QueryQuid = Guid.NewGuid();
         }
 
@@ -50,8 +48,6 @@ namespace CSharpLogic
 
         public Query(Equation eq) : base(eq)
         {
-            CachedEntities = new HashSet<object>();
-            CachedObjects = new HashSet<KeyValuePair<object, object>>();
         }
 
         #region IPropertyChanged Event

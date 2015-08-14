@@ -13,6 +13,8 @@ namespace AlgebraGeometry.Expr
     /// </summary>
     public class AGQueryExpr : IKnowledge
     {
+        #region Properties and Constructors
+
         private Query _query;
         public Query QueryTag
         {
@@ -25,29 +27,53 @@ namespace AlgebraGeometry.Expr
             QueryTag = queryTag;
         }
 
-        public List<IKnowledge> RetrieveRenderKnowledge()
+        #endregion
+
+        #region Override Functions
+
+        public override void RetrieveRenderKnowledge()
         {
-            if (_query.CachedEntities.Count == 0) return null;
+            if (_query.CachedEntities.Count == 0) return;
             var lst = new List<IKnowledge>();
 
             foreach (var cacheObj in _query.CachedEntities)
             {
                 var cacheShapeSymbol = cacheObj as ShapeSymbol;
-                var cacheGoal = cacheObj as EqGoal;
+                var cacheGoal        = cacheObj as EqGoal;
+                var cacheEq          = cacheObj as Equation;
                 if (cacheShapeSymbol != null)
                 {
                     starPadSDK.MathExpr.Expr expr = ExprG.Generate(cacheShapeSymbol);
                     var agShape = new AGShapeExpr(expr, cacheShapeSymbol);
                     lst.Add(agShape);   
                 }
-                if (cacheGoal != null)
+                else if (cacheGoal != null)
                 {
                     starPadSDK.MathExpr.Expr expr = ExprG.Generate(cacheGoal);
                     var agGoal = new AGPropertyExpr(expr, cacheGoal);
                     lst.Add(agGoal);
                 }
+                else if (cacheEq != null)
+                {
+                    starPadSDK.MathExpr.Expr expr = ExprG.Generate(cacheEq);
+                    var agEq = new AGEquationExpr(expr, cacheEq);
+                    lst.Add(agEq);
+                }
             }
-            return lst;
+            RenderKnowledge = lst;
         }
+
+        public override void GenerateSolvingTrace()
+        {
+            foreach (var temp in RenderKnowledge)
+            {
+                if (temp.IsSelected)
+                {
+                    temp.GenerateSolvingTrace();
+                }
+            }
+        }
+
+        #endregion
     }
 }

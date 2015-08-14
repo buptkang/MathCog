@@ -59,7 +59,27 @@ namespace AlgebraGeometry
         #endregion
     }
 
-    public class ShapeNode : GraphNode
+    public class EquationNode : GraphNode
+    {
+        private Equation _equation;
+
+        public Equation Equation
+        {
+            get { return _equation;  }
+            set { _equation = value; }
+        }
+
+        public EquationNode()
+        {
+        }
+
+        public EquationNode(Equation eq)
+        {
+            _equation = eq;
+        }
+    }
+
+    public class ShapeNode : EquationNode
     {
         private ShapeSymbol _shape;
         public ShapeSymbol ShapeSymbol
@@ -83,7 +103,7 @@ namespace AlgebraGeometry
         }
     }
 
-    public class GoalNode : GraphNode
+    public class GoalNode : EquationNode
     {
         private Goal _goal;
 
@@ -111,6 +131,24 @@ namespace AlgebraGeometry
             InternalNodes.CollectionChanged += InternalNodes_CollectionChanged;
         }
 
+        public GraphNode SearchInternalNode(object obj)
+        {
+            foreach (GraphNode node in InternalNodes)
+            {
+                var shapeNode = node as ShapeNode;
+                var goalNode = node as GoalNode;
+                if (shapeNode != null)
+                {
+                    if (shapeNode.ShapeSymbol.Equals(obj)) return node;
+                }
+                if (goalNode != null)
+                {
+                    if (goalNode.Goal.Equals(obj)) return node;
+                }
+            }
+            return null;
+        }
+
         void InternalNodes_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
@@ -121,6 +159,7 @@ namespace AlgebraGeometry
                 {
                     var shapeNode = gn as ShapeNode;
                     var goalNode  = gn as GoalNode;
+                    var eqNode    = gn as EquationNode;
                     if (shapeNode != null)
                     {
                         var shapeSymbol = shapeNode.ShapeSymbol;
@@ -141,10 +180,15 @@ namespace AlgebraGeometry
                             }
                         }
                     }
-                    if (goalNode != null)
+                    else if (goalNode != null)
                     {
                         var eqGoal = goalNode.Goal as EqGoal;
                         Query.CachedEntities.Add(eqGoal);
+                    }
+                    else if (eqNode != null)
+                    {
+                        var equation = eqNode.Equation;
+                        Query.CachedEntities.Add(equation);
                     }
                 }
 

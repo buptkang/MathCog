@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CSharpLogic
 {
-    public partial class Query : Equation
+    public partial class Equation : DyLogicObject, IEquationLogic, IEval
     {
         //Cached symbols for non-concrete objects
         public HashSet<object> CachedEntities { get; set; }

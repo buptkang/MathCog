@@ -43,15 +43,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="0.Arithmetic.Logic\Arithmetic.Rule.cs" />
-    <Compile Include="1.Algebra.Logic\Algebra.cs" />
-    <Compile Include="1.Algebra.Logic\Algebra.Rule.cs" />
-    <Compile Include="0.Arithmetic.Logic\Arithmetic.cs" />
-    <Compile Include="2.Equation.Logic\Equations.cs" />
-    <Compile Include="2.Equation.Logic\Equations.Rule.cs" />
-    <Compile Include="3.Geometry.Logic\IShape.Cache.cs" />
-    <Compile Include="3.Geometry.Logic\IShape.cs" />
-    <Compile Include="3.Geometry.Logic\ShapeTypes.cs" />
+    <Compile Include="0.Logic.Arithmetic\Arithmetic.Rule.cs" />
+    <Compile Include="1.Logic.Algebra\Algebra.cs" />
+    <Compile Include="1.Logic.Algebra\Algebra.Rule.cs" />
+    <Compile Include="0.Logic.Arithmetic\Arithmetic.cs" />
+    <Compile Include="2.Logic.Equation\Equations.cs" />
+    <Compile Include="2.Logic.Equation\Equations.Rule.cs" />
+    <Compile Include="3.Logic.Geometry\IShape.Cache.cs" />
+    <Compile Include="3.Logic.Geometry\IShape.cs" />
+    <Compile Include="3.Logic.Geometry\ShapeTypes.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Equation.cs" />
     <Compile Include="Equation.Eval.cs" />
@@ -59,7 +59,7 @@
     <Compile Include="Goal.cs" />
     <Compile Include="Goal.Eval.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Query.Cache.cs" />
+    <Compile Include="Equation.Cache.cs" />
     <Compile Include="Query.cs" />
     <Compile Include="Reification.cs" />
     <Compile Include="IEval.cs" />
@@ -67,10 +67,11 @@
     <Compile Include="Term.cs" />
     <Compile Include="Term.Eval.cs" />
     <Compile Include="Term.Trace.cs" />
-    <Compile Include="Test\2.AlgebraTest\AlgebraTest.cs" />
-    <Compile Include="Test\1.ArithTest\ArithTest.cs" />
-    <Compile Include="Test\3.EquationTest\EquationTest.cs" />
-    <Compile Include="Test\3.GoalTest\Goal.Generation.cs" />
+    <Compile Include="Test\1.Arith-Algebra-Equation\AlgebraTest.cs" />
+    <Compile Include="Test\1.Arith-Algebra-Equation\ArithTest.cs" />
+    <Compile Include="Test\1.Arith-Algebra-Equation\EquationTest.cs" />
+    <Compile Include="Test\2.Query-Trace\Query.ArithAlgebra.cs" />
+    <Compile Include="Test\2.Query-Trace\Query.Satisfy.cs" />
     <Compile Include="Test\0.Basic\6.Core.cs" />
     <Compile Include="Test\0.Basic\5.Goal.cs" />
     <Compile Include="Test\0.Basic\3.Reification.cs" />

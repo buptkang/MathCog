@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using System.Collections.Generic;
 using AlgebraGeometry;
 using CSharpLogic;
 using NUnit.Framework;
@@ -13,6 +14,9 @@ namespace ExprGenerator
     {
         public static Expr Generate(object obj)
         {
+            var boolValue = obj as bool?;
+            if (boolValue != null) return new WordSym(boolValue.ToString());
+
             var ss = obj as ShapeSymbol;
             if (ss != null) return Generate(ss);
 
@@ -21,6 +25,9 @@ namespace ExprGenerator
 
             var term = obj as Term;
             if (term != null) return Generate(term);
+
+            var equation = obj as Equation;
+            if (equation != null) return Generate(equation);
 
             var variable = obj as Var;
             if (variable != null)
@@ -57,6 +64,15 @@ namespace ExprGenerator
             return null;
         }
 
+        public static Expr Generate(Equation eq)
+        {
+            var head = WellKnownSym.equals;
+            var lhs = Generate(eq.Lhs);
+            var rhs = Generate(eq.Rhs);
+            //Debug.Assert(lhs != null && rhs != null);
+            return new CompositeExpr(head, new Expr[] { lhs, rhs });
+        }
+
         public static Expr Generate(EqGoal goal)
         {
             var head = WellKnownSym.equals;
@@ -66,37 +82,64 @@ namespace ExprGenerator
             return new CompositeExpr(head, new Expr[] { lhs, rhs });
         }
 
-        public static Expr Generate(Term term)
+        private static Expr Generate(Term term)
         {
             if (term.Op.Method.Name.Equals("Add"))
             {
                 var head = WellKnownSym.plus;
-                var tuple = term.Args as Tuple<object, object>;
-                Debug.Assert(tuple!=null);
-                var arg1 = Generate(tuple.Item1);
-                var arg2 = Generate(tuple.Item2);
-                return new CompositeExpr(head, new Expr[] {arg1, arg2});
+                var lst = term.Args as List<object>;
+                Debug.Assert(lst != null);
+                var exprLst = new List<Expr>();
+                foreach(var obj in lst)
+                {
+                    exprLst.Add(Generate(obj));
+                }
+                return new CompositeExpr(head, exprLst.ToArray());
             }
             else if (term.Op.Method.Name.Equals("Subtract"))
             {
                 var head = WellKnownSym.minus;
-                var tuple = term.Args as Tuple<object, object>;
-                Debug.Assert(tuple != null);
-                var arg1 = Generate(tuple.Item1);
-                var arg2 = Generate(tuple.Item2);
-                return new CompositeExpr(head, new Expr[] { arg1, arg2 });
+                var lst = term.Args as List<object>;
+                Debug.Assert(lst != null);
+                var exprLst = new List<Expr>();
+                foreach (var obj in lst)
+                {
+                    exprLst.Add(Generate(obj));
+                }
+                return new CompositeExpr(head, exprLst.ToArray());
             }
             else if (term.Op.Method.Name.Equals("Multiply"))
             {
                 var head = WellKnownSym.times;
-                var tuple = term.Args as Tuple<object, object>;
-                Debug.Assert(tuple != null);
-                var arg1 = Generate(tuple.Item1);
-                var arg2 = Generate(tuple.Item2);
-                return new CompositeExpr(head, new Expr[] { arg1, arg2 });
+                var lst = term.Args as List<object>;
+                Debug.Assert(lst != null);
+                var exprLst = new List<Expr>();
+                foreach (var obj in lst)
+                {
+                    exprLst.Add(Generate(obj));
+                }
+                return new CompositeExpr(head, exprLst.ToArray());
+            }
+            else if (term.Op.Method.Name.Equals("Divide"))
+            {
+                var head = WellKnownSym.divide;
+                var lst = term.Args as List<object>;
+                Debug.Assert(lst != null);
+                var exprLst = new List<Expr>();
+                foreach (var obj in lst)
+                {
+                    exprLst.Add(Generate(obj));
+                }
+                return new CompositeExpr(head, exprLst.ToArray());
             }
             //TODO
             return null;
+        }
+
+        public static Expr Derive(Expr source, Expr target)
+        {
+            var cc  = new CompositeExpr(WellKnownSym.times, new Expr[] { source, new WordSym("→"), target });
+            return new CompositeExpr(new WordSym("Step:"), new Expr[] {cc});
         }
     }
 
@@ -108,8 +151,8 @@ namespace ExprGenerator
             var yExpr = ToCoord(ps.SymYCoordinate);
             if (ps.Shape.Label == null)
             {
-                var comp = new CompositeExpr(new WordSym("comma"), new Expr[] { xExpr, yExpr});
-                var cc = new CompositeExpr(new WordSym(""), new Expr[] { comp });
+                //var comp = new CompositeExpr(new WordSym("comma"), new Expr[] { });
+                var cc = new CompositeExpr(new WordSym(""), new Expr[] { xExpr, yExpr });
                 return cc;                
             }
             else

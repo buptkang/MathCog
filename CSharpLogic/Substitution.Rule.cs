@@ -13,5 +13,10 @@ namespace CSharpLogic
             return string.Format("Substitute Term {1} into Object {0}",
                source.ToString(), term.ToString());
         }
+
+        public static string ApplySubstitute()
+        {
+            return string.Format("Consider substitute given knowledge to question");
+        }
     }
 }

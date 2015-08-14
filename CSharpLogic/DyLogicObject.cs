@@ -1,21 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
 
 namespace CSharpLogic
 {
     public class DyLogicObject : DynamicObject
     {
         public List<TraceStep> Traces = new List<TraceStep>();
+        public int TraceCount { get { return Traces.Count; } }
 
-        public int TraceCount
+        public List<TraceStep> CloneTrace()
         {
-            get { return Traces.Count; }
+            return Traces.Select(ts => ts.Clone()).ToList();
         }
+
+        public void ClearTrace()
+        {
+            Traces = new List<TraceStep>();
+        }
+
+        #region Dynamic Properties
 
         public readonly Dictionary<object, object> Properties 
                                     = new Dictionary<object, object>();
@@ -41,6 +45,8 @@ namespace CSharpLogic
             // so this method always returns true. 
             return true;
         }
+
+        #endregion
     }
 
     public static class DyLogicObjectExtension

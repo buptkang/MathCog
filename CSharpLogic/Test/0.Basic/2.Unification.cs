@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace CSharpLogic.Test
+namespace CSharpLogic
 {
     [TestFixture]
     public class TestUnification

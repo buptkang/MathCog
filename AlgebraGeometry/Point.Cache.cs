@@ -115,7 +115,9 @@ namespace AlgebraGeometry
                 }
 
                 //Substitution trace
-                var ts = new TraceStep(this,gPointSymbol, SubstitutionRule.ApplySubstitute(this, goal));
+                string rule = SubstitutionRule.ApplySubstitute();
+                string appliedRule = SubstitutionRule.ApplySubstitute(this, goal);
+                var ts = new TraceStep(this,gPointSymbol, rule, appliedRule);
                 gPoint.Traces.Insert(0,ts);
                 #endregion
             }
@@ -143,9 +145,11 @@ namespace AlgebraGeometry
                                 pt.Traces.Insert(0, goal.Traces[i]);
                             }
 
+                            string rule        = SubstitutionRule.ApplySubstitute();
+                            string appliedRule = SubstitutionRule.ApplySubstitute(pt, goal);
+
                             var ts = new TraceStep(new PointSymbol(gPt),
-                                new PointSymbol(pt), 
-                                SubstitutionRule.ApplySubstitute(pt, goal));
+                                new PointSymbol(pt),rule, appliedRule );
                             pt.Traces.Insert(0,ts);
                         }
                         else
@@ -175,7 +179,11 @@ namespace AlgebraGeometry
                             {
                                 gPoint.Traces.Insert(0, goal.Traces[i]);
                             }
-                            var ts = new TraceStep(ss, gPointSymbol, SubstitutionRule.ApplySubstitute(ss, goal));
+
+                            string rule        = SubstitutionRule.ApplySubstitute();
+                            string appliedRule = SubstitutionRule.ApplySubstitute(ss, goal);
+
+                            var ts = new TraceStep(ss, gPointSymbol,rule, appliedRule);
                             gPoint.Traces.Insert(0,ts);
                         }
                     }
@@ -202,7 +210,9 @@ namespace AlgebraGeometry
                     gPoint.Traces.Insert(0, goal.Traces[i]);
                 }
                 //Substitution trace
-                var ts = new TraceStep(this, gPointSymbol, SubstitutionRule.ApplySubstitute(this, goal));
+                var rule        = SubstitutionRule.ApplySubstitute();
+                var appliedRule = SubstitutionRule.ApplySubstitute(this, goal);
+                var ts = new TraceStep(this, gPointSymbol, rule, appliedRule);
                 gPoint.Traces.Insert(0, ts);
             }
             else
@@ -225,7 +235,9 @@ namespace AlgebraGeometry
                             {
                                 pt.Traces.Insert(0, goal.Traces[i]);
                             }
-                            var ts = new TraceStep(ss,gPointSymbol,SubstitutionRule.ApplySubstitute(ss, goal));
+                            string rule        = SubstitutionRule.ApplySubstitute();
+                            string appliedRule = SubstitutionRule.ApplySubstitute(ss, goal);
+                            var ts = new TraceStep(ss,gPointSymbol,rule, appliedRule);
                             pt.Traces.Insert(0, ts);
                         }
                         else
@@ -252,8 +264,10 @@ namespace AlgebraGeometry
                             for (int i = goal.Traces.Count - 1; i >= 0; i--)
                             {
                                 gPoint.Traces.Insert(0, goal.Traces[i]);
-                            } 
-                            var ts = new TraceStep(ss, gPointSymbol, SubstitutionRule.ApplySubstitute(ss, goal));
+                            }
+                            var rule = SubstitutionRule.ApplySubstitute();
+                            var appliedRule = SubstitutionRule.ApplySubstitute(ss, goal);
+                            var ts = new TraceStep(ss, gPointSymbol,rule, appliedRule);
                             gPoint.Traces.Insert(0, ts);
                         }
                     }

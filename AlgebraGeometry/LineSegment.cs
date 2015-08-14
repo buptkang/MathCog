@@ -9,6 +9,10 @@ namespace AlgebraGeometry
 {
     public partial class LineSegment : Shape
     {
+        #region Properties and Constructors
+
+        #region Properties
+
         private Point _pt1;
         public Point Pt1
         {
@@ -22,6 +26,21 @@ namespace AlgebraGeometry
             set { _pt2 = value;}
         }
 
+        private object _distance;
+
+        public object Distance
+        {
+            get { return _distance; }
+            set { _distance = value; }
+        }
+
+        public LineSegmentType InputType { get; set; }
+        public override object GetInputType() { return InputType; }
+
+        #endregion
+
+        #region Constructors
+
         public LineSegment(string label) : base(ShapeType.LineSegment, label)
         {
             InputType = LineSegmentType.Relation;
@@ -29,15 +48,24 @@ namespace AlgebraGeometry
 
         public LineSegment(string label, Point pt1, Point pt2) : base(ShapeType.LineSegment, label)
         {
+            _pt1 = pt1;
+            _pt2 = pt2;
             if (pt1.Equals(pt2))
                 throw new Exception("Two points are identical");
             InputType = LineSegmentType.Relation;
             ExtractRelationLabel(pt1.Label, pt2.Label);
+            Calc_Distance();
         }
 
         public LineSegment(Point pt1, Point pt2) : this(null, pt1, pt2)
-        {
+        {           
         }
+
+        #endregion
+
+        #endregion
+
+        #region Utils
 
         private void ExtractRelationLabel(string label1, string label2)
         {
@@ -72,6 +100,8 @@ namespace AlgebraGeometry
             lst.Add(Var.GetVar(_pt2.YCoordinate));
             return lst;
         }
+
+        #endregion
 
         #region IEqutable
 
@@ -117,8 +147,45 @@ namespace AlgebraGeometry
 
         #endregion
 
-        public LineSegmentType InputType { get; set; }        
-        public override object GetInputType() { return InputType; }
+        #region Transformations
+
+        private void Calc_Distance()
+        {
+            if (_pt1.Concrete && _pt2.Concrete)
+            {
+                double yDiff = Math.Abs((double)_pt1.YCoordinate - (double)_pt2.YCoordinate);
+                double xDiff = Math.Abs((double)_pt1.XCoordinate - (double)_pt2.XCoordinate);
+                Distance = Math.Sqrt(Math.Pow(xDiff, 2.0) + Math.Pow(yDiff, 2.0));
+            }
+        }
+
+/*        public static Expr Generate2PointsTrace1(TwoPoints tp)
+        {
+            string str = String.Format("P1({0}, {1}), P2({2}, {3})", tp.P1.XCoordinate, tp.P1.YCoordinate,
+                tp.P2.XCoordinate, tp.P2.YCoordinate);
+            return starPadSDK.MathExpr.Text.Convert(str);
+        }
+
+        public static Expr Generate2PointsTrace2(TwoPoints tp)
+        {
+            string str = String.Format("d = (({0} - {1})^2 + ({2} - {3})^2)^(1/2)", tp.P2.XCoordinate, tp.P1.XCoordinate,
+                tp.P2.YCoordinate, tp.P1.YCoordinate);
+
+            return starPadSDK.MathExpr.Text.Convert(str);
+        }
+
+        public static Expr Generate2PointsTrace3(TwoPoints tp)
+        {
+            var d =
+                Math.Sqrt(Math.Pow(tp.P2.XCoordinate - tp.P1.XCoordinate, 2d) +
+                          Math.Pow(tp.P2.YCoordinate - tp.P1.YCoordinate, 2d));
+            string str = String.Format("d = {0}", d);
+
+            return starPadSDK.MathExpr.Text.Convert(str);
+        }*/
+
+
+        #endregion
     }
 
     public enum LineSegmentType
@@ -130,6 +197,9 @@ namespace AlgebraGeometry
     {
         public override object RetrieveConcreteShapes()
         {
+            var lineSeg = Shape as LineSegment;
+            Debug.Assert(lineSeg != null);
+            if (lineSeg.Concrete) return this;
             if (CachedSymbols.Count == 0) return null;
             return CachedSymbols.ToList();
         }
