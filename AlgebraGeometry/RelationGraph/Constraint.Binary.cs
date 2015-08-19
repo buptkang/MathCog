@@ -67,7 +67,7 @@ namespace AlgebraGeometry
                         output = LineBinaryRelation.Unify(goal1, goal2);
                         break;
                 }
-                return output != null;                
+                return output != null;
             }
             var label = constraint as string;
             if (label != null)
@@ -93,7 +93,7 @@ namespace AlgebraGeometry
                         ls.OutputType = LineType.SlopeIntercept;
                         return true;
                     }
-                    return false;                    
+                    return false;
                 }
             }
             return false;
@@ -132,7 +132,7 @@ namespace AlgebraGeometry
             if (constraint2 == null) return ConstraintCheck(obj1, obj2, constraint1, out output);
             var label = constraint1 as string;
             if (DefaultLabels.EqualDefaultLabel(label)) return ConstraintCheck(obj1, obj2, constraint2, out output);
-            var shapeType = constraint2 as ShapeType?; 
+            var shapeType = constraint2 as ShapeType?;
             Debug.Assert(label != null);
             Debug.Assert(shapeType != null);
 
@@ -169,7 +169,7 @@ namespace AlgebraGeometry
         }
 
         private static bool ConstraintCheck(ShapeNode shapeNode, GoalNode goalNode,
-            string constraint1, ShapeType constraint2 , out object output)
+            string constraint1, ShapeType constraint2, out object output)
         {
             output = null;
             //TODO
@@ -177,7 +177,7 @@ namespace AlgebraGeometry
         }
 
         private static bool ConstraintCheck(GoalNode goalNode1, GoalNode goalNode2,
-            string constraint1, ShapeType constraint2 , out object output)
+            string constraint1, ShapeType constraint2, out object output)
         {
             output = null;
             return false;
@@ -254,19 +254,33 @@ namespace AlgebraGeometry
                 if (LineSegmentAcronym.EqualDistanceLabel(label))
                 {
                     output = LineSegBinaryRelation.Unify(pt1, pt2);
-                    if (output != null)
+                    if (output == null) return false;
+                    var lss = output as LineSegmentSymbol;
+                    var output1 = lss.Unify(label);
+                    Debug.Assert(lss != null);
+                    if (lss.CachedSymbols.Count == 0)
                     {
-                        var lss = output as LineSegmentSymbol;
-                        Debug.Assert(lss != null);
-                        object obj = lss.Unify(label);
-
-                        var lst = new List<object>();
-                        lst.Add(output);
-                        lst.Add(obj);
+                        var lst = new List<object>()
+                        {
+                            output, output1
+                        };
                         output = lst;
-                        return true;
                     }
-                    return false;
+                    else
+                    {
+                        var goalLst = output1 as List<EqGoal>;
+                        Debug.Assert(goalLst != null);
+                        var lst = new List<object>();
+                        for (int i = 0; i < lss.CachedSymbols.Count; i++)
+                        {
+                            var cachedSS = lss.CachedSymbols.ToList()[i];
+                            lst.Add(cachedSS);
+                            lst.Add(goalLst[i]);
+                        }
+                        output = lst;
+                    }
+
+                    return true;
                 }
 
                 #endregion

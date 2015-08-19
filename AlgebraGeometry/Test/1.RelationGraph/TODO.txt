@@ -1,5 +1,19 @@
 ﻿		#region non-concrete point-line relation
 
+		[Test]
+        public void Test_Slope_Intercept()
+        {
+/*            //TODO
+            var m = new Var('m');
+            var k = new Var('k');
+            var goal1 = new EqGoal(m, 2.0);
+            var goal2 = new EqGoal(k, 1.0);
+            object output;
+
+            bool result = RelationLogic.CreateRelation(goal1, goal2, null, out output);
+            Assert.True(result);*/
+        }
+
         [Test]
         public void Test_Line_Relation_NonConcrete_Add0()
         {

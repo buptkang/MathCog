@@ -26,8 +26,8 @@ namespace CSharpLogic
         {
             var lhsTerm = Lhs as Term;
             var rhsTerm = Rhs as Term;
-            if(lhsTerm != null) lhsTerm.UnEval();
-            if(rhsTerm != null) rhsTerm.UnEval();
+            if (lhsTerm != null) lhsTerm.UnEval();
+            if (rhsTerm != null) rhsTerm.UnEval();
             ClearTrace();
         }
 
@@ -161,20 +161,18 @@ namespace CSharpLogic
                     currentEq = localEq0;
                 }
 
-                if (withEqRule)
+                var localEq1 = currentEq.ApplyTransitive(rootEq, withEqRule);
+                if (!localEq1.Equals(currentEq))
                 {
-                    var localEq1 = currentEq.ApplyTransitive(rootEq);
-                    if (!localEq1.Equals(currentEq))
-                    {
-                        hasChange = true;
-                        currentEq = localEq1;
-                    }
-                    var localEq2 = localEq1.ApplySymmetric(rootEq);
-                    if (!localEq2.Equals(localEq1))
-                    {
-                        hasChange = true;
-                        currentEq = localEq2;
-                    }
+                    hasChange = true;
+                    currentEq = localEq1;
+                }
+
+                var localEq2 = localEq1.ApplySymmetric(rootEq);
+                if (!localEq2.Equals(localEq1))
+                {
+                    hasChange = true;
+                    currentEq = localEq2;
                 }
 
             } while (hasChange);

@@ -127,6 +127,12 @@ namespace AlgebraGeometry
 
     public static class LineUnaryRelation
     {
+        public static bool Unify(this LineSymbol shapeSymbol, object constraint, out object output)
+        {
+            output = shapeSymbol.Unify(constraint);
+            return output != null;
+        }
+
         public static object Unify(this LineSymbol ls, object constraint)
         {
             var refObj = constraint as string;

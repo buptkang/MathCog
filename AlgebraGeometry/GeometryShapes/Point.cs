@@ -157,10 +157,14 @@ namespace AlgebraGeometry
 
     public partial class PointSymbol : ShapeSymbol
     {
+        public override bool UnifyProperty(string label, out object obj)
+        {
+            return this.Unify(label, out obj);
+        }
+
         public override object RetrieveConcreteShapes()
         {
-            if (Shape.Concrete) return this;
-            if (CachedSymbols.Count == 0) return null;
+            if (CachedSymbols.Count == 0) return this;
             return CachedSymbols.ToList();
         }
 

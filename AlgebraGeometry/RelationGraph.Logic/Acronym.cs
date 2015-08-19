@@ -8,8 +8,10 @@ namespace AlgebraGeometry
 {
     public class PointAcronym
     {
-        public static string X = "x";
-        public static string Y = "y";
+        public const string X = "x";
+        public const string X1 = "X";
+        public const string Y = "y";
+        public const string Y1 = "Y";
     }
 
     public static class LineAcronym

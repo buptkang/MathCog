@@ -1,16 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Configuration;
-using System.Diagnostics;
-using System.Linq;
-using System.Management.Instrumentation;
-using System.Text;
-using NUnit.Framework;
-using CSharpLogic;
+﻿/*******************************************************************************
+ * Copyright (c) 2015 Bo Kang
+ *   
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *  
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 
 namespace AlgebraGeometry
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using CSharpLogic;
+
     public partial class RelationGraph
     {
         #region Constructor and Properties
@@ -26,16 +37,13 @@ namespace AlgebraGeometry
             _nodes = new List<GraphNode>();
             _preCache = new Dictionary<object, object>();
         }
-        public RelationGraph(List<GraphNode> nodes)
-        {
-            _nodes = nodes;
-        }
 
-        private List<GraphNode> _selectedNode;
+        //TODO
+        //private List<GraphNode> _selectedNode;
 
         /// <summary>
         /// Key: Pattern Match Result
-        /// Value: Predict Pattern Match Result
+        /// Value: Predict Pattern Match Result (GraphNode)
         /// </summary>
         private Dictionary<object, object> _preCache;
         public Dictionary<object, object> Cache
@@ -49,9 +57,9 @@ namespace AlgebraGeometry
 
         public GraphNode AddNode(object obj)
         {
-            var shape    = obj as ShapeSymbol;
-            var goal     = obj as Goal;
-            var query    = obj as Query;
+            var shape = obj as ShapeSymbol;
+            var goal = obj as Goal;
+            var query = obj as Query;
             var equation = obj as Equation;
 
             if (shape != null)
@@ -72,7 +80,7 @@ namespace AlgebraGeometry
             {
                 query.Success = false;
                 query.FeedBack = null;
-                RemoveQueryFromCache(query); 
+                RemoveQueryFromCache(query);
                 query.PropertyChanged += query_PropertyChanged;
                 bool result = AddQueryNode(query, out obj);
                 _preCache.Add(query.QueryQuid, new Tuple<Query, object>(query, obj));
@@ -147,6 +155,7 @@ namespace AlgebraGeometry
             if (shape != null) DeleteShapeNode(shape);
             if (goal != null) DeleteGoalNode(goal);
             if (query != null) DeleteQueryNode(query);
+            ReAddQueryNode();
         }
 
         /// <summary>
@@ -175,6 +184,7 @@ namespace AlgebraGeometry
                     sourceNode.OutEdges.Remove(inEdge);
                 }
                 _nodes.Remove(shapeNode);
+                _preCache.Remove(shape);
             }
         }
 
@@ -189,6 +199,7 @@ namespace AlgebraGeometry
             {
                 UnReify(goalNode);
                 _nodes.Remove(goalNode);
+                _preCache.Remove(goal);   
             }
         }
 
@@ -212,6 +223,7 @@ namespace AlgebraGeometry
                         targetNode.InEdges.Remove(outGe);
                     }
                 }
+                query.CachedEntities.Clear();
                 _nodes.Remove(queryNode);
             }
         }
@@ -348,7 +360,7 @@ namespace AlgebraGeometry
                 foreach (var gn in _nodes)
                 {
                     var qn = gn as QueryNode;
-                    if (qn != null && qn.Query.QueryQuid.Equals(query.QueryQuid)) 
+                    if (qn != null && qn.Query.QueryQuid.Equals(query.QueryQuid))
                         return qn;
                 }
             }
@@ -415,7 +427,7 @@ namespace AlgebraGeometry
                 if (pair.Key is Guid)
                 {
                     Debug.Assert(pair.Key != null);
-                    var tempGuid = (Guid) pair.Key;
+                    var tempGuid = (Guid)pair.Key;
                     if (tempGuid.CompareTo(query.QueryQuid) == 0)
                     {
                         keyObj = pair.Key;
@@ -423,7 +435,7 @@ namespace AlgebraGeometry
                     }
                 }
             }
-            if(keyObj != null) _preCache.Remove(query.QueryQuid);
+            if (keyObj != null) _preCache.Remove(query.QueryQuid);
         }
 
         public object RetrieveCacheValue(object obj)
@@ -543,8 +555,7 @@ namespace AlgebraGeometry
 
         #endregion
 
-        //TODO  Graph Node Selections
-        #region  Graph Node Selections
+        #region  (TODO) Graph Node Selections
         /*
         public void SelectNode(GraphNode gn)
         {

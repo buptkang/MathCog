@@ -30,7 +30,6 @@ namespace CSharpLogic
 
             //List<object> objs = localTerm.FindArithValues();
             if (list == null || list.Count < 2) return localTerm;
-
             bool madeChanges;
             do
             {
@@ -46,6 +45,7 @@ namespace CSharpLogic
                     itemCount = list.Count;
                     object obj1;
                     if (i + 1 >= list.Count) break;
+
                     if (SatisfyCalcCondition(term.Op, list[i], list[i + 1], out obj1))
                     {
                         var cloneTerm = localTerm.Clone();

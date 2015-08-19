@@ -162,18 +162,7 @@ namespace ExprSemanticTest
 
         #region Single Point Test (TODO)
 
-        [Test]
-        public void test1()
-        {
-            /*
-             * Input Fact: A(2,3) 
-             * Query: X=?
-             * =>
-             * Answer: X=2
-             * Why: given fact
-             */
-            //TODO 
-        }
+       
 
         [Test]
         public void test2()
@@ -229,6 +218,18 @@ namespace ExprSemanticTest
         }
 
         #endregion
+
+        [Test]
+        public void Test0()
+        {
+            //x = 1
+            const string fact1 = "x = 1";
+            var obj = Reasoner.Instance.Load(fact1);
+            var result = Reasoner.Instance.TestGetProperties();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 0);
+        }
+
 
         [Test]
         public void Test_Equation_1()

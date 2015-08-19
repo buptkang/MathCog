@@ -72,6 +72,11 @@ namespace AlgebraGeometry
         {
         }
 
+        public override bool UnifyProperty(string label, out object obj)
+        {
+            throw new NotImplementedException();
+        }
+
         public override object RetrieveConcreteShapes()
         {
             throw new NotImplementedException();

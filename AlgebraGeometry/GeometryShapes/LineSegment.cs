@@ -193,8 +193,15 @@ namespace AlgebraGeometry
         Relation
     }
 
-    public class LineSegmentSymbol : ShapeSymbol
+    public partial class LineSegmentSymbol : ShapeSymbol
     {
+        public override bool UnifyProperty(string label, out object obj)
+        {
+            obj = this.Unify(label);
+            if (obj == null) return false;
+            return true;
+        }
+
         public override object RetrieveConcreteShapes()
         {
             var lineSeg = Shape as LineSegment;

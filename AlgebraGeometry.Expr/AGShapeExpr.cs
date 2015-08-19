@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using ExprGenerator;
 using CSharpLogic;
@@ -29,7 +32,7 @@ namespace AlgebraGeometry.Expr
         public override void RetrieveRenderKnowledge()
         {
             var symbols = _shapeSymbol.RetrieveConcreteShapes();
-            var shapes = new List<IKnowledge>();
+            var shapes = new ObservableCollection<IKnowledge>();
             RenderKnowledge = null;
             if (symbols != null)
             {
@@ -45,11 +48,23 @@ namespace AlgebraGeometry.Expr
 
                 if (ssLst != null)
                 {
-                    shapes.AddRange(from symbol in ssLst 
-                                    let expr = ExprG.Generate(symbol) 
-                                    select new AGShapeExpr(expr, symbol));
+                    foreach (ShapeSymbol ss in ssLst.ToList())
+                    {
+                        var expr = ExprG.Generate(ss);
+                        var agExpr = new AGShapeExpr(expr, ss);
+                        shapes.Add(agExpr);
+                    }
                 }
                 RenderKnowledge = shapes;
+                RenderKnowledge.CollectionChanged += RenderKnowledge_CollectionChanged;
+            }
+        }
+
+        void RenderKnowledge_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Replace)
+            {
+                Console.Write("TODO");
             }
         }
 

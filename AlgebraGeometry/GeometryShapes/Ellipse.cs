@@ -54,7 +54,12 @@ namespace AlgebraGeometry
             throw new NotImplementedException();
         }
 
-        
+        public override bool UnifyProperty(string label, out object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+
 /*        public static Expr GenerateEllipseGeneralForm(Ellipse ellipse)
         {
             string str = String.Format("(x{0})^2 / {2}^2 + (y{1})^2 / {3}^2 = 1",

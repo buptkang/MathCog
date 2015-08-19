@@ -12,5 +12,10 @@ namespace AlgebraGeometry
         {
             throw new NotImplementedException();
         }
+
+        public override bool UnifyProperty(string label, out object obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

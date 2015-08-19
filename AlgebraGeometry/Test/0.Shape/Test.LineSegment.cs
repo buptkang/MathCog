@@ -38,11 +38,5 @@ namespace AlgebraGeometry
         }
 
         #endregion
-
-        #region Line segment distance property
-
-        //TODO
-
-        #endregion
     }
 }

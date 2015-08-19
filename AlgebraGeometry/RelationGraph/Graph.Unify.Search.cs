@@ -175,11 +175,6 @@ namespace AlgebraGeometry
             return queryNode;
         }
 
-        private void DeleteQueryNode(QueryNode qn)
-        {
-            
-        }
-
         /// <summary>
         /// a+1=, 2+3+5=
         /// </summary>
@@ -271,6 +266,13 @@ namespace AlgebraGeometry
                     }
                 }
             }
+
+            if (dict.Count != 0)
+            {
+                obj = dict;
+                return true;
+            }
+
             #endregion
 
             #region Binary Relation Checking

@@ -8,68 +8,8 @@ using NUnit.Framework;
 namespace MathReason
 {
     [TestFixture]
-    public class TestProblems
+    public partial class TestProblems
     {
-        [Test]
-        public void Test_Problem_1()
-        {
-            /*
-             * Problem 1: Find the distance betweeen A(2,0) and B(5,4)?
-             */
-            const string input1 = "A(2,0)";
-            const string input2 = "B(5,4)";
-            const string query  = "d=";
-
-            Reasoner.Instance.Load(input1);
-            Reasoner.Instance.Load(input2);
-
-            var obj = Reasoner.Instance.Load(query);
-            Assert.NotNull(obj);
-            var agQueryExpr = obj as AGQueryExpr;
-            Assert.NotNull(agQueryExpr);
-            var queryTag = agQueryExpr.QueryTag;
-            Assert.NotNull(queryTag);
-            Assert.True(queryTag.Success);
-            Assert.True(queryTag.CachedEntities.Count == 2);            
-            Assert.True(Reasoner.Instance.RelationGraph.Nodes.Count == 3);
-
-            var eqGoal = queryTag.CachedEntities.ToList()[1] as EqGoal;
-            Assert.NotNull(eqGoal);
-            Assert.True(eqGoal.Rhs.Equals(5.0));
-        }
-
-        [Test]
-        public void Test_Problem_2()
-        {
-            /*
-             * There exists two points A(3,4) and B(4,v), the distance between A and B is 5. What is the value of v?
-             */
-            const string input1 = "A(3,4)";
-            const string input2 = "B(4,v)";
-            const string input3 = "d=5";
-            const string query  = "v=";
-
-            Reasoner.Instance.Load(input1);
-            Reasoner.Instance.Load(input2);
-
-            var obj = Reasoner.Instance.Load(query);
-            Assert.NotNull(obj);
-            var agQueryExpr = obj as AGQueryExpr;
-            Assert.NotNull(agQueryExpr);
-            var queryTag = agQueryExpr.QueryTag;
-            Assert.NotNull(queryTag);
-            Assert.False(queryTag.Success);
-
-            Reasoner.Instance.Load(input3);
-            obj = Reasoner.Instance.Load(query);
-            Assert.NotNull(obj);
-            agQueryExpr = obj as AGQueryExpr;
-            Assert.NotNull(agQueryExpr);
-            queryTag = agQueryExpr.QueryTag;
-            Assert.NotNull(queryTag);
-            Assert.True(queryTag.Success);
-        }
-
         [Test]
         public void Test_Problem_3()
         {

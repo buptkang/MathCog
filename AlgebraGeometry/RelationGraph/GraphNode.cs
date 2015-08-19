@@ -1,28 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.ComponentModel;
-using CSharpLogic;
-using NUnit.Framework;
+﻿/*******************************************************************************
+ * Copyright (c) 2015 Bo Kang
+ *   
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *  
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 
 namespace AlgebraGeometry
 {
-    /// <summary>
-    /// A GraphNode can be Shape or Goal
-    /// </summary>
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
+    using System.Linq;
+    using System.ComponentModel;
+    using CSharpLogic;
+
     public abstract class GraphNode : INotifyPropertyChanged
     {
         private List<GraphEdge> _inEdges;
-        public List<GraphEdge> InEdges {
+        public List<GraphEdge> InEdges
+        {
             get { return _inEdges; }
-            set { _inEdges = value; } 
         }
 
         private List<GraphEdge> _outEdges;
-
         public List<GraphEdge> OutEdges
         {
             get { return _outEdges; }
@@ -36,10 +46,6 @@ namespace AlgebraGeometry
         }
 
         public bool Related { get; set; }
-
-        public bool IsolatedVertex { get { return _inEdges.Count == 0 && _outEdges.Count == 0; } }
-        public bool SourceVertex { get { return _inEdges.Count == 0; } }
-        public bool SinkVertex { get { return _outEdges.Count == 0; } }
 
         #region Dynamic System
 
@@ -62,10 +68,9 @@ namespace AlgebraGeometry
     public class EquationNode : GraphNode
     {
         private Equation _equation;
-
         public Equation Equation
         {
-            get { return _equation;  }
+            get { return _equation; }
             set { _equation = value; }
         }
 
@@ -106,7 +111,6 @@ namespace AlgebraGeometry
     public class GoalNode : EquationNode
     {
         private Goal _goal;
-
         public Goal Goal
         {
             get { return _goal; }
@@ -133,7 +137,7 @@ namespace AlgebraGeometry
 
         public GraphNode SearchInternalNode(object obj)
         {
-            foreach (GraphNode node in InternalNodes)
+            foreach (var node in InternalNodes)
             {
                 var shapeNode = node as ShapeNode;
                 var goalNode = node as GoalNode;
@@ -158,8 +162,8 @@ namespace AlgebraGeometry
                 foreach (var gn in e.NewItems)
                 {
                     var shapeNode = gn as ShapeNode;
-                    var goalNode  = gn as GoalNode;
-                    var eqNode    = gn as EquationNode;
+                    var goalNode = gn as GoalNode;
+                    var eqNode = gn as EquationNode;
                     if (shapeNode != null)
                     {
                         var shapeSymbol = shapeNode.ShapeSymbol;
@@ -170,7 +174,7 @@ namespace AlgebraGeometry
 
                         if (gShapeSymbol != null)
                         {
-                            Query.CachedEntities.Add(gShapeSymbol);                            
+                            Query.CachedEntities.Add(gShapeSymbol);
                         }
                         if (shapeSymbolLst != null)
                         {

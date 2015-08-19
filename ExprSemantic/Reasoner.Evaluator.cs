@@ -21,6 +21,11 @@ namespace MathReason
         {
             output = null;
 
+            if (TutorSession)
+            {
+                return EvalUserModel(expr, obj, st, out output);
+            }
+
             //deterministic
             var ss = obj as ShapeSymbol;
             if (ss != null) return EvalExprPatterns(expr, ss, out output);
@@ -35,12 +40,12 @@ namespace MathReason
             var equation = obj as Equation;
             if (equation != null) return EvalExprPatterns(expr, equation, out output);
             
-            //non-deterministic            
+            //non-deterministic Constraint-Solving
             var str = obj as string;
             var gQuery = new Query(str, st);
             if (str != null) return EvalExprPatterns(expr, gQuery, out output);  
 
-            //non-deterministic
+            //non-deterministic Multi-Candidate selection
             var dict = obj as Dictionary<PatternEnum, object>;
             //ambiguity of input pattern
             if (dict != null)
@@ -135,16 +140,8 @@ namespace MathReason
         }
 
         private bool EvalExprPatterns(Expr expr, Equation eq, out object output)
-        {
-            if (!TutorSession)
-            {
-                RelationGraph.AddNode(eq);
-            }
-            else
-            {
-                //TODO
-                RelationGraph.UserModel(eq);
-            }
+        {   
+            RelationGraph.AddNode(eq);
             output = new AGEquationExpr(expr, eq);
             return true;
         }
@@ -160,16 +157,7 @@ namespace MathReason
         /// <returns></returns>
         private bool EvalExprPatterns(Expr expr, Query query, out object output)
         {
-            object obj = null;
-            if (!TutorSession)
-            {
-                obj = RelationGraph.AddNode(query);                
-            }
-            else
-            {
-                obj = RelationGraph.UserModel(query);
-            }
-
+            object obj = RelationGraph.AddNode(query);
             output = new AGQueryExpr(expr, query);
             return obj != null;
             //return EvalNonDeterministic(expr, obj, out output);
@@ -184,15 +172,8 @@ namespace MathReason
         /// <returns></returns>
         private bool EvalExprPatterns(Expr expr, ShapeSymbol ss, out object output)
         {
-            if (!TutorSession)
-            {
-                object obj = RelationGraph.AddNode(ss);
-                Debug.Assert(obj != null);
-            }
-            else
-            {
-                object obj = RelationGraph.UserModel(ss);
-            }
+            object obj = RelationGraph.AddNode(ss);
+            Debug.Assert(obj != null);
             output = new AGShapeExpr(expr, ss);
             return true;
         }
@@ -206,33 +187,32 @@ namespace MathReason
         /// <returns></returns>
         private bool EvalExprPatterns(Expr expr, EqGoal goal, out object output)
         {
-            if (!TutorSession)
-            {
-                object obj = RelationGraph.AddNode(goal);
-            }
-            else
-            {
-                object obj = RelationGraph.UserModel(goal);
-            }
+            object obj = RelationGraph.AddNode(goal);
             output = new AGPropertyExpr(expr, goal);
             return true;
         }
 
         private void UnEvalExprPatterns(object obj)
         {
+            if (TutorSession)
+            {
+                UnEvalInUserModel(obj);
+                return;
+            }
+
             if (_cache.Count == 0) return;
             var shapeSymExpr = obj as AGShapeExpr;
-            if (shapeSymExpr != null && !TutorSession)
+            if (shapeSymExpr != null)
             {
                 RelationGraph.DeleteNode(shapeSymExpr.ShapeSymbol);
             }
             var termExpr = obj as AGPropertyExpr;
-            if (termExpr != null && !TutorSession)
+            if (termExpr != null)
             {
                 RelationGraph.DeleteNode(termExpr.Goal);
             }
             var queryExpr = obj as AGQueryExpr;
-            if (queryExpr != null && !TutorSession)
+            if (queryExpr != null)
             {
                 RelationGraph.DeleteNode(queryExpr.QueryTag);
             }

@@ -71,57 +71,96 @@ namespace CSharpLogic
         /// <summary>
         /// if x = y and y = z, then x = z
         /// if x = y, then x + a = y + a
+        /// if x^2 = y^2, then x = y
         /// if x = y, then ax = ay
         /// ax = ay -> x=y 
         /// </summary>
         /// <param name="goal"></param>
         /// <param name="gGoal"></param>
         /// <returns></returns>
-        public static Equation ApplyTransitive(this Equation currentEq, Equation rootEq)
+        public static Equation ApplyTransitive(this Equation currentEq, Equation rootEq, bool withEqRule)
         {
             Equation localEq = currentEq;
             object lhs = currentEq.Lhs;
             object rhs = currentEq.Rhs;
 
-            if (SatisfyTransitiveCondition(lhs, rhs))
+            if (withEqRule)
             {
-                var cloneEq = currentEq.Clone();
-                var inverseRhs = new Term(Expression.Multiply, new List<object>() {-1, rhs});
-
-                var lhsTerm = cloneEq.Lhs as Term;
-                if (lhsTerm != null)
+                if (SatisfyTransitiveCondition1(lhs, rhs))
                 {
-                    var cloneLst = lhsTerm.Args as List<object>;
-                    Debug.Assert(cloneLst != null);
-                    if (lhsTerm.Op.Method.Name.Equals("Add"))
+                    #region Condition1
+                    var cloneEq = currentEq.Clone();
+                    var inverseRhs = new Term(Expression.Multiply, new List<object>() { -1, rhs });
+                    var lhsTerm = cloneEq.Lhs as Term;
+                    if (lhsTerm != null)
                     {
-                        cloneLst.Add(inverseRhs);                        
+                        var cloneLst = lhsTerm.Args as List<object>;
+                        Debug.Assert(cloneLst != null);
+                        if (lhsTerm.Op.Method.Name.Equals("Add"))
+                        {
+                            cloneLst.Add(inverseRhs);
+                        }
+                        else
+                        {
+                            cloneEq.Lhs = new Term(Expression.Add, new List<object>() { lhs, inverseRhs });
+                        }
                     }
                     else
                     {
                         cloneEq.Lhs = new Term(Expression.Add, new List<object>() { lhs, inverseRhs });
                     }
-                }
-                else
-                {
-                    cloneEq.Lhs = new Term(Expression.Add, new List<object>() { lhs, inverseRhs });
-                }
+                    cloneEq.Rhs = new Term(Expression.Add, new List<object>() { rhs, inverseRhs });
+                    string rule = EquationsRule.Rule(EquationsRule.EquationRuleType.Transitive);
+                    string appliedRule = EquationsRule.Rule(
+                              EquationsRule.EquationRuleType.Transitive,
+                              localEq, null);
+                    rootEq.GenerateTrace(localEq, cloneEq, rule, appliedRule);
+                    localEq = cloneEq;
+                    #endregion
+                }                
+            }
 
-                cloneEq.Rhs = new Term(Expression.Add, new List<object>() {rhs, inverseRhs});
+            if (SatisfyTransitiveCondition2(lhs, rhs))
+            {
+                #region Condition2
 
+                var cloneEq = currentEq.Clone();
+
+                var lhsTerm = cloneEq.Lhs as Term;
+                Debug.Assert(lhsTerm != null);
+
+                var cloneLst = lhsTerm.Args as List<object>;
+                Debug.Assert(cloneLst != null);
+                cloneEq.Lhs = cloneLst[0];
+                cloneEq.Rhs = new Term(Expression.Power, new List<object>() { cloneEq.Rhs, 0.5 });
                 string rule = EquationsRule.Rule(EquationsRule.EquationRuleType.Transitive);
-
                 string appliedRule = EquationsRule.Rule(
                           EquationsRule.EquationRuleType.Transitive,
                           localEq, null);
-
                 rootEq.GenerateTrace(localEq, cloneEq, rule, appliedRule);
                 localEq = cloneEq;
+              
+                #endregion
             }
+
             return localEq;
         }
 
-        private static bool SatisfyTransitiveCondition(object lhs, object rhs)
+      private static bool SatisfyTransitiveCondition2(object lhs, object rhs)
+      {
+            bool rhsNumeric = LogicSharp.IsNumeric(rhs);
+            var lhsTerm = lhs as Term;
+            if (lhsTerm != null)
+            {
+                if (lhsTerm.Op.Method.Name.Equals("Power") && rhsNumeric)
+                {
+                    return true;
+                }
+            }           
+            return false;
+        }
+
+        private static bool SatisfyTransitiveCondition1(object lhs, object rhs)
         {
             bool rhsNumeric = LogicSharp.IsNumeric(rhs);
 

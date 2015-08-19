@@ -20,15 +20,16 @@ namespace AlgebraGeometry
             var lst = new List<TraceStep>();
 
             var lhs = new Var('m');
-            var rhs = new Term(Expression.Divide, new List<object>() {SymA, SymB});
+            var rhs = new Term(Expression.Divide, new List<object>() {SymA, NegSymB});
             var eq1 = new Equation(lhs, rhs);
-            string step1metaRule = "Slope Concept TODO";
-            string step1AppliedRule = String.Format("m = {0} / {1}", SymA, SymB);
+            string step1metaRule = "Given the line general form ax+by+c=0, the slope m =-a/b.";
+            string step1AppliedRule = String.Format("Substitute a and b into slope function : m = {0} / {1}", SymA, NegSymB);
             var ts = new TraceStep(this, eq1, step1metaRule, step1AppliedRule);
 
             lst.Add(ts);
+
             string step2metaRule = ArithRule.CalcRule("Divide");
-            string step2AppliedRule = ArithRule.CalcRule("Divide", SymA, SymB, SymSlope);
+            string step2AppliedRule = ArithRule.CalcRule("Divide", SymA, NegSymB, SymSlope);
             var ts2 = new TraceStep(eq1, target, step2metaRule, step2AppliedRule);
             lst.Add(ts2);
             return lst;

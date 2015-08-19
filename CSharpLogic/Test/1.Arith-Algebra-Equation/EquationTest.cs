@@ -17,7 +17,7 @@ namespace CSharpLogic
         public void Test_Arith_1()
         {
             //1+2=3
-            var lhs      = new Term(Expression.Add, new List<object>() {1, 2});
+            var lhs = new Term(Expression.Add, new List<object>() { 1, 2 });
             var equation = new Equation(lhs, 3);
             bool result = equation.ContainsVar();
             Assert.False(result);
@@ -54,7 +54,7 @@ namespace CSharpLogic
         public void Test_Arith_3()
         {
             //1+2+3=6
-            var lhs = new Term(Expression.Add, new List<object>() { 1, 2, 3});
+            var lhs = new Term(Expression.Add, new List<object>() { 1, 2, 3 });
             var equation = new Equation(lhs, 6);
             bool result = equation.ContainsVar();
             Assert.False(result);
@@ -90,7 +90,7 @@ namespace CSharpLogic
 
         #endregion
 
-        #region Algebra 
+        #region Algebra
 
         [Test]
         public void Test_Algebra_1()
@@ -133,8 +133,8 @@ namespace CSharpLogic
         [Test]
         public void Test_Algebra_3()
         {
-          
-            
+
+
         }
 
         #endregion
@@ -145,16 +145,49 @@ namespace CSharpLogic
         public void Test_Expression_1()
         {
             //1+1
-            var term = new Term(Expression.Add, new List<object>() {1, 1});
+            var term = new Term(Expression.Add, new List<object>() { 1, 1 });
             var equation = new Equation(term);
             //Assert.True(equation.IsExpression);
             Assert.True(equation.ToString().Equals("(1+1)"));
 
             //1+1+1
-            term = new Term(Expression.Add, new List<object>() { 1, 1 ,1});
+            term = new Term(Expression.Add, new List<object>() { 1, 1, 1 });
             equation = new Equation(term);
             //Assert.True(equation.IsExpression);
             Assert.True(equation.ToString().Equals("(1+1+1)"));
+        }
+
+        #endregion
+
+        #region Equation Test
+
+        [Test]
+        public void Test_Equation_1()
+        {
+            object pt1XCoord = 1.0;
+            object pt1YCoord = 2.0;
+            object pt2XCoord = 4.0;
+            object pt2YCoord = 6.0;
+
+            var variable = new Var('d');
+            var lhs = new Term(Expression.Power, new List<object>() { variable, 2.0});
+
+            var term1 = new Term(Expression.Subtract, new List<object>() { pt1XCoord, pt2XCoord });
+            var term11 = new Term(Expression.Power, new List<object>() { term1, 2.0 });
+
+            var term2 = new Term(Expression.Subtract, new List<object>() { pt1YCoord, pt2YCoord });
+            var term22 = new Term(Expression.Power, new List<object>() { term2, 2.0});
+
+            var rhs = new Term(Expression.Add, new List<object>() { term11, term22 }); 
+            //var obj = rhs.Eval();
+
+            //Assert.True(obj.Equals(25));
+            var eq = new Equation(lhs, rhs);
+            EqGoal goal;
+            bool result = eq.IsEqGoal(out goal);
+            Assert.True(result);
+            Assert.NotNull(goal);
+            Assert.True(goal.Rhs.Equals(5));
         }
 
         #endregion

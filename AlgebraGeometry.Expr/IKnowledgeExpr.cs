@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ namespace AlgebraGeometry.Expr
 
         public bool IsSelected { get; set; } // query handler
 
-        public List<IKnowledge> RenderKnowledge { get; set; }
+        public ObservableCollection<IKnowledge> RenderKnowledge { get; set; }
 
         public List<TraceStepExpr> AutoTrace { get; set; }
 
@@ -47,8 +48,11 @@ namespace AlgebraGeometry.Expr
 
         public IKnowledge FindSelectedKnowledge()
         {
+            var result = RenderKnowledge.FirstOrDefault(tempKnowledge => tempKnowledge.IsSelected);
+            if (result != null) return result;
+
             if (IsSelected) return this;
-            return RenderKnowledge.FirstOrDefault(tempKnowledge => tempKnowledge.IsSelected);
+            return null;
         }
 
         #endregion

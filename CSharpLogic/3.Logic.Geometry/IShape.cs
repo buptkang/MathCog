@@ -109,5 +109,6 @@ namespace CSharpLogic
 
         public abstract object RetrieveConcreteShapes();
         public abstract object GetOutputType();
+        public abstract bool UnifyProperty(string label, out object obj);
     }
 }

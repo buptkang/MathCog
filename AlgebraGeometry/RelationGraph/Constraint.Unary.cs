@@ -16,9 +16,11 @@ namespace AlgebraGeometry
         public static bool ConstraintCheck(GraphNode obj1, object constraint1, object constraint2, out object output)
         {
             if (constraint1 == null) return ConstraintCheck(obj1, constraint2, out output);
-            if (constraint2 == null) return ConstraintCheck(obj1, constraint1, out output);
             var label = constraint1 as string;
             if (DefaultLabels.EqualDefaultLabel(label)) return ConstraintCheck(obj1, constraint2, out output);
+
+            if (constraint2 == null) return ConstraintCheck(obj1, constraint1, out output);
+          
             var shapeType = constraint2 as ShapeType?;
             Debug.Assert(label != null);
             Debug.Assert(shapeType != null);
@@ -77,8 +79,10 @@ namespace AlgebraGeometry
         {
             output = null;
             var label = constraint as string;
-            if (label != null) return sn.ShapeSymbol.Unify(label, out output);
-
+            if (label != null)
+            {
+                return sn.ShapeSymbol.UnifyProperty(label, out output); 
+            }
             return false;
         }
 

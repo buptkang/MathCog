@@ -26,7 +26,7 @@ namespace CSharpLogic
                 case EquationRuleType.Symmetric:
                     return string.Format("Apply Symmetric law on equation {0}", obj1);
                 case EquationRuleType.Transitive:
-                    return "TODO";
+                    return string.Format("Apply Transitive law on equation {0}", obj1);
             }
             return null;
         }
@@ -38,18 +38,11 @@ namespace CSharpLogic
                 case EquationRuleType.Inverse:
                     return "TODO";
                 case EquationRuleType.Symmetric:
-                    return string.Format("Symmetric law on equation x=y -> y=x");
+                    return string.Format("Consider Symmetric law on equation x=y -> y=x");
                 case EquationRuleType.Transitive:
-                    return "TODO";
+                    return string.Format("Consider Transitive law on equation x^a=y^a->x=y");
             }
             return null;
-        }
-
-        public static string ApplyTransitiveProperty(Func<Expression, Expression, BinaryExpression> op, object obj)
-        {
-            Debug.Assert(op.Method != null);
-            return string.Format("{0} {1} from both side of the equation.",
-                op.Method.Name, obj.ToString());
         }
     }
 }

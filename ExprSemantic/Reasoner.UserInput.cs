@@ -15,8 +15,19 @@ namespace MathReason
     /// </summary>
     public partial class Reasoner
     {
+        private bool EvalUserModel(Expr expr,
+            object obj,
+            ShapeType? st,
+            out object output)
+        {
+            output = null;
+            return false;
+        }
 
-
+        private void UnEvalInUserModel(object obj)
+        {
+            
+        }
 
     }
 }

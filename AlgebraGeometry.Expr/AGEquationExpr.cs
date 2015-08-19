@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -39,7 +40,7 @@ namespace AlgebraGeometry.Expr
         public override void RetrieveRenderKnowledge()
         {
             if (_equation.CachedEntities.Count == 0) return;
-            var lst = new List<IKnowledge>();
+            var lst = new ObservableCollection<IKnowledge>();
 
             foreach (var cacheObj in _equation.CachedEntities)
             {

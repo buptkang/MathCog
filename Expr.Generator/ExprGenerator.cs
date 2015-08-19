@@ -98,14 +98,20 @@ namespace ExprGenerator
             }
             else if (term.Op.Method.Name.Equals("Subtract"))
             {
-                var head = WellKnownSym.minus;
+                var head = WellKnownSym.plus;
                 var lst = term.Args as List<object>;
                 Debug.Assert(lst != null);
                 var exprLst = new List<Expr>();
-                foreach (var obj in lst)
+
+                exprLst.Add(Generate(lst[0]));
+
+                for (int i = 1; i < lst.Count; i++)
                 {
-                    exprLst.Add(Generate(obj));
+                    var tempExpr = Generate(lst[i]);
+                    var compExpr = new CompositeExpr(WellKnownSym.minus, tempExpr);
+                    exprLst.Add(compExpr);
                 }
+
                 return new CompositeExpr(head, exprLst.ToArray());
             }
             else if (term.Op.Method.Name.Equals("Multiply"))
@@ -120,9 +126,25 @@ namespace ExprGenerator
                 }
                 return new CompositeExpr(head, exprLst.ToArray());
             }
-            else if (term.Op.Method.Name.Equals("Divide"))
+            if (term.Op.Method.Name.Equals("Divide"))
             {
-                var head = WellKnownSym.divide;
+                var head = WellKnownSym.times;
+                var lst = term.Args as List<object>;
+                Debug.Assert(lst != null);
+                var exprLst = new List<Expr>();
+
+                exprLst.Add(Generate(lst[0]));
+                for (int i = 1; i < lst.Count; i++)
+                {
+                    var tempExpr = Generate(lst[i]);
+                    var compExpr = new CompositeExpr(WellKnownSym.divide, tempExpr);
+                    exprLst.Add(compExpr);
+                }
+                return new CompositeExpr(head, exprLst.ToArray());
+            }
+            if (term.Op.Method.Name.Equals("Power"))
+            {
+                var head = WellKnownSym.power;
                 var lst = term.Args as List<object>;
                 Debug.Assert(lst != null);
                 var exprLst = new List<Expr>();
@@ -130,7 +152,7 @@ namespace ExprGenerator
                 {
                     exprLst.Add(Generate(obj));
                 }
-                return new CompositeExpr(head, exprLst.ToArray());
+                return new CompositeExpr(head, exprLst.ToArray());                
             }
             //TODO
             return null;

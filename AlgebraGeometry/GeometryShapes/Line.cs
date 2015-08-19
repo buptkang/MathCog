@@ -358,9 +358,14 @@ namespace AlgebraGeometry
         {
             var line = Shape as Line;
             Debug.Assert(line != null);
-            if (line.Concrete) return this;
-            if (CachedSymbols.Count == 0) return null;
+            //if (line.Concrete) return this;
+            if (CachedSymbols.Count == 0) return this;
             return CachedSymbols.ToList();
+        }
+
+        public override bool UnifyProperty(string label, out object obj)
+        {
+            return this.Unify(label, out obj);
         }
 
         public LineSymbol(Line line) : base(line)
