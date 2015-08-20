@@ -1,0 +1,49 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using CSharpLogic;
+using NUnit.Framework;
+
+namespace AlgebraGeometry
+{
+    [TestFixture]
+    public partial class TestProblemSolvingScenarios
+    {
+        #region Input Sequence Issue (Caching), CRUD function
+
+        [Test]
+        public void TestScenario2_SequenceInput_1()
+        {
+            /*
+             * Input sequence:
+             * 1: Hat(AB) [Line]  => Line
+             * 2: A(2,3)          => Point
+             * 3: B(3,4)          => Point
+             * Update: AB [Label] => Line
+             */
+            var graph = new RelationGraph();
+            const string label = "AB";
+            var query = new Query(label, ShapeType.Line);
+            var qn = graph.AddNode(query);
+			Assert.Null(qn);
+			Assert.False(query.Success);
+
+            var ptA = new Point("A", 2, 3);
+            var ptASymbol = new PointSymbol(ptA);
+            var ptB = new Point("B", 3, 4);
+            var ptBSymbol = new PointSymbol(ptB);
+            graph.AddNode(ptASymbol);
+            graph.AddNode(ptBSymbol);
+
+            var shapes = graph.RetrieveShapeSymbols(ShapeType.Line);
+			Assert.True(shapes.Count == 1);
+            var line = shapes[0] as LineSymbol;
+			Assert.NotNull(line);
+            Assert.True(line.ToString().Equals("x-y+1=0"));
+        }
+
+        #endregion
+    }
+}

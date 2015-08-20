@@ -49,7 +49,9 @@
     <Compile Include="Test\Basics\Test.Equation.cs" />
     <Compile Include="Test\Problem\Test.Problem1.cs" />
     <Compile Include="Test\Problem\Test.Problem2.cs" />
-    <Compile Include="Test\Problem\Test.Problems.cs" />
+    <Compile Include="Test\Problem\Test.Problem3.cs" />
+    <Compile Include="Test\Problem\Test.Problem4.cs" />
+    <Compile Include="Test\Problem\Test.Problem5.cs" />
     <Compile Include="Reasoner.cs" />
     <Compile Include="Reasoner.Evaluator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -87,10 +89,6 @@
     <ProjectReference Include="..\Expr\Expr.csproj">
       <Project>{eff3e46c-89cb-4e15-84d3-bf7ce0d72b4b}</Project>
       <Name>Expr</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\UndoFramework\UndoFramework.csproj">
-      <Project>{2da7292f-8a1a-4b58-85f7-374a09fd90b9}</Project>
-      <Name>UndoFramework</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

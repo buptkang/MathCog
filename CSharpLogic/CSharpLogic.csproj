@@ -67,11 +67,14 @@
     <Compile Include="Term.cs" />
     <Compile Include="Term.Eval.cs" />
     <Compile Include="Term.Trace.cs" />
-    <Compile Include="Test\1.Arith-Algebra-Equation\AlgebraTest.cs" />
-    <Compile Include="Test\1.Arith-Algebra-Equation\ArithTest.cs" />
-    <Compile Include="Test\1.Arith-Algebra-Equation\EquationTest.cs" />
-    <Compile Include="Test\2.Query-Trace\Query.ArithAlgebra.cs" />
-    <Compile Include="Test\2.Query-Trace\Query.Satisfy.cs" />
+    <Compile Include="Test\1.Logic.Algebra\AlgebraArithIntegrateTest.cs" />
+    <Compile Include="Test\1.Logic.Algebra\AlgebraReificationTest.cs" />
+    <Compile Include="Test\1.Logic.Algebra\AlgebraTest.cs" />
+    <Compile Include="Test\0.Logic.Arithmetic\ArithTest.cs" />
+    <Compile Include="Test\2.Logic.Equation\1.Equation.Arith.Test.cs" />
+    <Compile Include="Test\2.Logic.Equation\2.Equation.Algebra.Test.cs" />
+    <Compile Include="Test\2.Logic.Equation\3.Equation.GoalGen.Test.cs" />
+    <Compile Include="Test\2.Logic.Equation\0.Equation.Satisfy.Test.cs" />
     <Compile Include="Test\0.Basic\6.Core.cs" />
     <Compile Include="Test\0.Basic\5.Goal.cs" />
     <Compile Include="Test\0.Basic\3.Reification.cs" />
@@ -87,7 +90,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

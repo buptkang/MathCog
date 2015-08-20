@@ -5,8 +5,6 @@ using System.Linq;
 using System.Text;
 using AlgebraGeometry;
 using CSharpLogic;
-using FunctionalCSharp;
-using FunctionalCSharp.DiscriminatedUnions;
 using starPadSDK.MathExpr;
 
 namespace ExprPatternMatch

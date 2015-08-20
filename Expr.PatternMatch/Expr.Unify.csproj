@@ -79,10 +79,6 @@
       <Project>{eff3e46c-89cb-4e15-84d3-bf7ce0d72b4b}</Project>
       <Name>Expr</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FunctionalCSharp\FunctionalCSharp.csproj">
-      <Project>{dc55ba21-eebf-4488-9aba-bea806ea9a07}</Project>
-      <Name>FunctionalCSharp</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

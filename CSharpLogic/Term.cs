@@ -303,7 +303,8 @@ namespace CSharpLogic
 
         public object Reify(EqGoal eqGoal)
         {
-            return null;
+            Dictionary<object,object> dict = eqGoal.ToDict();
+            return Reify(dict);
         }
 
         public Term Reify(Dictionary<object, object> s)

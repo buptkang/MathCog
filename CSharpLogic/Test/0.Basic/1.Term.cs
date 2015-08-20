@@ -1,10 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using NUnit.Framework;
+﻿/*******************************************************************************
+ * Copyright (c) 2015 Bo Kang
+ *   
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *  
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 
 namespace CSharpLogic
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq.Expressions;
+    using NUnit.Framework;
+
     [TestFixture]
     public class TestTerm
     {
@@ -13,13 +29,13 @@ namespace CSharpLogic
         {
             var term1 = new Term(Expression.Add, new List<object>() { 1, 1 });
             var x = new Var('x');
-            var term2 = new Term(Expression.Add, new List<object>() {1,x});
+            var term2 = new Term(Expression.Add, new List<object>() { 1, x });
 
             var dict = new Dictionary<object, object>();
-            bool result = LogicSharp.Unify(term1,term2, dict);
+            bool result = LogicSharp.Unify(term1, term2, dict);
 
             Assert.True(result);
-            Assert.True(dict.Count == 1); 
+            Assert.True(dict.Count == 1);
         }
 
         [Test]
@@ -35,7 +51,7 @@ namespace CSharpLogic
         public void Test_containVar()
         {
             var variable = new Var('x');
-            var term = new Term(Expression.Add, new Tuple<object,object>(variable, 2));
+            var term = new Term(Expression.Add, new Tuple<object, object>(variable, 2));
             Assert.True(term.ContainsVar(variable));
 
             var term2 = new Term(Expression.Add, new Tuple<object, object>(term, 1.0));
@@ -70,7 +86,7 @@ namespace CSharpLogic
         public void Test_Equal()
         {
             var x = new Var('x');
-            var term1 = new Term(Expression.Add, new List<object>() {x, 1});
+            var term1 = new Term(Expression.Add, new List<object>() { x, 1 });
             var term2 = new Term(Expression.Add, new List<object>() { x, 1 });
             Assert.True(term1.Equals(term2));
         }
@@ -78,7 +94,7 @@ namespace CSharpLogic
         [Test]
         public void Test_Reconstruct()
         {
-            var term = new Term(Expression.Add, new List<object>() {1});
+            var term = new Term(Expression.Add, new List<object>() { 1 });
             Assert.True(term.ReConstruct().Equals(1));
         }
 
