@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B2421FE7-B924-49D9-B898-FB722C50CEDE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AlgebraGeometry.Expr</RootNamespace>
+    <AssemblyName>AlgebraGeometry.Expr</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AGEquationExpr.cs" />
+    <Compile Include="AGPropertyExpr.cs" />
+    <Compile Include="AGQueryExpr.cs" />
+    <Compile Include="AGShapeExpr.cs" />
+    <Compile Include="IKnowledgeExpr.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TraceExpr.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\1.GeometryLogic\Geometry.Logic.csproj">
+      <Project>{37ff5773-06ae-41c1-bb0f-b7fe22fc874b}</Project>
+      <Name>Geometry.Logic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\0.CSharpLogic\CSharpLogic.csproj">
+      <Project>{b6ae1355-89f0-4ecb-83ac-b3b5118a6e4e}</Project>
+      <Name>CSharpLogic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Expr.Reify\Expr.Reify.csproj">
+      <Project>{0646d21e-db97-480d-bdd3-f0a783f2bc84}</Project>
+      <Name>Expr.Reify</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Expr.Unify\Expr.Unify.csproj">
+      <Project>{c4f74bbb-98d6-462f-9d63-2590f646b9d3}</Project>
+      <Name>Expr.Unify</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Expr\Expr.csproj">
+      <Project>{eff3e46c-89cb-4e15-84d3-bf7ce0d72b4b}</Project>
+      <Name>Expr</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Unicode\Unicode.csproj">
+      <Project>{bef41126-6dac-4589-8da5-21dd9fb06911}</Project>
+      <Name>Unicode</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
