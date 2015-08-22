@@ -49,13 +49,13 @@
     <Compile Include="Test\Test.Generator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\1.GeometryLogic\Geometry.Logic.csproj">
-      <Project>{37ff5773-06ae-41c1-bb0f-b7fe22fc874b}</Project>
-      <Name>Geometry.Logic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\0.CSharpLogic\CSharpLogic.csproj">
+    <ProjectReference Include="..\..\CSharp.Logic\CSharpLogic.csproj">
       <Project>{b6ae1355-89f0-4ecb-83ac-b3b5118a6e4e}</Project>
       <Name>CSharpLogic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Geometry.Logic\Geometry.Logic.csproj">
+      <Project>{37ff5773-06ae-41c1-bb0f-b7fe22fc874b}</Project>
+      <Name>Geometry.Logic</Name>
     </ProjectReference>
     <ProjectReference Include="..\ExprText\ExprText.fsproj">
       <Project>{75819ff3-51e9-4230-9248-e15526726c3b}</Project>

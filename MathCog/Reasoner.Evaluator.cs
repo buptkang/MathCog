@@ -1,20 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using AlgebraGeometry;
-using AlgebraGeometry.Expr;
-using CSharpLogic;
-using ExprPatternMatch;
-using starPadSDK.MathExpr;
+﻿/*******************************************************************************
+ * Copyright (c) 2015 Bo Kang
+ *   
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *  
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 
-namespace MathReason
+
+namespace MathCog
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using AlgebraGeometry;
+    using AlgebraGeometry.Expr;
+    using CSharpLogic;
+    using ExprPatternMatch;
+    using starPadSDK.MathExpr;
     public partial class Reasoner
     {
         #region Input Eval and UnEval
 
-        private bool EvalExprPatterns(Expr expr, 
+        private bool EvalExprPatterns(Expr expr,
                                       object obj,
                                       ShapeType? st,
                                       out object output)
@@ -39,11 +55,11 @@ namespace MathReason
 
             var equation = obj as Equation;
             if (equation != null) return EvalExprPatterns(expr, equation, out output);
-            
+
             //non-deterministic Constraint-Solving
             var str = obj as string;
             var gQuery = new Query(str, st);
-            if (str != null) return EvalExprPatterns(expr, gQuery, out output);  
+            if (str != null) return EvalExprPatterns(expr, gQuery, out output);
 
             //non-deterministic Multi-Candidate selection
             var dict = obj as Dictionary<PatternEnum, object>;
@@ -69,23 +85,23 @@ namespace MathReason
         {
             output = null;
             return false;
-/*            List<object> objs = dict.Values.ToList();
-            //convert shapesymbol to shape
-            var lst = new List<object>();
-            foreach (object obj in objs)
-            {
-                var ss = obj as ShapeSymbol;
-                if (ss != null)
-                {
-                    lst.Add(ss.Shape);
-                }
-                else
-                {
-                    lst.Add(obj);
-                }
-            }
-            object obj1 = RelationGraph.Add(lst);
-            return EvalNonDeterministic(expr, obj1, out output);*/
+            /*            List<object> objs = dict.Values.ToList();
+                        //convert shapesymbol to shape
+                        var lst = new List<object>();
+                        foreach (object obj in objs)
+                        {
+                            var ss = obj as ShapeSymbol;
+                            if (ss != null)
+                            {
+                                lst.Add(ss.Shape);
+                            }
+                            else
+                            {
+                                lst.Add(obj);
+                            }
+                        }
+                        object obj1 = RelationGraph.Add(lst);
+                        return EvalNonDeterministic(expr, obj1, out output);*/
         }
 
         private bool EvalNonDeterministic(Expr expr, object obj, out object output)
@@ -140,7 +156,7 @@ namespace MathReason
         }
 
         private bool EvalExprPatterns(Expr expr, Equation eq, out object output)
-        {   
+        {
             RelationGraph.AddNode(eq);
             output = new AGEquationExpr(expr, eq);
             return true;

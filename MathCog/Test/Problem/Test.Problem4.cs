@@ -14,7 +14,7 @@
  * limitations under the License.
  *******************************************************************************/
 
-namespace MathReason
+namespace MathCog
 {
     using AlgebraGeometry;
     using AlgebraGeometry.Expr;

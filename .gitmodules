@@ -1,6 +1,3 @@
-[submodule "CSharp.Logic"]
-	path = CSharp.Logic
-	url = git@github.com:buptkang/CSharp.Logic.git
 [submodule "Geometry.Logic"]
 	path = Geometry.Logic
 	url = git@github.com:buptkang/Relation.Logic.git
