@@ -83,7 +83,7 @@
       <Name>Expr.Unify</Name>
     </ProjectReference>
     <ProjectReference Include="..\ParsingExpressionGrammar\ExprText\ExprText.fsproj">
-      <Project>{75819ff3-51e9-4230-9248-e15526726c3b}</Project>
+      <Project>{3d169bb6-4e9a-4757-a82c-e9a20a8f7a94}</Project>
       <Name>ExprText</Name>
     </ProjectReference>
     <ProjectReference Include="..\ParsingExpressionGrammar\Expr\Expr.csproj">

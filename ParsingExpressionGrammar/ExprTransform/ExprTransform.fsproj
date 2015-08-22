@@ -46,6 +46,11 @@
     <Compile Include="ExprTransform.fs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Expr.Unify\Expr.Unify.csproj">
+      <Name>Expr.Unify</Name>
+      <Project>{c4f74bbb-98d6-462f-9d63-2590f646b9d3}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <ProjectReference Include="..\Expr\Expr.csproj">
       <Name>Expr</Name>
       <Project>{eff3e46c-89cb-4e15-84d3-bf7ce0d72b4b}</Project>

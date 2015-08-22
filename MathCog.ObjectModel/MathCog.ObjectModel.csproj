@@ -49,6 +49,9 @@
     <Compile Include="TraceExpr.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Geometry.Logic\Geometry.Logic.csproj">
       <Project>{37ff5773-06ae-41c1-bb0f-b7fe22fc874b}</Project>
       <Name>Geometry.Logic</Name>
@@ -65,6 +68,10 @@
       <Project>{c4f74bbb-98d6-462f-9d63-2590f646b9d3}</Project>
       <Name>Expr.Unify</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ParsingExpressionGrammar\ExprText\ExprText.fsproj">
+      <Project>{3d169bb6-4e9a-4757-a82c-e9a20a8f7a94}</Project>
+      <Name>ExprText</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ParsingExpressionGrammar\Expr\Expr.csproj">
       <Project>{eff3e46c-89cb-4e15-84d3-bf7ce0d72b4b}</Project>
       <Name>Expr</Name>
@@ -74,10 +81,6 @@
       <Name>Unicode</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="README.md" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
