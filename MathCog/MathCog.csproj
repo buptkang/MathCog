@@ -62,13 +62,13 @@
     <Compile Include="Test\Basics\Test.Query.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CSharp.Logic\CSharpLogic.csproj">
-      <Project>{b6ae1355-89f0-4ecb-83ac-b3b5118a6e4e}</Project>
-      <Name>CSharpLogic</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Geometry.Logic\Geometry.Logic.csproj">
       <Project>{37ff5773-06ae-41c1-bb0f-b7fe22fc874b}</Project>
       <Name>Geometry.Logic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Geometry.Logic\lib\CSharpLogic\CSharpLogic.csproj">
+      <Project>{b6ae1355-89f0-4ecb-83ac-b3b5118a6e4e}</Project>
+      <Name>CSharpLogic</Name>
     </ProjectReference>
     <ProjectReference Include="..\MathCog.ObjectModel\MathCog.ObjectModel.csproj">
       <Project>{b2421fe7-b924-49d9-b898-fb722c50cede}</Project>

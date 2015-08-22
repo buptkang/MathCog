@@ -49,13 +49,13 @@
     <Compile Include="TraceExpr.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CSharp.Logic\CSharpLogic.csproj">
-      <Project>{b6ae1355-89f0-4ecb-83ac-b3b5118a6e4e}</Project>
-      <Name>CSharpLogic</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Geometry.Logic\Geometry.Logic.csproj">
       <Project>{37ff5773-06ae-41c1-bb0f-b7fe22fc874b}</Project>
       <Name>Geometry.Logic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Geometry.Logic\lib\CSharpLogic\CSharpLogic.csproj">
+      <Project>{b6ae1355-89f0-4ecb-83ac-b3b5118a6e4e}</Project>
+      <Name>CSharpLogic</Name>
     </ProjectReference>
     <ProjectReference Include="..\ParsingExpressionGrammar\Expr.Reify\Expr.Reify.csproj">
       <Project>{0646d21e-db97-480d-bdd3-f0a783f2bc84}</Project>
