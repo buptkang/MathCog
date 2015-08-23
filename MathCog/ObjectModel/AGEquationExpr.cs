@@ -14,12 +14,13 @@
  * limitations under the License.
  *******************************************************************************/
 
-namespace AlgebraGeometry.Expr
+namespace MathCog
 {
-    using CSharpLogic;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using AlgebraGeometry;
+    using CSharpLogic;
 
     public class AGEquationExpr : IKnowledge
     {

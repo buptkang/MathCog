@@ -16,8 +16,6 @@
 
 namespace MathCog
 {
-    using AlgebraGeometry;
-    using AlgebraGeometry.Expr;
     using CSharpLogic;
     using NUnit.Framework;
     using System.Linq;

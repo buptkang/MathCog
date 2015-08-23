@@ -14,10 +14,10 @@
  * limitations under the License.
  *******************************************************************************/
 
-namespace AlgebraGeometry.Expr
+namespace MathCog
 {
-    using CSharpLogic;
     using System.Collections.Generic;
+    using CSharpLogic;
 
     /// <summary>
     /// such as S= 5.0, m = 4, x=2+1

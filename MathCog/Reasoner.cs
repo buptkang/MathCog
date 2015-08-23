@@ -21,7 +21,6 @@ namespace MathCog
     using System.Diagnostics;
     using System.Linq;
     using AlgebraGeometry;
-    using AlgebraGeometry.Expr;
     using CSharpLogic;
     using ExprPatternMatch;
     using starPadSDK.MathExpr;

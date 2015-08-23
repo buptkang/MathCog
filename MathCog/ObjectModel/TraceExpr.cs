@@ -14,9 +14,10 @@
  * limitations under the License.
  *******************************************************************************/
 
-namespace AlgebraGeometry.Expr
+namespace MathCog
 {
     using CSharpLogic;
+    using AlgebraGeometry;
 
     public class TraceStepExpr
     {

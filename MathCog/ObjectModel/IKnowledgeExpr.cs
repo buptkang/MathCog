@@ -14,7 +14,7 @@
  * limitations under the License.
  *******************************************************************************/
 
-namespace AlgebraGeometry.Expr
+namespace MathCog
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;

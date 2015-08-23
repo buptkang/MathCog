@@ -16,8 +16,7 @@
 
 namespace MathCog
 {
-    using AlgebraGeometry;
-    using AlgebraGeometry.Expr;
+    using AlgebraGeometry;    
     using NUnit.Framework;
 
     [TestFixture]
