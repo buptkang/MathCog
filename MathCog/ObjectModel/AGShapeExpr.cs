@@ -14,8 +14,6 @@
  * limitations under the License.
  *******************************************************************************/
 
-
-
 namespace MathCog
 {
     using AlgebraGeometry;
@@ -90,7 +88,7 @@ namespace MathCog
         {
             if (IsSelected)
             {
-                var traces = _shapeSymbol.Shape.Traces;
+                var traces = _shapeSymbol.Traces;
                 if (traces.Count == 0) return;
                 var lst = new List<TraceStepExpr>();
                 TraceStepExpr tse;

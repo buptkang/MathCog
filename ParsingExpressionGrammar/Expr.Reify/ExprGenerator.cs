@@ -172,8 +172,8 @@ namespace AlgebraGeometry
 
         public static Expr Derive(Expr source, Expr target)
         {
-            var cc = new CompositeExpr(WellKnownSym.times, new Expr[] { source, new WordSym("→"), target });
-            return new CompositeExpr(new WordSym("Step:"), new Expr[] { cc });
+            return new CompositeExpr(WellKnownSym.times, new Expr[] { source, new WordSym("→"), target });
+            //return new CompositeExpr(new WordSym("Step:"), new Expr[] { cc });
         }
     }
 

@@ -36,7 +36,8 @@ namespace MathCog
             AppliedRule = ts.AppliedRule as string;
             Source = ExprG.Generate(ts.Source);
             Target = ExprG.Generate(ts.Target);
-            StepExpr = ExprG.Derive(Source, Target);
+            //StepExpr = ExprG.Derive(Source, Target);
+            StepExpr = Target;
         }
 
         #endregion
