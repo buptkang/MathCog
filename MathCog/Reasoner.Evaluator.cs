@@ -31,33 +31,29 @@ namespace MathCog
         private bool EvalExprPatterns(Expr expr,
                                       object obj,
                                       ShapeType? st,
-                                      out object output)
+                                      out object output,
+                                      bool userInput = false)
         {
             output = null;
 
-            if (TutorSession)
-            {
-                return EvalUserModel(expr, obj, st, out output);
-            }
-
             //deterministic
             var ss = obj as ShapeSymbol;
-            if (ss != null) return EvalExprPatterns(expr, ss, out output);
+            if (ss != null) return EvalExprPatterns(expr, ss, out output, userInput);
 
             //deterministic
             var goal = obj as EqGoal;
-            if (goal != null) return EvalExprPatterns(expr, goal, out output);
+            if (goal != null) return EvalExprPatterns(expr, goal, out output, userInput);
 
             var query = obj as Query;
-            if (query != null) return EvalExprPatterns(expr, query, out output);
+            if (query != null) return EvalExprPatterns(expr, query, out output, userInput);
 
             var equation = obj as Equation;
-            if (equation != null) return EvalExprPatterns(expr, equation, out output);
+            if (equation != null) return EvalExprPatterns(expr, equation, out output, userInput);
 
             //non-deterministic Constraint-Solving
             var str = obj as string;
             var gQuery = new Query(str, st);
-            if (str != null) return EvalExprPatterns(expr, gQuery, out output);
+            if (str != null) return EvalExprPatterns(expr, gQuery, out output, userInput);
 
             //non-deterministic Multi-Candidate selection
             var dict = obj as Dictionary<PatternEnum, object>;
@@ -153,9 +149,9 @@ namespace MathCog
             return false;
         }
 
-        private bool EvalExprPatterns(Expr expr, Equation eq, out object output)
+        private bool EvalExprPatterns(Expr expr, Equation eq, out object output, bool userInput = false)
         {
-            RelationGraph.AddNode(eq);
+            RelationGraph.AddNode(eq, userInput);
             output = new AGEquationExpr(expr, eq);
             return true;
         }
@@ -169,9 +165,9 @@ namespace MathCog
         /// <param name="query"></param>
         /// <param name="output"></param>
         /// <returns></returns>
-        private bool EvalExprPatterns(Expr expr, Query query, out object output)
+        private bool EvalExprPatterns(Expr expr, Query query, out object output, bool userInput = false)
         {
-            object obj = RelationGraph.AddNode(query);
+            object obj = RelationGraph.AddNode(query, userInput);
             output = new AGQueryExpr(expr, query);
             return obj != null;
             //return EvalNonDeterministic(expr, obj, out output);
@@ -184,9 +180,9 @@ namespace MathCog
         /// <param name="ss"></param>
         /// <param name="output"></param>
         /// <returns></returns>
-        private bool EvalExprPatterns(Expr expr, ShapeSymbol ss, out object output)
+        private bool EvalExprPatterns(Expr expr, ShapeSymbol ss, out object output, bool userInput = false)
         {
-            object obj = RelationGraph.AddNode(ss);
+            object obj = RelationGraph.AddNode(ss, userInput);
             Debug.Assert(obj != null);
             output = new AGShapeExpr(expr, ss);
             return true;
@@ -198,38 +194,35 @@ namespace MathCog
         /// <param name="expr"></param>
         /// <param name="goal"></param>
         /// <param name="output"></param>
+        /// <param name="userInput"></param>
         /// <returns></returns>
-        private bool EvalExprPatterns(Expr expr, EqGoal goal, out object output)
+        private bool EvalExprPatterns(Expr expr, EqGoal goal, out object output, bool userInput = false)
         {
-            object obj = RelationGraph.AddNode(goal);
+            object obj = RelationGraph.AddNode(goal, userInput);
             output = new AGPropertyExpr(expr, goal);
             return true;
         }
 
-        private void UnEvalExprPatterns(object obj)
+        private bool UnEvalExprPatterns(object obj, out bool userInput)
         {
-            if (TutorSession)
-            {
-                UnEvalInUserModel(obj);
-                return;
-            }
-
-            if (_cache.Count == 0) return;
+            userInput = false;
+            if (_cache.Count == 0) return false;
             var shapeSymExpr = obj as AGShapeExpr;
             if (shapeSymExpr != null)
             {
-                RelationGraph.DeleteNode(shapeSymExpr.ShapeSymbol);
+                return RelationGraph.DeleteNode(shapeSymExpr.ShapeSymbol, out userInput);
             }
             var termExpr = obj as AGPropertyExpr;
             if (termExpr != null)
             {
-                RelationGraph.DeleteNode(termExpr.Goal);
+                return RelationGraph.DeleteNode(termExpr.Goal, out userInput);
             }
             var queryExpr = obj as AGQueryExpr;
             if (queryExpr != null)
             {
-                RelationGraph.DeleteNode(queryExpr.QueryTag);
+                return RelationGraph.DeleteNode(queryExpr.QueryTag, out userInput);
             }
+            return false;
         }
 
         #endregion

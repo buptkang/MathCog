@@ -126,11 +126,12 @@ namespace MathCog
             var eqGoal = agPropertyExpr.Goal;
             Assert.NotNull(eqGoal);
             Assert.True(eqGoal.Rhs.Equals(-4));
-            Assert.True(eqGoal.StrategyTraces.Count == 1);
+         
             //Trace
             agPropertyExpr.GenerateSolvingTrace();
             Assert.True(agPropertyExpr.AutoTrace != null);
             Assert.True(agPropertyExpr.AutoTrace.Count == 1);
+            Assert.True(eqGoal.StrategyTraces.Count == 1);
         }
 
         [Test]
@@ -164,6 +165,7 @@ namespace MathCog
             agPropertyExpr.GenerateSolvingTrace();
             Assert.True(agPropertyExpr.AutoTrace != null);
             Assert.True(agPropertyExpr.AutoTrace.Count == 9);
+            Assert.True(agPropertyExpr.Strategies.Count == 3);
         }
     }
 }

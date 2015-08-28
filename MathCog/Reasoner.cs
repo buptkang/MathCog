@@ -51,7 +51,6 @@ namespace MathCog
             RelationGraph = new RelationGraph();
             _cache = new ObservableCollection<KeyValuePair<object, object>>();
             _preCache = new Dictionary<object, object>();
-            _tutorSession = false;
         }
 
         /// <summary>
@@ -63,35 +62,26 @@ namespace MathCog
         /// </summary>
         private Dictionary<object, object> _preCache;
 
-        private bool _tutorSession;
-
-        public bool TutorSession
-        {
-            get { return _tutorSession; }
-            set { _tutorSession = value; }
-        }
-
         #endregion
 
         #region Input communication with lower reasoning engine
 
-        public object Load(object obj, ShapeType? st = null, bool tutorSession = false)
+        public object Load(object obj, ShapeType? st = null, bool userInput = false)
         {
-            _tutorSession = tutorSession;
             var str = obj as string;     // text input
-            if (str != null) return Load(str, st);
+            if (str != null) return Load(str, st, userInput);
             var expr = obj as Expr;      // sketch input
-            if (expr != null) return Load(expr, st);
+            if (expr != null) return Load(expr, st, userInput);
             return null;
         }
 
-        private object Load(Expr expr, ShapeType? st = null)
+        private object Load(Expr expr, ShapeType? st = null, bool userInput = false)
         {
             var rTemp = ExprVisitor.Instance.Match(expr); //input patter match
             Debug.Assert(rTemp != null);
             object output;
 
-            EvalExprPatterns(expr, rTemp, st, out output);
+            EvalExprPatterns(expr, rTemp, st, out output, userInput);
             var iKnowledge = output as IKnowledge;
             if (iKnowledge != null)
             {
@@ -100,10 +90,10 @@ namespace MathCog
             return output;
         }
 
-        private object Load(string fact, ShapeType? st = null)
+        private object Load(string fact, ShapeType? st = null, bool userInput = false)
         {
             Expr expr = Text.Convert(fact);
-            object result = Load(expr, st);
+            object result = Load(expr, st, userInput);
             if (result != null)
             {
                 _preCache.Add(fact, expr);
@@ -112,29 +102,31 @@ namespace MathCog
             return null;
         }
 
-        public void Unload(string fact)
+        public bool Unload(string fact, out bool userInput)
         {
-            if (_preCache.ContainsKey(fact))
-            {
-                var expr = _preCache[fact] as Expr;
-                if (expr != null)
-                {
-                    Unload(expr);
-                    _preCache.Remove(fact);
-                }
-            }
+            userInput = false;
+            if (!_preCache.ContainsKey(fact)) return false;
+            var expr = _preCache[fact] as Expr;
+            Debug.Assert(expr != null);
+
+            bool result = Unload(expr, out userInput);
+            _preCache.Remove(fact);
+            return result;
         }
 
-        public void Unload(Expr key)
+        public bool Unload(Expr key, out bool userInput)
         {
+            userInput = false;
             List<KeyValuePair<object, object>> fact
                 = _cache.Where(x => x.Key.Equals(key)).ToList();
             if (fact.Count != 0)
             {
                 Debug.Assert(fact.Count == 1);
-                UnEvalExprPatterns(fact[0].Value);
+                bool result = UnEvalExprPatterns(fact[0].Value, out userInput);
                 _cache.Remove(fact[0]);
+                return result;
             }
+            return false;
         }
 
         public void Reset()

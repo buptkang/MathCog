@@ -83,7 +83,10 @@ namespace MathCog
 
             //a+1=1
             const string fact2 = "a+1=1";
-            Reasoner.Instance.Unload(fact1);
+            bool userInput;
+            bool result1 = Reasoner.Instance.Unload(fact1, out userInput);
+            Assert.True(result1);
+            Assert.False(userInput);
             Reasoner.Instance.Load(fact2);
             result = Reasoner.Instance.TestGetProperties();
             Assert.NotNull(result);
@@ -96,7 +99,7 @@ namespace MathCog
 
             //a+1=2*2
             const string fact3 = "a+1=2*2";
-            Reasoner.Instance.Unload(fact2);
+            Reasoner.Instance.Unload(fact2, out userInput);
             Reasoner.Instance.Load(fact3);
             result = Reasoner.Instance.TestGetProperties();
             Assert.NotNull(result);

@@ -58,6 +58,7 @@ namespace MathCog
                     lst.Add(tse);
                 }
                 AutoTrace = lst;
+                Strategies = _goal.StrategyTraces;
                 return;
             }
 

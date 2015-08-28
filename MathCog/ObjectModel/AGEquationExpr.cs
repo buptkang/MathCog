@@ -113,6 +113,7 @@ namespace MathCog
                         lst.Add(tse);
                     }
                     AutoTrace = lst;
+                    Strategies = _equation.StrategyTraces;
                 }
             }
             else

@@ -99,6 +99,7 @@ namespace MathCog
                     lst.Add(tse);
                 }
                 AutoTrace = lst;
+                Strategies = _shapeSymbol.StrategyTraces;
                 return;
             }
 

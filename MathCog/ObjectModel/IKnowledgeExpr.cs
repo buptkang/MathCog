@@ -38,7 +38,9 @@ namespace MathCog
 
         public ObservableCollection<IKnowledge> RenderKnowledge { get; set; }
 
-        public List<TraceStepExpr> AutoTrace { get; set; }
+        public List<TraceStepExpr> AutoTrace { get; set; } // inner loop scaffolding
+
+        public List<string> Strategies { get; set; } //outer loop scaffolding 
 
         public IKnowledge(starPadSDK.MathExpr.Expr exp)
         {

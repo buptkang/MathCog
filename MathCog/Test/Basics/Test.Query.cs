@@ -16,7 +16,6 @@
 
 namespace MathCog
 {
-    using AlgebraGeometry;
     using CSharpLogic;
     using NUnit.Framework;
     using System.Collections.Generic;
@@ -287,7 +286,6 @@ namespace MathCog
             var queryExpr = obj as AGQueryExpr;
             Assert.NotNull(queryExpr);
 
-            Reasoner.Instance.TutorSession = true;
             const string input2 = "1+1=2";
             var obj1 = Reasoner.Instance.Load(input2);
 

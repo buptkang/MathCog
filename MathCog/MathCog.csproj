@@ -51,8 +51,8 @@
     <Compile Include="ObjectModel\AGShapeExpr.cs" />
     <Compile Include="ObjectModel\IKnowledgeExpr.cs" />
     <Compile Include="ObjectModel\TraceExpr.cs" />
-    <Compile Include="Reasoner.UserInput.cs" />
     <Compile Include="Test\Basics\Test.Equation.cs" />
+    <Compile Include="Test\Basics\Test.RealTime.cs" />
     <Compile Include="Test\Problem\Test.Problem1.cs" />
     <Compile Include="Test\Problem\Test.Problem2.cs" />
     <Compile Include="Test\Problem\Test.Problem3.cs" />

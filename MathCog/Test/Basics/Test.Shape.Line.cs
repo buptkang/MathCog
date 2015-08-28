@@ -157,7 +157,8 @@ namespace MathCog
             Assert.Null(shape.B);
             Assert.True(shape.C.Equals(-2.0));
 
-            reasoner.Unload(prop1);
+            bool userInput;
+            reasoner.Unload(prop1, out userInput);
             result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
@@ -244,7 +245,8 @@ namespace MathCog
             Assert.True(shape.B.Equals(1));
             Assert.True(shape.C.Equals(-2.0));
 
-            reasoner.Unload(prop1);
+            bool userInput;
+            reasoner.Unload(prop1, out userInput);
             result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
@@ -262,7 +264,7 @@ namespace MathCog
             Assert.True(shape.B.Equals(1));
             Assert.True(shape.C.Equals(-2.0));
 
-            reasoner.Unload(prop2);
+            reasoner.Unload(prop2, out userInput);
             result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
@@ -314,7 +316,8 @@ namespace MathCog
             Assert.True(shape.C.Equals(2.0));
 
             //Unload m=2
-            reasoner.Unload(prop1);
+            bool userInput;
+            reasoner.Unload(prop1, out userInput);
             result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);
@@ -372,7 +375,8 @@ namespace MathCog
             Assert.Null(shape.B);
             Assert.True(shape.C.Equals(0.0));
 
-            reasoner.Unload(prop1);
+            bool userInput;
+            reasoner.Unload(prop1, out userInput);
             result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);

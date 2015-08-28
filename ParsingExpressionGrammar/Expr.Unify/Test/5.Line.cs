@@ -117,6 +117,8 @@ namespace ExprPatternMatch
             Assert.True(ls.SymA.Equals("2"));
             Assert.True(ls.SymB.Equals("1"));
             Assert.True(ls.ToString().Equals("2x+y+1=0"));
+            Assert.True(ls.Traces.Count == 0);
+            Assert.True(ls.StrategyTraces.Count == 0);
         }
 
         [Test]

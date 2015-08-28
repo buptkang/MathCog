@@ -144,8 +144,9 @@ namespace MathCog
             var agQueryExpr = obj as AGQueryExpr;
             Assert.NotNull(agQueryExpr);
 
+            bool userInput;
             const string input2Update = "B(5,6)";
-            Reasoner.Instance.Unload(input2);
+            Reasoner.Instance.Unload(input2, out userInput);
 
             agQueryExpr.RetrieveRenderKnowledge();
             Assert.True(agQueryExpr.RenderKnowledge == null);
