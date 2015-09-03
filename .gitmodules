@@ -1,0 +1,3 @@
+[submodule "Geometry.Logic"]
+	path = Geometry.Logic
+	url = git@github.com:buptkang/Relation.Logic.git
