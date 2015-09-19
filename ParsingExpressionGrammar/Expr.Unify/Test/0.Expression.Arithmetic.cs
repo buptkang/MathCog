@@ -96,7 +96,7 @@ namespace ExprPatternMatch
 
             object evalResult = term.Eval();
             Assert.True(evalResult.Equals(4));
-            Assert.True(term.TraceCount == 2);
+            Assert.True(term.Traces.Count == 2);
         }
 
         [Test]
@@ -112,7 +112,7 @@ namespace ExprPatternMatch
             Assert.NotNull(term);
             object evalResult = term.Eval();
             Assert.True(evalResult.Equals(3));
-            Assert.True(term.TraceCount == 3);
+            Assert.True(term.Traces.Count == 3);
         }
 
         [Test]

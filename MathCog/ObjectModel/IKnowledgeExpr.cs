@@ -14,6 +14,9 @@
  * limitations under the License.
  *******************************************************************************/
 
+using System;
+using System.Diagnostics;
+
 namespace MathCog
 {
     using System.Collections.Generic;
@@ -38,18 +41,49 @@ namespace MathCog
 
         public ObservableCollection<IKnowledge> RenderKnowledge { get; set; }
 
-        public List<TraceStepExpr> AutoTrace { get; set; } // inner loop scaffolding
-
-        public List<string> Strategies { get; set; } //outer loop scaffolding 
-
+        public List<Tuple<object, object>> AutoTrace { get; set; } // outer and inner loop scaffolding
+      
         public IKnowledge(starPadSDK.MathExpr.Expr exp)
         {
             _inputExpr = exp;
         }
 
+        public object Tag { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            var knowledge = obj as IKnowledge;
+            if (knowledge == null) return false;
+            return Expr.Equals(knowledge.Expr);
+        }
+
         #endregion
 
         #region Virtual Functions and Utils
+
+        public int RetrieveStepsNumbers()
+        {
+            int count = 0;
+            foreach (Tuple<object, object> tuple in AutoTrace)
+            {
+                var lst = tuple.Item2 as List<TraceStepExpr>;
+                Debug.Assert(lst != null);
+                count += lst.Count;
+            }
+            return count;
+        }
+
+        public List<string> RetrieveOuterLoopStrategies()
+        {
+            var lst = new List<string>();
+            foreach (Tuple<object, object> tuple in AutoTrace)
+            {
+                var str = tuple.Item1 as string;
+                Debug.Assert(str != null);
+                lst.Add(str);
+            }
+            return lst;
+        }
 
         public virtual bool HasSolvingTrace()
         {

@@ -87,6 +87,14 @@ namespace MathCog
             }
         }
 
+        public override bool Equals(object obj)
+        {
+            var queryExpr = obj as AGQueryExpr;
+            if (queryExpr == null) return false;
+
+            return QueryTag.Equals(queryExpr.QueryTag);
+        }
+
         #endregion
     }
 }

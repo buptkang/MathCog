@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection.Emit;
 using System.Text;
 using System.Text.RegularExpressions;
 using AlgebraGeometry;
@@ -310,7 +311,8 @@ namespace ExprPatternMatch
                 return true;
                 #endregion
             }            
-            else if (root.Head.Equals(WellKnownSym.times))
+            
+            if (root.Head.Equals(WellKnownSym.times))
             {
                 #region Multiply Term
                 int argCount = root.Args.Count();
@@ -356,12 +358,61 @@ namespace ExprPatternMatch
                 }
                 #endregion
             }
+
+            if (root.Head.Equals(WellKnownSym.power))
+            {
+                var argCount = root.Args.Count();
+                if (argCount != 2) return false;
+                var lst = new List<object>();
+                for (int i = 0; i < argCount; i++)
+                {
+                    object tempObj;
+                    if (root.Args[i].IsExpression(out tempObj))
+                    {
+                        lst.Add(tempObj);
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                obj = new Term(Expression.Power, lst);
+                return true;
+            }
             return false;
         }
     }
 
     public static class EquationPatternExtensions
     {
+        public static bool IsEquationLabel(this Expr expr, out object obj)
+        {
+            obj = null;
+            var compExpr = expr as CompositeExpr;
+            if (compExpr == null) return false;
+
+            object label;
+            bool isLabel = compExpr.Head.IsLabel(out label);
+
+            string labelStr;
+            if (isLabel)
+            {
+                labelStr = (string) label;
+                var childCount = compExpr.Args.Count();
+                if (childCount != 1) return false;
+                var eqExpr = compExpr.Args[0];
+                object obj1;
+                var isEquation = eqExpr.IsEquation(out obj1);
+                if (!isEquation) return false;
+                var eq = obj1 as Equation;
+                Debug.Assert(eq != null);
+                eq.EqLabel = labelStr;
+                obj = eq;
+                return true;
+            }
+            return IsEquation(expr, out obj);
+        }
+
         public static bool IsEquation(this Expr expr, out object obj)
         {
             obj = null;
@@ -496,7 +547,10 @@ namespace ExprPatternMatch
                 {
                     if (wordSymbol.Word.Equals(""))
                     {
-                        return IsPoint(composite.Args[0], out point);
+                        if (composite.Args.Count() == 1)
+                        {
+                            return IsPoint(composite.Args[0], out point);
+                        } 
                     }
 
                     if (!wordSymbol.Word.Equals("comma"))
@@ -980,7 +1034,8 @@ namespace ExprPatternMatch
         #endregion
     }
 
-    public static class NotInUse
+
+    /*public static class NotInUse
     {
         private static bool IsPowerYForm(this starPadSDK.MathExpr.Expr expr)
         {
@@ -996,13 +1051,13 @@ namespace ExprPatternMatch
                 Expr expr2 = compositeExpr.Args[1];
 
                 DoubleNumber dn1, dn2;
-               // if (expr1.IsYTerm(out dn1) && expr2.IsConstantTerm(out dn2))
-               // {
-               //     if (dn2.Num.Equals(2.0))
-               //     {
-                        return true;
-               //     }
-               // }
+                // if (expr1.IsYTerm(out dn1) && expr2.IsConstantTerm(out dn2))
+                // {
+                //     if (dn2.Num.Equals(2.0))
+                //     {
+                return true;
+                //     }
+                // }
             }
             return false;
         }
@@ -1025,7 +1080,7 @@ namespace ExprPatternMatch
                 //{
                 //    if (dn2.Num.Equals(2.0))
                 //    {
-                        return true;
+                return true;
                 //    }
                 //}
             }
@@ -1132,39 +1187,9 @@ namespace ExprPatternMatch
                 return false;
             }
         }
-
-        //public static bool IsDistanceForm(this Expr expr, out IKnowledgeExpr distanceExpr)
-        //{
-        //    distanceExpr = null;
-
-        //    if (!(expr is CompositeExpr)) return false;
-        //    var composite = expr as CompositeExpr;
-        //    if (!(composite.Head.Equals(WellKnownSym.equals) && composite.Args.Length == 2)) return false;
-
-        //    Expr expr1 = composite.Args[0];
-        //    Expr expr2 = composite.Args[1];
-
-        //    if (!(expr2 is IntegerNumber)) return false;
-        //    if (!(expr1 is CompositeExpr)) return false;
-
-        //    composite = expr1 as CompositeExpr;
-
-        //    if (!(composite.Head is LetterSym && composite.Args.Length == 2)) return false;
-
-        //    expr1 = composite.Args[0];
-        //    expr2 = composite.Args[1];
-
-        //    if (expr1 is IntegerNumber || expr1 is LetterSym || expr2 is IntegerNumber || expr2 is LetterSym)
-        //    {
-        //        distanceExpr = new PointPointExpr(new TwoPoints(new Point(6.0,8.0), new Point(6.0,0.0)));
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
     }
+
+    */
 
     public class AGTemplateExpressions
     {

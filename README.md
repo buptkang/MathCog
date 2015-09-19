@@ -15,3 +15,6 @@ AG.Reasoner is the logic inference engine with the long term memory.
 ##Citation##
 
 Coming Soon
+
+
+In tutor mode, the input or user input does not need to store on the constraint graph. 

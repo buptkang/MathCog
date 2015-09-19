@@ -40,7 +40,7 @@ namespace ExprPatternMatch
             Assert.True(variable.ToString().Equals("x"));
 
             //term evaluation
-            Assert.True(term.TraceCount == 0);
+            Assert.True(term.Traces.Count == 0);
 
         }
 

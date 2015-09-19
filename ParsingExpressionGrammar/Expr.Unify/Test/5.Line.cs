@@ -26,8 +26,8 @@ namespace ExprPatternMatch
          *  5: ax=2
          *  6: by=0
          *  7: cy=0
-         *  \\TODO 8: -2.1x-3y-1=0
-         *  \\TODO 9: -2x+3.2y+1=0
+         *  //TODO 8: -2.1x-3y-1=0
+         *  //TODO 9: -2x+3.2y+1=0
          *  10: ax-by+1=0
          *  11: -ax-by-9=0 
          *  12: 2x=1
@@ -37,6 +37,7 @@ namespace ExprPatternMatch
          *  16: y = 2x+1
          *  17: y = -x+3
          *  18: y = -ax+3
+         *  19: a(x+2y-1=0)
          * 
          * False Negative Test:
          *  
@@ -118,7 +119,6 @@ namespace ExprPatternMatch
             Assert.True(ls.SymB.Equals("1"));
             Assert.True(ls.ToString().Equals("2x+y+1=0"));
             Assert.True(ls.Traces.Count == 0);
-            Assert.True(ls.StrategyTraces.Count == 0);
         }
 
         [Test]
@@ -186,7 +186,7 @@ namespace ExprPatternMatch
         public void Test_Line_TruePositive_8()
         {
             //TODO has issue here
-            const string txt = "-2x-3y-1=0";
+            const string txt = "-2.1x-3y-1=0";
             Expr expr = Text.Convert(txt);
             object obj;
             LineSymbol ls;
@@ -196,7 +196,7 @@ namespace ExprPatternMatch
             Assert.NotNull(eq);
             result = eq.IsLineEquation(out ls);
             Assert.True(result);
-            Assert.True(ls.SymA.Equals("-2"));
+            Assert.True(ls.SymA.Equals("-2.1"));
             Assert.True(ls.SymB.Equals("-3"));
             Assert.True(ls.SymC.Equals("-1"));
         }
@@ -384,7 +384,7 @@ namespace ExprPatternMatch
             Expr expr = Text.Convert(txt);
             object obj;
             LineSymbol ls;
-            bool result = expr.IsEquation(out obj);
+            bool result = expr.IsEquationLabel(out obj);
             Assert.True(result);
             var eq = obj as Equation;
             Assert.NotNull(eq);
@@ -393,6 +393,22 @@ namespace ExprPatternMatch
             Assert.True(ls.SymSlope.Equals("(-1*a)"));
             Assert.True(ls.SymIntercept.Equals("-3"));
             Assert.True(ls.ToString().Equals("y=(-1*a)x-3"));
+        }
+
+        [Test]
+        public void Test_Line_TruePositive_19()
+        {
+            //19: ab(x+2y-1=0)
+            const string txt = "ab(x+2y-1=0)";
+            Expr expr = Text.Convert(txt);
+            object obj;
+            LineSymbol ls;
+            bool result = expr.IsEquationLabel(out obj);
+            Assert.True(result);
+            var eq = obj as Equation;            
+            Assert.NotNull(eq);
+            Assert.True(eq.EqLabel != null);
+            Assert.True(eq.EqLabel.ToString().Equals("ab"));
         }
 
         [Test]

@@ -38,6 +38,7 @@ namespace ExprPatternMatch
 
             //TODO tackle decimal number 
             string[] strs = Regex.Split(parseStr, "(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
+            //string[] strs = Regex.Split(parseStr, "(?<=\\D)(?=\\d)|(?<=(\\d+\\.\\d+))(?=\\D)");
             var lst = new List<object>();
             for(var i = 0; i < strs.Length; i++)
             {
@@ -45,16 +46,26 @@ namespace ExprPatternMatch
 
                 if (i == 0)
                 {
-                    if (LogicSharp.IsNumeric(strs[0]))
+                    if (LogicSharp.IsNumeric(strs[i]))
                     {
-                        double dNum;
-                        LogicSharp.IsDouble(strs[0], out dNum);
-                        dNum = isNeg ? dNum *-1 : dNum;
-                        lst.Add(dNum);
+                        int iNum;
+                        bool result000 = LogicSharp.IsInt(strs[i], out iNum);
+                        if (result000)
+                        {
+                            iNum = isNeg ? iNum * -1 : iNum;
+                            lst.Add(iNum);
+                        }
+                        else
+                        {
+                            double dNum;
+                            LogicSharp.IsDouble(strs[i], out dNum);
+                            dNum = isNeg ? dNum * -1 : dNum;
+                            lst.Add(dNum);                            
+                        }
                     }
                     else
                     {
-                        char[] tempArr = strs[0].ToCharArray();
+                        char[] tempArr = strs[i].ToCharArray();
                         if (isNeg)
                         {
                             lst.Add(-1);                            
@@ -66,9 +77,18 @@ namespace ExprPatternMatch
                 {
                     if (LogicSharp.IsNumeric(strs[i]))
                     {
-                        double dNum;
-                        LogicSharp.IsDouble(strs[i], out dNum);
-                        lst.Add(dNum);
+                        int iNum;
+                        bool result000 = LogicSharp.IsInt(strs[i], out iNum);
+                        if (result000)
+                        {
+                            lst.Add(iNum);
+                        }
+                        else
+                        {
+                            double dNum;
+                            LogicSharp.IsDouble(strs[i], out dNum);
+                            lst.Add(dNum);
+                        }
                     }
                     else
                     {

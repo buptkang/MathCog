@@ -30,5 +30,15 @@ namespace ExprPatternMatch
             bool result = expr.IsEquation(out obj);
             Assert.False(result);
         }
+
+        [Test]
+        public void Test_3()
+        {
+            string txt = "d＾2 = 16+9";
+            Expr expr = Text.Convert(txt);
+            object obj;
+            bool result = expr.IsEquation(out obj);
+            Assert.True(result);
+        }
     }
 }
