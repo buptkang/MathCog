@@ -26,6 +26,7 @@ namespace MathCog
          * Given an equation 2y+2x-y+2x+4=0, graph this equation's corresponding shape?
          * What is the slope of this line? 
          */
+
         [Test]
         public void Test_Problem_5()
         {
@@ -38,7 +39,6 @@ namespace MathCog
             Assert.NotNull(lineSymbol);
 
             Assert.True(lineSymbol.Traces.Count == 7);
-            Assert.True(lineSymbol.StrategyTraces.Count == 1);
 
             //demonstration mode : look at the semantic KR
             Assert.True(lineSymbol.ToString().Equals("4x+y+4=0"));
@@ -47,8 +47,6 @@ namespace MathCog
             shapeExpr.IsSelected = true;
             shapeExpr.GenerateSolvingTrace();
             Assert.NotNull(shapeExpr.AutoTrace);
-            //tutor mode: refer to the syntax KR
-            //shapeExpr.Expr 
         }
 
         [Test]
@@ -73,7 +71,6 @@ namespace MathCog
             var agShapeExpr1 = queryExpr1.RenderKnowledge[0] as AGShapeExpr;
             Assert.NotNull(agShapeExpr1);
 
-            Assert.True(agShapeExpr1.ShapeSymbol.StrategyTraces.Count == 3);
             Assert.True(agShapeExpr1.ShapeSymbol.Traces.Count == 9);
             var glineSymbol = agShapeExpr1.ShapeSymbol as LineSymbol;
             Assert.NotNull(glineSymbol);
@@ -103,7 +100,6 @@ namespace MathCog
             var agShapeExpr1 = queryExpr1.RenderKnowledge[0] as AGShapeExpr;
             Assert.NotNull(agShapeExpr1);
 
-            Assert.True(agShapeExpr1.ShapeSymbol.StrategyTraces.Count == 3);
             Assert.True(agShapeExpr1.ShapeSymbol.Traces.Count == 9);
             var glineSymbol = agShapeExpr1.ShapeSymbol as LineSymbol;
             Assert.NotNull(glineSymbol);
@@ -131,7 +127,6 @@ namespace MathCog
             agPropertyExpr.GenerateSolvingTrace();
             Assert.True(agPropertyExpr.AutoTrace != null);
             Assert.True(agPropertyExpr.AutoTrace.Count == 1);
-            Assert.True(eqGoal.StrategyTraces.Count == 1);
         }
 
         [Test]
@@ -160,12 +155,10 @@ namespace MathCog
             var eqGoal = agPropertyExpr.Goal;
             Assert.NotNull(eqGoal);
             Assert.True(eqGoal.Rhs.Equals(-4));
-            Assert.True(eqGoal.StrategyTraces.Count == 3);
             //Trace
             agPropertyExpr.GenerateSolvingTrace();
             Assert.True(agPropertyExpr.AutoTrace != null);
             Assert.True(agPropertyExpr.AutoTrace.Count == 9);
-            Assert.True(agPropertyExpr.Strategies.Count == 3);
         }
     }
 }

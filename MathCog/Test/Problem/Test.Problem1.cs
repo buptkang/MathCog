@@ -55,6 +55,9 @@ namespace MathCog
             answerExpr.IsSelected = true;
             answerExpr.GenerateSolvingTrace();
             Assert.NotNull(answerExpr.AutoTrace);
+            Assert.True(answerExpr.AutoTrace.Count == 3);
+            int count = answerExpr.RetrieveStepsNumbers();
+            Assert.True(count == 8);
         }
 
         [Test]
@@ -143,9 +146,8 @@ namespace MathCog
             var agQueryExpr = obj as AGQueryExpr;
             Assert.NotNull(agQueryExpr);
 
-            bool userInput;
             const string input2Update = "B(5,6)";
-            Reasoner.Instance.Unload(input2, out userInput);
+            Reasoner.Instance.Unload(input2);
 
             agQueryExpr.RetrieveRenderKnowledge();
             Assert.True(agQueryExpr.RenderKnowledge == null);

@@ -14,6 +14,8 @@
  * limitations under the License.
  *******************************************************************************/
 
+using System.Diagnostics;
+
 namespace MathCog
 {
     using AlgebraGeometry;
@@ -97,16 +99,23 @@ namespace MathCog
             {
                 var traces = _shapeSymbol.Traces;
                 if (traces.Count == 0) return;
-                var lst = new List<TraceStepExpr>();
-                TraceStepExpr tse;
-                for (int i = 0; i < traces.Count; i++)
+                var lstTuples = new List<Tuple<object, object>>();
+                for (var i = 0; i < traces.Count; i++)
                 {
-                    var ts = traces[i];
-                    tse = new TraceStepExpr(ts);
-                    lst.Add(tse);
+                    var strategy = traces[i].Item1 as string;
+                    var steps = traces[i].Item2 as List<TraceStep>;
+                    Debug.Assert(steps != null);
+                    var gSteps = new List<TraceStepExpr>();
+                    foreach (TraceStep ts in steps)
+                    {
+                        var tse = new TraceStepExpr(ts);
+                        gSteps.Add(tse);
+                    }
+
+                    var gTuple = new Tuple<object, object>(strategy, gSteps);
+                    lstTuples.Add(gTuple);
                 }
-                AutoTrace = lst;
-                Strategies = _shapeSymbol.StrategyTraces;
+                AutoTrace = lstTuples;
                 return;
             }
 
@@ -119,6 +128,13 @@ namespace MathCog
                     temp.GenerateSolvingTrace();
                 }
             }
+        }
+
+        public override bool Equals(object obj)
+        {
+            var shapeExpr = obj as AGShapeExpr;
+            if (shapeExpr == null) return false;
+            return ShapeSymbol.Equals(shapeExpr.ShapeSymbol);
         }
 
         #endregion

@@ -14,6 +14,9 @@
  * limitations under the License.
  *******************************************************************************/
 
+using System.Diagnostics;
+using System.Threading;
+
 namespace MathCog
 {
     using System;
@@ -106,15 +109,23 @@ namespace MathCog
                 {
                     var traces = _equation.Traces;
                     if (traces.Count == 0) return;
-                    var lst = new List<TraceStepExpr>();
+                    var lstTuples = new List<Tuple<object, object>>();
                     for (var i = 0; i < traces.Count; i++)
                     {
-                        var ts = traces[i];
-                        var tse = new TraceStepExpr(ts);
-                        lst.Add(tse);
+                        var strategy = traces[i].Item1 as string;
+                        var steps = traces[i].Item2 as List<TraceStep>;
+                        Debug.Assert(steps != null);
+                        var gSteps = new List<TraceStepExpr>();
+                        foreach (TraceStep ts in steps)
+                        {
+                            var tse = new TraceStepExpr(ts); 
+                            gSteps.Add(tse);
+                        }
+
+                        var gTuple = new Tuple<object, object>(strategy, gSteps);
+                        lstTuples.Add(gTuple);
                     }
-                    AutoTrace = lst;
-                    Strategies = _equation.StrategyTraces;
+                    AutoTrace = lstTuples;
                 }
             }
             else
@@ -134,6 +145,13 @@ namespace MathCog
             var traces = _equation.Traces;
             if (traces.Count == 0) return false;
             return true;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var eqExpr = obj as AGEquationExpr;
+            if (eqExpr == null) return false;
+            return Equation.Equals(eqExpr.Equation);
         }
 
         #endregion

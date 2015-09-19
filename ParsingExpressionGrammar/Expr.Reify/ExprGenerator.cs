@@ -50,13 +50,26 @@ namespace AlgebraGeometry
             int integer;
             if (LogicSharp.IsInt(obj, out integer))
             {
-                return new IntegerNumber(integer.ToString());
+                var integerExpr = new IntegerNumber(integer.ToString());
+                if (integer < 0)
+                {
+                    return new CompositeExpr(WellKnownSym.times, new Expr[]{integerExpr});
+                }
+                else
+                {
+                    return integerExpr;
+                }
             }
 
             double dNumber;
             if (LogicSharp.IsDouble(obj, out dNumber))
             {
-                return new DoubleNumber(dNumber);
+                var doubleExpr = new DoubleNumber(dNumber);
+                if (dNumber < 0)
+                {
+                    return new CompositeExpr(WellKnownSym.times, new Expr[] { doubleExpr });
+                }
+                return doubleExpr;
             }
 
             return null;

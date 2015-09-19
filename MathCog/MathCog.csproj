@@ -50,8 +50,14 @@
     <Compile Include="ObjectModel\AGQueryExpr.cs" />
     <Compile Include="ObjectModel\AGShapeExpr.cs" />
     <Compile Include="ObjectModel\IKnowledgeExpr.cs" />
+    <Compile Include="ObjectModel\IKnowledgeGenerator.cs" />
     <Compile Include="ObjectModel\TraceExpr.cs" />
+    <Compile Include="Reasoner.Validate.cs" />
     <Compile Include="Test\Basics\Test.Equation.cs" />
+    <Compile Include="Test\Problem\Test.Problem96.cs" />
+    <Compile Include="Test\Problem\Test.Problem97.cs" />
+    <Compile Include="Test\Problem\Test.Problem98.cs" />
+    <Compile Include="Test\Problem\Test.Problem99.cs" />
     <Compile Include="Test\Basics\Test.RealTime.cs" />
     <Compile Include="Test\Problem\Test.Problem1.cs" />
     <Compile Include="Test\Problem\Test.Problem2.cs" />
@@ -70,7 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Geometry.Logic\Geometry.Logic.csproj">
-      <Project>{37ff5773-06ae-41c1-bb0f-b7fe22fc874b}</Project>
+      <Project>{6a38a2dc-768d-4490-9db3-9cf9998b6712}</Project>
       <Name>Geometry.Logic</Name>
     </ProjectReference>
     <ProjectReference Include="..\Geometry.Logic\lib\CSharpLogic\CSharpLogic.csproj">
@@ -102,6 +108,7 @@
     <None Include="ObjectModel\README.md" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

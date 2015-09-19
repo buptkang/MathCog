@@ -143,8 +143,7 @@ namespace MathCog
 
             ////////////////////////////////////////////////////////////////
 
-            bool userInput;
-            Reasoner.Instance.Unload(fact2, out userInput);
+            Reasoner.Instance.Unload(fact2);
             result = Reasoner.Instance.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);

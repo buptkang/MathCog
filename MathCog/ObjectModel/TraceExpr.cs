@@ -30,6 +30,8 @@ namespace MathCog
         public starPadSDK.MathExpr.Expr Target { get; set; }
         public starPadSDK.MathExpr.Expr StepExpr { get; set; }
 
+        public TraceStep TraceStep { get; set; }
+
         public TraceStepExpr(TraceStep ts)
         {
             MetaRule = ts.Rule as string;
@@ -38,6 +40,7 @@ namespace MathCog
             Target = ExprG.Generate(ts.Target);
             //StepExpr = ExprG.Derive(Source, Target);
             StepExpr = Target;
+            TraceStep = ts;
         }
 
         #endregion

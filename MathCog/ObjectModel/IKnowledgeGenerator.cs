@@ -14,34 +14,36 @@
  * limitations under the License.
  *******************************************************************************/
 
+using AlgebraGeometry;
+using CSharpLogic;
+
 namespace MathCog
 {
-    using NUnit.Framework;
-
-    [TestFixture]
-    public class TestRealTime
+    public static class IKnowledgeGenerator
     {
-        [Test]
-        public void Test0()
+        public static IKnowledge Generate(object obj)
         {
-            const string fact1 = "2x+y-1=0";
-            Reasoner.Instance.Load(fact1);
+            var shape = obj as ShapeSymbol;
+            var goal = obj as EqGoal;
+            var equation = obj as Equation;
+            if (shape != null)
+            {
+                return new AGShapeExpr(ExprG.Generate(shape), shape);
+            }
 
-            bool result = Reasoner.Instance.Unload(fact1);
-            Assert.True(result);
+            if (goal != null)
+            {
+                return new AGPropertyExpr(ExprG.Generate(goal), goal);
+            }
 
-            Assert.True(Reasoner.Instance.RelationGraph.Nodes.Count == 0);
+            if (equation != null)
+            {
+                return new AGEquationExpr(ExprG.Generate(equation), equation);
+            }
 
-            //const string user1 = "y+2x-1=0";
-            const string user1 = "y+3x-1=0";
-            var obj = Reasoner.Instance.Load(user1);
-            Assert.NotNull(obj);
-
-            Assert.True(Reasoner.Instance.RelationGraph.Nodes.Count == 0);
-            //Assert.True(Reasoner.Instance.RelationGraph.UserNodes.Count == 1);
-
-            result = Reasoner.Instance.Unload(user1);
-            Assert.True(result);
+            var knowledge = new IKnowledge(ExprG.Generate(obj));
+            knowledge.Tag = obj;
+            return knowledge;
         }
     }
 }

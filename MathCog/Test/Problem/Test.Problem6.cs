@@ -52,6 +52,7 @@ namespace MathCog
             var ls = queryTag.CachedEntities.ToList()[0] as LineSymbol;
             Assert.NotNull(ls);
             Assert.True(ls.SymA.Equals("-2"));
+            Assert.True(ls.ToString().Equals("y=-2x-4"));
         }
     }
 }

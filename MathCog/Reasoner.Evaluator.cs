@@ -24,6 +24,7 @@ namespace MathCog
     using CSharpLogic;
     using ExprPatternMatch;
     using starPadSDK.MathExpr;
+
     public partial class Reasoner
     {
         #region Input Eval and UnEval
@@ -63,6 +64,13 @@ namespace MathCog
                 return false;
                 //throw new Exception("TODO");
                 //return EvalExprPatterns(expr, dict, out output);
+            }
+
+            if (userInput)
+            {
+                var iknowledge = new IKnowledge(expr);
+                iknowledge.Tag = obj;
+                output = iknowledge;
             }
             return false;
         }
@@ -151,7 +159,11 @@ namespace MathCog
 
         private bool EvalExprPatterns(Expr expr, Equation eq, out object output, bool userInput = false)
         {
-            RelationGraph.AddNode(eq, userInput);
+            object obj = null;
+            if (!userInput)
+            {
+                obj = RelationGraph.AddNode(eq);
+            }            
             output = new AGEquationExpr(expr, eq);
             return true;
         }
@@ -167,7 +179,17 @@ namespace MathCog
         /// <returns></returns>
         private bool EvalExprPatterns(Expr expr, Query query, out object output, bool userInput = false)
         {
-            object obj = RelationGraph.AddNode(query, userInput);
+            object obj = null;
+            if (!userInput)
+            {
+                obj = RelationGraph.AddNode(query);
+                //Console.WriteLine("TODO");
+            }
+            else
+            {
+                obj = RelationGraph.AddNode(query);
+                RelationGraph.DeleteNode(obj);
+            }
             output = new AGQueryExpr(expr, query);
             return obj != null;
             //return EvalNonDeterministic(expr, obj, out output);
@@ -182,8 +204,9 @@ namespace MathCog
         /// <returns></returns>
         private bool EvalExprPatterns(Expr expr, ShapeSymbol ss, out object output, bool userInput = false)
         {
-            object obj = RelationGraph.AddNode(ss, userInput);
-            Debug.Assert(obj != null);
+            if (!userInput) RelationGraph.AddNode(ss);
+
+            //expr = ExprG.Generate(ss);
             output = new AGShapeExpr(expr, ss);
             return true;
         }
@@ -198,29 +221,32 @@ namespace MathCog
         /// <returns></returns>
         private bool EvalExprPatterns(Expr expr, EqGoal goal, out object output, bool userInput = false)
         {
-            object obj = RelationGraph.AddNode(goal, userInput);
+            object obj = null;
+            if (!userInput)
+            {
+                obj = RelationGraph.AddNode(goal);
+            }
             output = new AGPropertyExpr(expr, goal);
             return true;
         }
 
-        private bool UnEvalExprPatterns(object obj, out bool userInput)
+        private bool UnEvalExprPatterns(object obj)
         {
-            userInput = false;
             if (_cache.Count == 0) return false;
             var shapeSymExpr = obj as AGShapeExpr;
             if (shapeSymExpr != null)
             {
-                return RelationGraph.DeleteNode(shapeSymExpr.ShapeSymbol, out userInput);
+                return RelationGraph.DeleteNode(shapeSymExpr.ShapeSymbol);
             }
             var termExpr = obj as AGPropertyExpr;
             if (termExpr != null)
             {
-                return RelationGraph.DeleteNode(termExpr.Goal, out userInput);
+                return RelationGraph.DeleteNode(termExpr.Goal);
             }
             var queryExpr = obj as AGQueryExpr;
             if (queryExpr != null)
             {
-                return RelationGraph.DeleteNode(queryExpr.QueryTag, out userInput);
+                return RelationGraph.DeleteNode(queryExpr.QueryTag);
             }
             return false;
         }
