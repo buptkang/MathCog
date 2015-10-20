@@ -133,8 +133,17 @@ namespace MathCog
         public override bool Equals(object obj)
         {
             var shapeExpr = obj as AGShapeExpr;
-            if (shapeExpr == null) return false;
-            return ShapeSymbol.Equals(shapeExpr.ShapeSymbol);
+            if (shapeExpr != null)
+            {
+                return ShapeSymbol.Equals(shapeExpr.ShapeSymbol);                
+            }
+            var shapeSym = obj as ShapeSymbol;
+            if (shapeSym != null)
+            {
+                return ShapeSymbol.Equals(shapeSym);
+            }
+
+            return false;
         }
 
         #endregion

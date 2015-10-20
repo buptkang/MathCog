@@ -24,18 +24,23 @@ namespace MathCog
     public partial class TestProblems
     {
         /*
-         * There exists two points A(3,4) and B(4,v), the distance between A and B is 5. What is the value of v?
+         * There exists two points A(2,4) and B(5,v), the distance between A and B is 5. 
+         *  What is the value of v?
          */
         [Test]
-        public void Test_Problem_2()
+        public void Test_Problem_02()
         {
-            const string input1 = "A(3,4)";
-            const string input2 = "B(7,v)";
+            const string input1 = "A(2,4)";
+            const string input2 = "B(5,v)";
             const string input3 = "d=5";
             const string query = "v=";
 
             Reasoner.Instance.Load(input1);
             Reasoner.Instance.Load(input2);
+            Reasoner.Instance.Load(input3);
+
+            Assert.True(Reasoner.Instance.RelationGraph.Nodes.Count == 5);
+
            
             var obj = Reasoner.Instance.Load(query);
             Assert.NotNull(obj);
@@ -43,18 +48,40 @@ namespace MathCog
             Assert.NotNull(agQueryExpr);
             var queryTag = agQueryExpr.QueryTag;
             Assert.NotNull(queryTag);
-            Assert.False(queryTag.Success);
-
-            Reasoner.Instance.Load(input3);
             Assert.True(queryTag.Success);
             Assert.True(queryTag.CachedEntities.Count == 2);
             var goal1 = queryTag.CachedEntities.ToList()[0] as EqGoal;
             Assert.NotNull(goal1);
-            Assert.True(goal1.Rhs.Equals(9));
+            Assert.True(goal1.Rhs.Equals(0));
             var goal2 = queryTag.CachedEntities.ToList()[1] as EqGoal;
             Assert.NotNull(goal2);
-            Assert.True(goal2.Rhs.Equals(-1));
+            Assert.True(goal2.Rhs.Equals(8));
+
+            Reasoner.Instance.Reset();
         }
+
+        #region Behavior Validate
+
+        [Test]
+        public void Test_Problem_02_BehaviorValidate_01()
+        {
+            const string input1 = "A(2,4)";
+            const string input2 = "B(5,v)";
+            const string query = "v=";
+
+            bool? result = Reasoner.Instance.VerifyConcreteSymbol(input1);
+            Assert.True(result != null);
+            Assert.True(result.Value);
+
+            result = Reasoner.Instance.VerifyConcreteSymbol(input2);
+            Assert.True(result != null);
+            Assert.False(result.Value);
+
+            result = Reasoner.Instance.VerifyConcreteSymbol(query);
+            Assert.Null(result);
+        }
+
+        #endregion
 
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 using CSharpLogic;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
+using starPadSDK.UnicodeNs;
 using Text = starPadSDK.MathExpr.Text;
 using starPadSDK.MathExpr;
 using ExprSemantic;
@@ -14,6 +15,13 @@ namespace ExprPatternMatch
     [TestFixture]
     public class TestGoal
     {
+        /*
+         * 1. x=1 (ambiguity input) 
+         * 2. x=y (Not goal, should be line)
+         * 
+         * 
+         */ 
+
         [Test]
         public void Test0()
         {
@@ -21,31 +29,41 @@ namespace ExprPatternMatch
             string txt = "x = 1";
             Expr expr = Text.Convert(txt);
             object obj = ExprVisitor.Instance.Match(expr);
-            Assert.IsInstanceOf(typeof(EqGoal), obj);
+
+            var lst = obj as Dictionary<PatternEnum, object>;
+            Assert.NotNull(lst);
+        }
+
+        [Test]
+        public void TEst0_1()
+        {
+            //x=y           
+            string txt = "m1=m2";
+            Expr expr = Text.Convert(txt);
+
+            object obj;
+            bool result = expr.IsEquationLabel(out obj);
+            Assert.True(result);
+
+            var eq = obj as Equation;
+            Assert.NotNull(eq);
+
+            result = eq.IsEqGoal(out obj);
+            Assert.False(result);
+
+            //object obj = ExprVisitor.Instance.Match(expr);
+            /* Assert.IsInstanceOf(typeof(EqGoal), obj);
             var eqGoal = obj as EqGoal;
             Assert.NotNull(eqGoal);
             Assert.IsInstanceOf(typeof(Var), eqGoal.Lhs);
             var variable = eqGoal.Lhs as Var;
             Assert.NotNull(variable);
             Assert.True(variable.Token.ToString().Equals("x"));
-            Assert.True(eqGoal.Rhs.Equals(1));
-
-            //x=y           
-            txt = "x = y";
-            expr = Text.Convert(txt);
-            obj = ExprVisitor.Instance.Match(expr);
-            Assert.IsInstanceOf(typeof(EqGoal), obj);
-            eqGoal = obj as EqGoal;
-            Assert.NotNull(eqGoal);
-            Assert.IsInstanceOf(typeof(Var), eqGoal.Lhs);
-            variable = eqGoal.Lhs as Var;
-            Assert.NotNull(variable);
-            Assert.True(variable.Token.ToString().Equals("x"));
             Assert.IsInstanceOf(typeof(Var), eqGoal.Rhs);
             variable = eqGoal.Rhs as Var;
             Assert.NotNull(variable);
             Assert.True(variable.Token.ToString().Equals("y"));
-            Assert.True(eqGoal.Traces.Count == 0);
+            Assert.True(eqGoal.Traces.Count == 0);*/
         }
 
         [Test]
@@ -110,59 +128,26 @@ namespace ExprPatternMatch
             Assert.True(eqGoal.Traces.Count == 3);
         }
 
-        public void Test_Symmetric()
+        [Test]
+        public void Test3()
         {
-            /*
-            //1 = x
-            txt = "1 = x";
-            expr = Text.Convert(txt);
-            result = expr.IsGoal(out obj);
+            //y-3=10
+            const string txt = "y-3=10";
+            Expr expr = Text.Convert(txt);
+            object obj;
+            bool result = expr.IsEquationLabel(out obj);
             Assert.True(result);
-            Assert.IsInstanceOf(typeof(EqGoal), obj);
-            eqGoal = obj as EqGoal;
-            Assert.NotNull(eqGoal);
-            Assert.IsInstanceOf(typeof(Var), eqGoal.Rhs);
-            variable = eqGoal.Rhs as Var;
-            Assert.NotNull(variable);
-            Assert.True(variable.Token.ToString().Equals("x"));
-            Assert.True(eqGoal.Lhs.Equals(1));
-            Assert.True(eqGoal.Traces.Count == 0);
-             */ 
-        }
+            var eq = obj as Equation;
+            Assert.NotNull(eq);
 
-        public void Test7()
-        {
-            //TODO
-            //associative rule
-            /*
-            txt = "m + 1 -2 = y";
-            expr = Text.Convert(txt);
-            result = expr.IsGoal(out obj);
+            result = eq.IsEqGoal(out obj);
             Assert.True(result);
-            Assert.IsInstanceOf(typeof(EqGoal), obj);
-            eqGoal = obj as EqGoal;
+
+            var eqGoal = obj as EqGoal;
             Assert.NotNull(eqGoal);
-            Assert.IsInstanceOf(typeof(Term), eqGoal.Lhs);
-            var term = eqGoal.Lhs as Term;
-            Assert.NotNull(term);
-            Assert.True(term.Op.Method.Name.Equals("Add"));
-            var tuple = term.Args as Tuple<object, object>;
-            Assert.NotNull(tuple);
-            variable = tuple.Item1 as Var;
-            Assert.NotNull(variable);
-            Assert.True(variable.Token.ToString().Equals("m"));
-            Assert.True(tuple.Item2.Equals(-1));
 
-            Assert.IsInstanceOf(typeof(Var), eqGoal.Rhs);
-            variable = eqGoal.Rhs as Var;
-            Assert.NotNull(variable);
-            Assert.True(variable.Token.ToString().Equals("y"));
-
-            Assert.True(eqGoal.TraceCount == 1);
-            */
-
-            //1+y = m+1
-
-        }
+            Assert.True(eqGoal.Rhs.Equals(13));
+        }  
+      
     }
 }

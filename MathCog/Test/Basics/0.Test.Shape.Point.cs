@@ -14,6 +14,8 @@
  * limitations under the License.
  *******************************************************************************/
 
+using starPadSDK.MathExpr;
+
 namespace MathCog
 {
     using AlgebraGeometry;
@@ -96,6 +98,25 @@ namespace MathCog
             Assert.NotNull(propExpr);
             Assert.True(shapeExpr.ShapeSymbol.CachedSymbols.Count == 1);
         }
+
+        [Test]
+        public void Test_PatternMatch2()
+        {
+            /*
+             *  (0,-4)
+             */
+            const string fact1 = "(0,-4)";
+            var result = Reasoner.Instance.Load(fact1);
+            var shapeExpr = result as AGShapeExpr;
+            Assert.NotNull(shapeExpr);
+            Assert.True(shapeExpr.ShapeSymbol.ToString().Equals("(0,-4)"));
+
+            var ps = shapeExpr.ShapeSymbol as PointSymbol;
+            Expr expr = ps.ToExpr();
+            Assert.NotNull(expr);
+
+        }
+
 
         #endregion
 

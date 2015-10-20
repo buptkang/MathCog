@@ -102,6 +102,41 @@ namespace MathCog
             Assert.True(lineSym.SymC.Equals("3"));
         }
 
+        [Test]
+        public void Test_Line_Concrete5()
+        {
+            var reasoner = Reasoner.Instance;
+            const string fact1 = "-2x+3.2y+1=0";
+            reasoner.Load(fact1);
+            var result = reasoner.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 1);
+            var ls = result[0];
+            Assert.NotNull(ls);
+            var lineSym = ls.ShapeSymbol as LineSymbol;
+            Assert.NotNull(lineSym);
+            Assert.True(lineSym.SymA.Equals("-2"));
+            Assert.True(lineSym.SymB.Equals("3.2"));
+            Assert.True(lineSym.SymC.Equals("1"));
+        }
+
+        [Test]
+        public void Test_Line_Concrete6()
+        {
+         /*   var reasoner = Reasoner.Instance;
+            const string fact1 = "-4x-y+5=0";
+            reasoner.Load(fact1, null, true);
+            var result = reasoner.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 1);
+            var ls = result[0];
+            Assert.NotNull(ls);
+            var lineSym = ls.ShapeSymbol as LineSymbol;
+            Assert.NotNull(lineSym);*/
+        
+        }
+
+
 
         #endregion
 

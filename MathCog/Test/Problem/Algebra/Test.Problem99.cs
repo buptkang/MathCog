@@ -26,12 +26,13 @@ namespace MathCog
     public partial class TestProblems
     {
         /*
-         * Simplify the expression 1+2-3?
+         * Simplify the expression 1+2+3?
          */
+
         [Test]
-        public void Test_Problem98()
+        public void Test_Problem_99()
         {
-            const string fact1 = "1+2-3=";
+            const string fact1 = "1+2+3=";
             var queryExpr = Reasoner.Instance.Load(fact1) as AGQueryExpr;
             Assert.NotNull(queryExpr);
             queryExpr.RetrieveRenderKnowledge();
@@ -48,6 +49,8 @@ namespace MathCog
             var steps = agEquationExpr.AutoTrace[0].Item2 as List<TraceStepExpr>;
             Assert.NotNull(steps);
             Assert.True(steps.Count == 2);
+
+            Reasoner.Instance.Reset();
         }
     }
 }

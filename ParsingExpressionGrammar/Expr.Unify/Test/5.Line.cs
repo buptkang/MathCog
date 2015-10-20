@@ -26,8 +26,8 @@ namespace ExprPatternMatch
          *  5: ax=2
          *  6: by=0
          *  7: cy=0
-         *  //TODO 8: -2.1x-3y-1=0
-         *  //TODO 9: -2x+3.2y+1=0
+         *  8: -2.1x-3y-1=0
+         *  9: -2x+3.2y+1=0
          *  10: ax-by+1=0
          *  11: -ax-by-9=0 
          *  12: 2x=1
@@ -38,6 +38,11 @@ namespace ExprPatternMatch
          *  17: y = -x+3
          *  18: y = -ax+3
          *  19: a(x+2y-1=0)
+         *  20: y = 3x+2
+         *  21: y= 3x+k
+         *  22: y-3=10
+         *  23: 4y=x
+         *  24: y=3x
          * 
          * False Negative Test:
          *  
@@ -118,7 +123,6 @@ namespace ExprPatternMatch
             Assert.True(ls.SymA.Equals("2"));
             Assert.True(ls.SymB.Equals("1"));
             Assert.True(ls.ToString().Equals("2x+y+1=0"));
-            Assert.True(ls.Traces.Count == 0);
         }
 
         [Test]
@@ -185,7 +189,6 @@ namespace ExprPatternMatch
         [Test]
         public void Test_Line_TruePositive_8()
         {
-            //TODO has issue here
             const string txt = "-2.1x-3y-1=0";
             Expr expr = Text.Convert(txt);
             object obj;
@@ -204,7 +207,7 @@ namespace ExprPatternMatch
         [Test]
         public void Test_Line_TruePositive_9()
         {
-            const string txt = "-2x+3y+1=0";
+            const string txt = "-2x+3.2y+1=0";
             Expr expr = Text.Convert(txt);
             object obj;
             LineSymbol ls;
@@ -215,7 +218,7 @@ namespace ExprPatternMatch
             result = eq.IsLineEquation(out ls);
             Assert.True(result);
             Assert.True(ls.SymA.Equals("-2"));
-            Assert.True(ls.SymB.Equals("3"));
+            Assert.True(ls.SymB.Equals("3.2"));
             Assert.True(ls.SymC.Equals("1"));
         }
 
@@ -409,6 +412,101 @@ namespace ExprPatternMatch
             Assert.NotNull(eq);
             Assert.True(eq.EqLabel != null);
             Assert.True(eq.EqLabel.ToString().Equals("ab"));
+        }
+
+        [Test]
+        public void Test_Line_TruePositive_20()
+        {
+            //20:  y = 3x+2
+            const string txt = " y = 3x+2";
+            Expr expr = Text.Convert(txt);
+            object obj;
+            LineSymbol ls;
+            bool result = expr.IsEquationLabel(out obj);
+            Assert.True(result);
+            var eq = obj as Equation;            
+            Assert.NotNull(eq);
+
+            result = eq.IsLineEquation(out ls);
+            Assert.True(result);
+            Assert.True(ls.ToString().Equals("y=3x+2"));
+        }
+
+        [Test]
+        public void Test_Line_TruePositive_21()
+        {
+            //21: y= 3x+k
+            const string txt = "y=3x+k";
+            Expr expr = Text.Convert(txt);
+            object obj;
+            LineSymbol ls;
+            bool result = expr.IsEquationLabel(out obj);
+            Assert.True(result);
+            var eq = obj as Equation;
+            Assert.NotNull(eq);
+
+            result = eq.IsLineEquation(out ls, false);
+            Assert.True(result);
+            Assert.True(ls.ToString().Equals("y=3x+k"));
+        }
+
+        [Test]
+        public void Test_Line_TruePositive_22()
+        {
+            string a = "-10.6x";
+
+            string b = a.Substring(1, 2);
+
+
+            //22: y-3= 10
+            const string txt = "y-3=10";
+            Expr expr = Text.Convert(txt);
+            object obj;
+            LineSymbol ls;
+            bool result = expr.IsEquationLabel(out obj);
+            Assert.True(result);
+            var eq = obj as Equation;
+            Assert.NotNull(eq);
+
+            result = eq.IsLineEquation(out ls);
+            Assert.True(result);
+            Assert.True(ls.ToString().Equals("y-13=0"));
+        }
+
+        [Test]
+        public void Test_Line_TruePositive_23()
+        {
+            //23. 4y=x
+            const string txt = "4y=x";
+            Expr expr = Text.Convert(txt);
+            object obj;
+            LineSymbol ls;
+            bool result = expr.IsEquationLabel(out obj);
+            Assert.True(result);
+            var eq = obj as Equation;
+            Assert.NotNull(eq);
+
+            result = eq.IsLineEquation(out ls);
+            Assert.True(result);
+            Assert.True(ls.ToString().Equals("-x+4y=0"));
+        }
+
+        [Test]
+        public void Test_Line_TruePositive_24()
+        {
+            //24: y=3x
+            const string txt = "y=3x";
+            Expr expr = Text.Convert(txt);
+            object obj;
+            LineSymbol ls;
+            bool result = expr.IsEquationLabel(out obj);
+            Assert.True(result);
+            var eq = obj as Equation;
+            Assert.NotNull(eq);
+
+            result = eq.IsLineEquation(out ls);
+            Assert.True(result);
+//            Assert.True(ls.ToString().Equals("-x+4y=0"));
         }
 
         [Test]

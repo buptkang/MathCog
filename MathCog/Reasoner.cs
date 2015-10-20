@@ -67,26 +67,69 @@ namespace MathCog
 
         #region Input communication with lower reasoning engine
 
-        public object Load(object obj, ShapeType? st = null, bool tutorMode = false)
+        public object Load(object obj, ShapeType? st = null, 
+            bool tutorMode = false, bool algebraSide = true)
         {
             var str = obj as string;     // text input
-            if (str != null) return Load(str, st, tutorMode);
+            if (str != null) return Load(str, st, tutorMode, algebraSide);
             var expr = obj as Expr;      // sketch input
-            if (expr != null) return Load(expr, st, tutorMode);
+            if (expr != null) return Load(expr, st, tutorMode, algebraSide);
+            var ss = obj as ShapeSymbol;
+            if (ss != null) return Load(ss, tutorMode);
             return null;
         }
 
-        private object Load(Expr expr, ShapeType? st = null, bool tutorMode = false)
+        //Geometry Side Input Variation
+        private object Load(ShapeSymbol rTemp, bool tutorMode = false)
         {
-            //pre-fetch
-            foreach (KeyValuePair<object, object> pair in _cache)
+            Expr expr = ExprG.Generate(rTemp);
+            object output;
+            EvalExprPatterns(expr, rTemp, null, out output, tutorMode);
+            var iKnowledge = output as IKnowledge;
+            if (iKnowledge != null && !tutorMode)
             {
-                if (pair.Key.Equals(expr))
+                _cache.Add(new KeyValuePair<object, object>(rTemp, iKnowledge));
+            }
+            return output;
+        }
+
+        private object Load(Expr expr, ShapeType? st = null, 
+            bool tutorMode = false, bool algebraSide = true)
+        {
+            if (!tutorMode)
+            {
+                //pre-fetch
+                foreach (KeyValuePair<object, object> pair in _cache)
                 {
-                    return pair.Value;
+                    if (pair.Key.Equals(expr))
+                    {
+                        return pair.Value;
+                    }
+                }                
+            }
+
+            if (tutorMode && !algebraSide)
+            {
+                //pre-fetch
+                foreach (KeyValuePair<object, object> pair in _cache)
+                {
+                    if (pair.Key.Equals(expr))
+                    {
+                        return pair.Value;
+                    }
                 }
             }
-            var rTemp = ExprVisitor.Instance.Match(expr, tutorMode); //input patter match
+
+            object rTemp = null;
+            if (tutorMode)
+            {
+                rTemp = ExprVisitor.Instance.UserMatch(expr);
+            }
+            else
+            {
+                rTemp = ExprVisitor.Instance.Match(expr);
+            }
+             //input patter match
             Debug.Assert(rTemp != null);
             object output;
 
@@ -99,21 +142,42 @@ namespace MathCog
             return output;
         }
 
-        private object Load(string fact, ShapeType? st = null, bool tutorMode = false)
+        private object Load(string fact, ShapeType? st = null, 
+            bool tutorMode = false, bool algebraSide = true)
         {
-            //pre-fetch
-            if (_preCache.ContainsKey(fact))
+            if (!tutorMode)
             {
-                var cachedExpr = _preCache[fact] as Expr;
-                Debug.Assert(cachedExpr != null);
-                foreach (KeyValuePair<object, object> pair in _cache)
+                //pre-fetch
+                if (_preCache.ContainsKey(fact))
                 {
-                    if (pair.Key.Equals(cachedExpr))
+                    var cachedExpr = _preCache[fact] as Expr;
+                    Debug.Assert(cachedExpr != null);
+                    foreach (KeyValuePair<object, object> pair in _cache)
                     {
-                        return pair.Value;
+                        if (pair.Key.Equals(cachedExpr))
+                        {
+                            return pair.Value;
+                        }
                     }
+                    throw new Exception("Cannot reach here!");
                 }
-                throw new Exception("Cannot reach here!");
+            }
+            if (tutorMode && !algebraSide)
+            {
+                //pre-fetch
+                if (_preCache.ContainsKey(fact))
+                {
+                    var cachedExpr = _preCache[fact] as Expr;
+                    Debug.Assert(cachedExpr != null);
+                    foreach (KeyValuePair<object, object> pair in _cache)
+                    {
+                        if (pair.Key.Equals(cachedExpr))
+                        {
+                            return pair.Value;
+                        }
+                    }
+                    throw new Exception("Cannot reach here!");
+                }
             }
             Expr expr = Text.Convert(fact);
             object result = Load(expr, st, tutorMode);
@@ -129,17 +193,35 @@ namespace MathCog
         {
             var strObj = obj as string;
             var exprObj = obj as Expr;
+            var shapeObj = obj as ShapeSymbol;
             if (strObj != null)
             {
                 return Unload(strObj);
             }
-
             if (exprObj != null)
             {
                 return Unload(exprObj);
             }
-
+            if (shapeObj != null)
+            {
+                UnLoad(shapeObj);
+            }
             throw new Exception("Cannot reach here!!!");
+        }
+
+        //Geometry Side Input Variation
+        private object UnLoad(ShapeSymbol rTemp)
+        {
+            List<KeyValuePair<object, object>> fact
+                = _cache.Where(x => x.Key.Equals(rTemp)).ToList();
+            if (fact.Count != 0)
+            {
+                Debug.Assert(fact.Count == 1);
+                bool result = UnEvalExprPatterns(fact[0].Value);
+                _cache.Remove(fact[0]);
+                return result;
+            }
+            return false;
         }
 
         private bool Unload(string fact)
@@ -174,42 +256,6 @@ namespace MathCog
             _preCache = new Dictionary<object, object>();
         }
 
-        #endregion
-
-        #region Query API
-
-        public object SurfaceValidate(Expr expr)
-        {
-            var tempObj = ExprVisitor.Instance.Match(expr, false); //input patter match
-
-            return tempObj;
-        }
-
-        /// <summary>
-        /// In TutorMode, verify user's own input state
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="?"></param>
-        /// <returns>List<TraceStep></returns>
-        public object Validate(object obj, out object objOutput)
-        {
-            var expr = obj as Expr;
-            var str = obj as string;     // text input
-            if (str != null)
-            {
-                expr = Text.Convert(str);
-            }
-            Debug.Assert(expr != null);
-
-            var rTemp = ExprVisitor.Instance.Match(expr, true); //input patter match
-            Debug.Assert(rTemp != null);
-
-            rTemp = ExprVisitor.Instance.Transform(rTemp);
-            object output;
-            InternalValidate(expr, rTemp, out output);
-            objOutput = rTemp;
-            return output;
-        }
         #endregion
     }
 }

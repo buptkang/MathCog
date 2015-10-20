@@ -37,6 +37,15 @@ namespace MathCog
         {
             output = null;
 
+            //non-deterministic Multi-Candidate selection
+            var dict = obj as Dictionary<PatternEnum, object>;
+            //ambiguity of input pattern
+            if (dict != null)
+            {
+                EvalExprPatterns(expr, dict, out output);
+                obj = output;
+            }
+
             //deterministic
             var ss = obj as ShapeSymbol;
             if (ss != null) return EvalExprPatterns(expr, ss, out output, userInput);
@@ -55,16 +64,6 @@ namespace MathCog
             var str = obj as string;
             var gQuery = new Query(str, st);
             if (str != null) return EvalExprPatterns(expr, gQuery, out output, userInput);
-
-            //non-deterministic Multi-Candidate selection
-            var dict = obj as Dictionary<PatternEnum, object>;
-            //ambiguity of input pattern
-            if (dict != null)
-            {
-                return false;
-                //throw new Exception("TODO");
-                //return EvalExprPatterns(expr, dict, out output);
-            }
 
             if (userInput)
             {
@@ -86,75 +85,54 @@ namespace MathCog
             out object output)
         {
             output = null;
-            return false;
-            /*            List<object> objs = dict.Values.ToList();
-                        //convert shapesymbol to shape
-                        var lst = new List<object>();
-                        foreach (object obj in objs)
-                        {
-                            var ss = obj as ShapeSymbol;
-                            if (ss != null)
-                            {
-                                lst.Add(ss.Shape);
-                            }
-                            else
-                            {
-                                lst.Add(obj);
-                            }
-                        }
-                        object obj1 = RelationGraph.Add(lst);
-                        return EvalNonDeterministic(expr, obj1, out output);*/
-        }
-
-        private bool EvalNonDeterministic(Expr expr, object obj, out object output)
-        {
-            output = null;
-            var shape = obj as Shape;
-            if (shape != null)
+            if (dict.Values.Count == 0) return false;
+            List<object> objs = dict.Values.ToList();
+            //convert shapesymbol to shape
+            var lst = new List<object>();
+            foreach (object obj in objs)
             {
-                var point = shape as Point;
-                if (point != null)
+                var shapeSymbol = obj as ShapeSymbol;
+                var eqGoal = obj as EqGoal;
+
+                bool relExist;
+                if (shapeSymbol != null)
                 {
-                    var ps = new PointSymbol(point);
-                    output = new AGShapeExpr(expr, ps);
-                    return true;
-                }
-                var line = shape as Line;
-                if (line != null)
-                {
-                    var ls = new LineSymbol(line);
-                    output = new AGShapeExpr(expr, ls);
-                    return true;
+                    relExist = RelationGraph.RelationExist(shapeSymbol);
+                    if (relExist)
+                    {
+                        lst.Add(obj);
+                    }
                 }
 
-                var lineSeg = shape as LineSegment;
-                if (lineSeg != null)
+                if (eqGoal != null)
                 {
-                    var lss = new LineSegmentSymbol(lineSeg);
-                    output = new AGShapeExpr(expr, lss);
-                    return true;
+                    relExist = RelationGraph.RelationExist(eqGoal);
+                    if (relExist)
+                    {
+                        lst.Add(obj);
+                    }
                 }
-
-                throw new Exception("Cannot reach here");
             }
 
-            var goal = obj as Goal;
-            if (goal != null)
+            if (lst.Count == 0)
             {
-                var eqGoal = goal as EqGoal;
-                Debug.Assert(eqGoal != null);
-                output = new AGPropertyExpr(expr, eqGoal);
+               
+                output = dict.Values.ToList()[0];
                 return true;
             }
 
-            var types = obj as List<ShapeType>;
-            if (types != null)
+            if (lst.Count == 1)
             {
-                output = types;
-                //user interaction required to disambiguate.
-                return false;
+                output = lst[0];
+                return true;
             }
-            return false;
+
+            if (lst.Count != 0)
+            {
+                //TODO Non-deterministic selection
+                output = lst[0];                
+            }
+            return true;
         }
 
         private bool EvalExprPatterns(Expr expr, Equation eq, out object output, bool userInput = false)
@@ -163,7 +141,7 @@ namespace MathCog
             if (!userInput)
             {
                 obj = RelationGraph.AddNode(eq);
-            }            
+            }
             output = new AGEquationExpr(expr, eq);
             return true;
         }
@@ -183,12 +161,6 @@ namespace MathCog
             if (!userInput)
             {
                 obj = RelationGraph.AddNode(query);
-                //Console.WriteLine("TODO");
-            }
-            else
-            {
-                obj = RelationGraph.AddNode(query);
-                RelationGraph.DeleteNode(obj);
             }
             output = new AGQueryExpr(expr, query);
             return obj != null;
@@ -206,7 +178,7 @@ namespace MathCog
         {
             if (!userInput) RelationGraph.AddNode(ss);
 
-            //expr = ExprG.Generate(ss);
+            expr = ExprG.Generate(ss);
             output = new AGShapeExpr(expr, ss);
             return true;
         }
@@ -288,6 +260,24 @@ namespace MathCog
         {
             return GetQueryFacts();
         }
+
+        public IKnowledge SearchKnowledge(string handler)
+        {
+            if (!_preCache.ContainsKey(handler)) return null;
+            var expr = _preCache[handler] as Expr;
+
+            foreach (KeyValuePair<object, object> pair in _cache)
+            {
+                if (pair.Key.Equals(expr))
+                {
+                    var obj = pair.Value as IKnowledge;
+                    if (obj != null) return obj;
+                }
+            }
+
+            return null;
+        }
+
 
         #endregion
     }

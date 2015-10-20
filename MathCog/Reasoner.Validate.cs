@@ -31,9 +31,16 @@ namespace MathCog
         private void InternalValidate(Expr expr,object obj,out object output)
         {
             output = null;
+            var eqGoal   = obj as EqGoal;
             var query    = obj as Query;
             var equation = obj as Equation;
             var shape = obj as ShapeSymbol;
+
+            if (eqGoal != null)
+            {
+                InternalValidate(expr, eqGoal, out output);
+                return;
+            }
             if (query != null)
             {
                 InternalValidate(expr, query, out output);
@@ -64,13 +71,33 @@ namespace MathCog
                     return;
                 }
             }
+            output = RelationGraph.RelationExist(ss);
+        }
+
+        private void InternalValidate(Expr expr, EqGoal goal, out object output)
+        {
+            output = false;
+            foreach (var gn in RelationGraph.Nodes)
+            {
+                var goalNode = gn as GoalNode;
+                if (goalNode == null) continue;
+                var eqGoal = goalNode.Goal as EqGoal;
+                if (eqGoal == null) continue;
+
+                bool result = eqGoal.Equals(goal);
+                if (result)
+                {
+                    output = true;
+                    return;
+                }
+            }
         }
 
         private bool InternalValidate(Expr expr, Equation eq, out object trace)
         {
             trace = null;
 
-            var rTemp = ExprVisitor.Instance.Match(expr, false); //input patter match
+            var rTemp = ExprVisitor.Instance.Match(expr); //input patter match
 
             return false;
 
@@ -104,6 +131,7 @@ namespace MathCog
 
             var queryExpr = new AGQueryExpr(expr, query);
             queryExpr.RetrieveRenderKnowledge();
+            if (queryExpr.RenderKnowledge == null) return false;
             if (queryExpr.RenderKnowledge.Count == 0)
             {
                 return false;

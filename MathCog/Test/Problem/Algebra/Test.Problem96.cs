@@ -27,7 +27,7 @@ namespace MathCog
          *
          */
         [Test]
-        public void Test_Problem96()
+        public void Test_Problem_96()
         {
             const string fact1 = "x+2-1=";
             var queryExpr = Reasoner.Instance.Load(fact1) as AGQueryExpr;
@@ -46,6 +46,8 @@ namespace MathCog
             var steps = agEquationExpr.AutoTrace[0].Item2 as List<TraceStepExpr>;
             Assert.NotNull(steps);
             Assert.True(steps.Count == 1);
+
+            Reasoner.Instance.Reset();
         }
     }
 }

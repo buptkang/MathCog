@@ -57,6 +57,25 @@ namespace ExprPatternMatch
                 if (composite.Head.Equals(WellKnownSym.times))
                 {
                     var builder = new StringBuilder();
+
+                    if (composite.Args.Count() == 2)
+                    {
+                        object tempObj0;
+                        bool result = composite.Args[0].IsLabel(out tempObj0);
+                        if (result)
+                        {
+                            object tempObj1;
+                            bool result2 = composite.Args[1].IsNumeric(out tempObj1);
+                            if (result2)
+                            {
+                                builder.Append(tempObj0);
+                                builder.Append(tempObj1);
+                                label = builder.ToString();
+                                return true;
+                            }
+                        }
+                    }
+
                     foreach (Expr tempExpr in composite.Args)
                     {
                         object tempObj;
@@ -275,8 +294,22 @@ namespace ExprPatternMatch
             {
                 var str = obj as string;
                 Debug.Assert(str != null);
-                obj = TransformString(str);
+                obj = TransformString2(str);
+                if (obj == null) return false;
                 return true;
+            }
+            return false;
+        }
+
+        public static bool IsDivideExpression(this Expr expr, out object obj)
+        {
+            obj = null;
+            var root = expr as CompositeExpr;
+            if (root == null) return false;
+            if (root.Args.Count() == 1 && root.Head.Equals(WellKnownSym.divide))
+            {
+                var exp = root.Args[0];
+                return exp.IsExpression(out obj);
             }
             return false;
         }
@@ -288,97 +321,158 @@ namespace ExprPatternMatch
             if (expr.IsExpressionTerm(out obj)) return true;
 
             var root = expr as CompositeExpr;
-            if (root == null) return false;
-
-            if (root.Head.Equals(WellKnownSym.plus))
+            if (root != null)
             {
-                #region Addition Terms
-                var argCount = root.Args.Count();
-                var lst = new List<object>();
-                for (int i = 0; i < argCount; i++)
+                if (root.Head.Equals(WellKnownSym.plus))
+                {
+                    #region Addition Terms
+                    var argCount = root.Args.Count();
+                    var lst = new List<object>();
+                    for (int i = 0; i < argCount; i++)
+                    {
+                        object tempObj;
+                        if (root.Args[i].IsExpression(out tempObj))
+                        {
+                            lst.Add(tempObj);
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    obj = new Term(Expression.Add, lst);
+                    return true;
+                    #endregion
+                }
+
+                if (root.Head.Equals(WellKnownSym.minus))
                 {
                     object tempObj;
-                    if (root.Args[i].IsExpression(out tempObj))
+                    if (root.Args[0].IsExpression(out tempObj))
                     {
-                        lst.Add(tempObj);
+                        obj = new Term(Expression.Multiply,
+                            new List<object>() {-1, tempObj});
+                        return true;
+                    }
+                    return false;
+                }
+
+                if (root.Head.Equals(WellKnownSym.times))
+                {
+                    #region Multiply Term
+                    int argCount = root.Args.Count();
+
+                    if (argCount == 2)
+                    {
+                        object obj1;
+                        bool arg1Expr = root.Args[0].IsExpression(out obj1);
+                        object obj2;
+                        bool arg2Expr = root.Args[1].IsExpression(out obj2);
+
+                        object obj3;
+                        bool arg2DivideExpr = root.Args[1].IsDivideExpression(out obj3);
+
+                        if (arg1Expr && arg2Expr)
+                        {
+                            obj = new Term(Expression.Multiply, new List<object>() { obj1, obj2 });
+                            return true;
+                        }
+
+                        if (arg1Expr && arg2DivideExpr)
+                        {
+                            obj = new Term(Expression.Divide, new List<object>() { obj1, obj3 });
+                            return true;
+                        }
+
+                        return false;
+                    }
+                    else if (argCount > 2)
+                    {
+                        object obj1;
+                        bool arg1Expr = root.Args[0].IsExpression(out obj1);
+                        object obj2;
+                        bool arg2Expr = root.Args[1].IsExpression(out obj2);
+
+                        if (arg1Expr && arg2Expr)
+                        {
+                            obj = new Term(Expression.Multiply, new List<object>() { obj1, obj2 });
+                            object tempObj;
+                            for (int i = 2; i < argCount; i++)
+                            {
+                                if (root.Args[i].IsExpression(out tempObj))
+                                {
+                                    obj = new Term(Expression.Multiply, new List<object>() { obj, tempObj });
+                                }
+                            }
+                            return true;
+                        }
+                        return false;
                     }
                     else
                     {
                         return false;
                     }
+                    #endregion
                 }
-                obj = new Term(Expression.Add, lst);
-                return true;
-                #endregion
-            }            
-            
-            if (root.Head.Equals(WellKnownSym.times))
-            {
-                #region Multiply Term
-                int argCount = root.Args.Count();
-                if (argCount == 2)
-                {
-                    object obj1;
-                    bool arg1Expr = root.Args[0].IsExpression(out obj1);
-                    object obj2;
-                    bool arg2Expr = root.Args[1].IsExpression(out obj2);
 
-                    if (arg1Expr && arg2Expr)
-                    {
-                        obj = new Term(Expression.Multiply, new List<object>(){obj1, obj2});
-                        return true;
-                    }
-                    return false;
-                }
-                else if (argCount > 2)
+                if (root.Head.Equals(WellKnownSym.power))
                 {
-                    object obj1;
-                    bool arg1Expr = root.Args[0].IsExpression(out obj1);
-                    object obj2;
-                    bool arg2Expr = root.Args[1].IsExpression(out obj2);
-
-                    if (arg1Expr && arg2Expr)
+                    #region Power
+                    var argCount = root.Args.Count();
+                    if (argCount != 2) return false;
+                    var lst = new List<object>();
+                    for (int i = 0; i < argCount; i++)
                     {
-                        obj = new Term(Expression.Multiply, new List<object>(){obj1, obj2});
                         object tempObj;
-                        for (int i = 2; i < argCount; i++)
+                        if (root.Args[i].IsExpression(out tempObj))
                         {
-                            if (root.Args[i].IsExpression(out tempObj))
-                            {
-                                obj = new Term(Expression.Multiply, new List<object>(){obj, tempObj});
-                            }
+                            lst.Add(tempObj);
                         }
-                        return true;
+                        else
+                        {
+                            return false;
+                        }
                     }
-                    return false;
+                    obj = new Term(Expression.Power, lst);
+                    return true;
+                    #endregion
+                }
+            }
+
+            if (expr.IsLabel(out obj))
+            {
+                obj = new Var(obj);
+                return true;
+            }
+
+            if (root != null && root.Head.Equals(WellKnownSym.root))
+            {
+                #region root
+
+                var argCount = root.Args.Count();
+                if (argCount != 2) return false;
+                var lst = new List<object>();
+
+                object tempObj;
+                bool result = root.Args[0].IsNumeric(out tempObj);
+                if (!result) return false;
+                if (tempObj.Equals(2) || tempObj.Equals(2.0))
+                {
+                    lst.Add(0.5);
                 }
                 else
                 {
                     return false;
                 }
+                result = root.Args[1].IsExpression(out tempObj);
+                if (!result) return false;
+                lst.Insert(0, tempObj);
+                obj = new Term(Expression.Power, lst);
+                return true;
+
                 #endregion
             }
 
-            if (root.Head.Equals(WellKnownSym.power))
-            {
-                var argCount = root.Args.Count();
-                if (argCount != 2) return false;
-                var lst = new List<object>();
-                for (int i = 0; i < argCount; i++)
-                {
-                    object tempObj;
-                    if (root.Args[i].IsExpression(out tempObj))
-                    {
-                        lst.Add(tempObj);
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                obj = new Term(Expression.Power, lst);
-                return true;
-            }
             return false;
         }
     }
@@ -553,10 +647,10 @@ namespace ExprPatternMatch
                         } 
                     }
 
-                    if (!wordSymbol.Word.Equals("comma"))
+                    /*if (!wordSymbol.Word.Equals("comma"))
                     {
                         return false;
-                    }                    
+                    }*/        
                 }
                 else if (wellKnownSymbol != null)
                 {

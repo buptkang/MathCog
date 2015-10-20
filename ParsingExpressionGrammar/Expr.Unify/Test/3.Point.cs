@@ -67,17 +67,6 @@ namespace ExprPatternMatch
         }
 
         [Test]
-        public void Test4()
-        {
-            //TODO
-/*            txt = "(-3.0,y + 1 = 2)";
-            expr = Text.Convert(txt);
-            result = ExprVisitor.Instance.Match(expr);
-            ps = result as PointSymbol;
-            Assert.NotNull(ps);*/
-        }
-
-        [Test]
         public void TestCoordinate()
         {
             string txt = "-3.6";

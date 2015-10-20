@@ -52,6 +52,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test\0.Expression.Arithmetic.cs" />
     <Compile Include="Test\0.Expression.Eval.cs" />
+    <Compile Include="Test\0.Label.cs" />
     <Compile Include="Test\1.Expression.Algebra.cs" />
     <Compile Include="Test\2.Equation.cs" />
     <Compile Include="Test\4.Goal.cs" />

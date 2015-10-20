@@ -14,6 +14,8 @@
  * limitations under the License.
  *******************************************************************************/
 
+using System;
+
 namespace AlgebraGeometry
 {
     using CSharpLogic;
@@ -53,7 +55,7 @@ namespace AlgebraGeometry
                 var integerExpr = new IntegerNumber(integer.ToString());
                 if (integer < 0)
                 {
-                    return new CompositeExpr(WellKnownSym.times, new Expr[]{integerExpr});
+                    return new CompositeExpr(WellKnownSym.times, new Expr[] { integerExpr });
                 }
                 else
                 {
@@ -64,7 +66,9 @@ namespace AlgebraGeometry
             double dNumber;
             if (LogicSharp.IsDouble(obj, out dNumber))
             {
-                var doubleExpr = new DoubleNumber(dNumber);
+                var doubleExpr = new WordSym(dNumber.ToString());
+                //var doubleExpr = new DoubleNumber(dNumber);
+                
                 if (dNumber < 0)
                 {
                     return new CompositeExpr(WellKnownSym.times, new Expr[] { doubleExpr });
@@ -214,11 +218,33 @@ namespace AlgebraGeometry
         {
             int number;
             bool result = LogicSharp.IsInt(coord, out number);
-            if (result) return new IntegerNumber(coord);
+
+            if (result)
+            {
+                if (number < 0)
+                {
+                    var abs = Math.Abs(number);
+                    return new CompositeExpr(WellKnownSym.minus,
+                        new Expr[] { new IntegerNumber(abs) });
+                }
+                return new IntegerNumber(coord);
+            }
 
             double dNumber;
             result = LogicSharp.IsDouble(coord, out dNumber);
-            if (result) return new DoubleNumber(dNumber);
+
+            if (result)
+            {
+                if (number < 0)
+                {
+                    var abs = Math.Abs(number);
+                    return new CompositeExpr(WellKnownSym.minus,
+                        new Expr[] { new DoubleNumber(abs)});
+                }
+                return new DoubleNumber(dNumber);
+            }
+
+
 
             return new WordSym(coord);
         }

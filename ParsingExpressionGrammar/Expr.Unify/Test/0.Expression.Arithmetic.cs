@@ -197,8 +197,42 @@ namespace ExprPatternMatch
             Assert.NotNull(tuple1);
             Assert.True(tuple1.Item1.Equals(4));
             Assert.True(tuple1.Item2.Equals(1));
+        }
+
+        [Test]
+        public void Test_numerics_7()
+        {
+            var expr1 = new CompositeExpr(WellKnownSym.plus,
+                new Expr[] {new IntegerNumber("16"), new IntegerNumber("9")});
+            var expr2 = new CompositeExpr(WellKnownSym.root, 
+                new Expr[] {new IntegerNumber("2"), expr1});
+            var expr3 = new CompositeExpr(WellKnownSym.equals,
+                new Expr[] {new LetterSym('d'), expr2});
+
+            object obj;
+            bool result = expr2.IsExpression(out obj);
+            Assert.True(result);
+            var gTerm = obj as Term;
+            Assert.NotNull(gTerm);
+
+            result = expr3.IsEquation(out obj);
+            Assert.True(result);
+            var gEquation = obj as Equation;
+            Assert.NotNull(gEquation);
+        }
+
+        [Test]
+        public void Test_numerics_8()
+        {
+            var expr1 = new CompositeExpr(WellKnownSym.divide,
+                new Expr[] {new DoubleNumber(0.5)});
+
+            var expr2 = new CompositeExpr(WellKnownSym.times,
+                new Expr[] {-1, expr1});
+
+            object obj;
+            bool result = expr2.IsExpression(out obj);
+            Assert.True(result);
         }    
-
-
     }
 }

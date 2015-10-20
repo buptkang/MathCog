@@ -100,5 +100,86 @@ namespace ExprPatternMatch
             if (lst.Count == 1) return lst[0];
             return new Term(Expression.Multiply, lst);
         }
+
+        public static object TransformString2(string str)
+        {
+            char[] charArr = str.ToCharArray();
+            if (charArr.Length == 1) return new Var(str);
+            bool isNeg = charArr[0].Equals('-');
+
+            var lst = new List<object>();
+            int j = - 1;
+            for (int i = charArr.Count() - 1; i >= 0; i--)
+            {
+                if (Char.IsLetter(charArr[i]))
+                {
+                    lst.Insert(0, new Var(charArr[i]));
+                }
+                else
+                {
+                    j = i;
+                    break;
+                }
+            }
+            if (isNeg)
+            {
+                if (j == 0)
+                {
+                    var term1 = new Term(Expression.Multiply, new List<object>() {-1, lst[0]});
+                    lst[0] = term1;
+
+                    if (lst.Count == 1)
+                    {
+                        return lst[0];
+                    }
+                    return new Term(Expression.Multiply, lst);
+                }
+                var subStr = str.Substring(1, j);
+                bool result = LogicSharp.IsNumeric(subStr);
+                if (!result) return null;
+
+                int iNum;
+                bool result000 = LogicSharp.IsInt(subStr, out iNum);
+                if (result000)
+                {
+                    lst.Insert(0,-1*iNum);
+                }
+                else
+                {
+                    double dNum;
+                    LogicSharp.IsDouble(subStr, out dNum);
+                    lst.Insert(0,-1*dNum);
+                }
+            }
+            else
+            {
+                if (j == -1)
+                {
+                    if (lst.Count == 1)
+                    {
+                        return lst[0];
+                    }
+                    return new Term(Expression.Multiply, lst);
+                }
+                var subStr = str.Substring(0, j+1);
+
+                bool result = LogicSharp.IsNumeric(subStr);
+                if (!result) return null;
+
+                int iNum;
+                bool result000 = LogicSharp.IsInt(subStr, out iNum);
+                if (result000)
+                {
+                    lst.Insert(0,iNum);
+                }
+                else
+                {
+                    double dNum;
+                    LogicSharp.IsDouble(subStr, out dNum);
+                    lst.Insert(0,dNum);
+                }
+            }
+            return new Term(Expression.Multiply, lst);
+        }
     }
 }

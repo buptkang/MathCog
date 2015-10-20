@@ -79,12 +79,9 @@ namespace MathCog
                 }
                 else if (cacheEq != null)
                 {
-                    throw new Exception("TODO");
-                    /*
-                                        starPadSDK.MathExpr.Expr expr = ExprG.Generate(cacheEq);
-                                        var agEq = new AGEquationExpr(expr, cacheEq);
-                                        lst.Add(agEq);
-                     */
+                    starPadSDK.MathExpr.Expr expr = ExprG.Generate(cacheEq);
+                    var agEq = new AGEquationExpr(expr, cacheEq);
+                    lst.Add(agEq);
                 }
                 else
                 {

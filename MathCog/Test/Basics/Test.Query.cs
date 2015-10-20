@@ -239,7 +239,6 @@ namespace MathCog
             Assert.True(result.Count == 0);
         }
 
-
         [Test]
         public void Test_Equation_1()
         {

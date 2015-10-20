@@ -1,4 +1,7 @@
-﻿ /* Copyright (C) 2015 Bo Kang, Joseph J. LaViola Jr.
+﻿/*******************************************************************************
+ * Math Interactive Tutoring System
+ * <p>
+ * Copyright (C) 2015 Bo Kang, Joseph J. LaViola Jr.
  * <p>
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -16,8 +19,6 @@
 
 namespace MathCog
 {
-    using System;
-    using CSharpLogic;
     using System.Collections.Generic;
     using NUnit.Framework;
 
@@ -25,13 +26,12 @@ namespace MathCog
     public partial class TestProblems
     {
         /*
-         * Simplify the expression x+1+x-4?
-         * 
+         * Simplify the expression 1+2-3?
          */
         [Test]
-        public void Test_Problem97()
+        public void Test_Problem_98()
         {
-            const string fact1 = "x+1+x-4=";
+            const string fact1 = "1+2-3=";
             var queryExpr = Reasoner.Instance.Load(fact1) as AGQueryExpr;
             Assert.NotNull(queryExpr);
             queryExpr.RetrieveRenderKnowledge();
@@ -47,30 +47,9 @@ namespace MathCog
 
             var steps = agEquationExpr.AutoTrace[0].Item2 as List<TraceStepExpr>;
             Assert.NotNull(steps);
-            Assert.True(steps.Count == 4);
-        }
+            Assert.True(steps.Count == 2);
 
-        [Test]
-        public void Test_Problem97_1()
-        {
-            const string fact1 = "x+x-3";
-            object objOutput;
-            var trace = Reasoner.Instance.Validate(fact1, out objOutput) as List<Tuple<object, object>>;
-
-            var query = objOutput as Query;
-            Assert.NotNull(query);
-
-            Assert.NotNull(trace);
-            Assert.True(trace.Count == 1);
-            var strategy = trace[0].Item1 as string;
-            var tsLst = trace[0].Item2 as List<TraceStepExpr>;
-            Assert.NotNull(strategy);
-            Assert.NotNull(tsLst);
-            var eq = tsLst[1].TraceStep.Target as Equation;
-            Assert.NotNull(eq);
-            var term = eq.Rhs as Term;
-            Assert.NotNull(term);
-            Assert.True(term.ToString().Equals("((2*x)-3)"));
+            Reasoner.Instance.Reset();
         }
     }
 }
