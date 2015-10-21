@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{55264250-E814-4363-9DF5-0E9927F95DF0}</ProjectGuid>
+    <ProjectGuid>{0646D21E-DB97-480D-BDD3-F0A783F2BC84}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Expr.Generator</RootNamespace>
