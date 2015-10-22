@@ -14,7 +14,14 @@ AG.Reasoner is the logic inference engine with the long term memory.
 
 ##Citation##
 
+
+How to build:
+
+git submodule foreach --recursive git submodule update --init
+
+
 Coming Soon
+
 
 
 In tutor mode, the input or user input does not need to store on the constraint graph. 
