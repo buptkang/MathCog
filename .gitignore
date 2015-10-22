@@ -8,6 +8,8 @@
 
 # Build results
 
+Geometry.Logic/
+
 [Dd]ebug/
 [Rr]elease/
 x64/

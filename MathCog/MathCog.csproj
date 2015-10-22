@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{20496938-6B06-4A7B-8160-04E620938F3E}</ProjectGuid>
+    <ProjectGuid>{71ED2833-DDD7-43D4-8BDF-23FBB83D000C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MathCog</RootNamespace>
@@ -81,14 +81,6 @@
     <Compile Include="Test\Problem\Test.Problem56.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Geometry.Logic\Geometry.Logic.csproj">
-      <Project>{6a38a2dc-768d-4490-9db3-9cf9998b6712}</Project>
-      <Name>Geometry.Logic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Geometry.Logic\lib\CSharpLogic\CSharpLogic.csproj">
-      <Project>{b6ae1355-89f0-4ecb-83ac-b3b5118a6e4e}</Project>
-      <Name>CSharpLogic</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ParsingExpressionGrammar\Expr.Reify\Expr.Reify.csproj">
       <Project>{0646d21e-db97-480d-bdd3-f0a783f2bc84}</Project>
       <Name>Expr.Reify</Name>
