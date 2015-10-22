@@ -1,4 +1,0 @@
-[submodule "libs/Relation.Logic"]
-	path = libs/Relation.Logic
-	url = https://github.com/buptkang/Relation.Logic.git
-	branch = master
