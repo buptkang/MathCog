@@ -54,6 +54,14 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\libs\CSharp.Logic\CSharpLogic.csproj">
+      <Project>{b6ae1355-89f0-4ecb-83ac-b3b5118a6e4e}</Project>
+      <Name>CSharpLogic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\Relation.Logic\Geometry.Logic.csproj">
+      <Project>{37ff5773-06ae-41c1-bb0f-b7fe22fc874b}</Project>
+      <Name>Geometry.Logic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ExprText\ExprText.fsproj">
       <Project>{3d169bb6-4e9a-4757-a82c-e9a20a8f7a94}</Project>
       <Name>ExprText</Name>
