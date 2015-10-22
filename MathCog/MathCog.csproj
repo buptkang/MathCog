@@ -81,14 +81,6 @@
     <Compile Include="Test\Problem\Test.Problem56.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\libs\Relation.Logic\CSharp.Logic\CSharpLogic.csproj">
-      <Project>{deff2043-1cd0-4d03-a371-55901f39690c}</Project>
-      <Name>CSharpLogic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\libs\Relation.Logic\Geometry.Logic.csproj">
-      <Project>{37ff5773-06ae-41c1-bb0f-b7fe22fc874b}</Project>
-      <Name>Geometry.Logic</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ParsingExpressionGrammar\Expr.Reify\Expr.Reify.csproj">
       <Project>{0646d21e-db97-480d-bdd3-f0a783f2bc84}</Project>
       <Name>Expr.Reify</Name>
@@ -108,6 +100,14 @@
     <ProjectReference Include="..\ParsingExpressionGrammar\Unicode\Unicode.csproj">
       <Project>{bef41126-6dac-4589-8da5-21dd9fb06911}</Project>
       <Name>Unicode</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Relation.Logic\CSharp.Logic\CSharpLogic.csproj">
+      <Project>{b6ae1355-89f0-4ecb-83ac-b3b5118a6e4e}</Project>
+      <Name>CSharpLogic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Relation.Logic\Geometry.Logic.csproj">
+      <Project>{37ff5773-06ae-41c1-bb0f-b7fe22fc874b}</Project>
+      <Name>Geometry.Logic</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
