@@ -54,8 +54,8 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\libs\CSharp.Logic\CSharpLogic.csproj">
-      <Project>{b6ae1355-89f0-4ecb-83ac-b3b5118a6e4e}</Project>
+    <ProjectReference Include="..\..\libs\Relation.Logic\CSharp.Logic\CSharpLogic.csproj">
+      <Project>{deff2043-1cd0-4d03-a371-55901f39690c}</Project>
       <Name>CSharpLogic</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\libs\Relation.Logic\Geometry.Logic.csproj">

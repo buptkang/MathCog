@@ -2,7 +2,3 @@
 	path = libs/Relation.Logic
 	url = https://github.com/buptkang/Relation.Logic.git
 	branch = master
-[submodule "libs/CSharp.Logic"]
-	path = libs/CSharp.Logic
-	url = https://github.com/buptkang/CSharp.Logic.git
-	branch = master
