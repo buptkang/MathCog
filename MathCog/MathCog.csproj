@@ -52,8 +52,8 @@
     <Compile Include="ObjectModel\IKnowledgeExpr.cs" />
     <Compile Include="ObjectModel\IKnowledgeGenerator.cs" />
     <Compile Include="ObjectModel\TraceExpr.cs" />
-    <Compile Include="Reasoner.Behavior.cs" />
-    <Compile Include="Reasoner.Validate.cs" />
+    <Compile Include="Source\Reasoner.Behavior.cs" />
+    <Compile Include="Source\Reasoner.Validate.cs" />
     <Compile Include="Test\Basics\0.Test.Equation.cs" />
     <Compile Include="Test\Problem\Test.Problem10.cs" />
     <Compile Include="Test\Problem\Test.Problem11.cs" />
@@ -69,8 +69,8 @@
     <Compile Include="Test\Problem\Test.Problem02.cs" />
     <Compile Include="Test\Problem\Test.Problem04.cs" />
     <Compile Include="Test\Problem\Test.Problem05.cs" />
-    <Compile Include="Reasoner.cs" />
-    <Compile Include="Reasoner.Evaluator.cs" />
+    <Compile Include="Source\Reasoner.cs" />
+    <Compile Include="Source\Reasoner.Evaluator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test\Basics\0.Test.Shape.Line.cs">
       <SubType>Code</SubType>

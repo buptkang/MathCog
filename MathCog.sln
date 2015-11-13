@@ -5,14 +5,6 @@ VisualStudioVersion = 12.0.40121.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PEG", "PEG", "{D597E14E-7174-4F47-8E9F-F8CB94AE662B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2AED0B5E-31F5-4A31-997E-2A4F5EED7F2D}"
-	ProjectSection(SolutionItems) = preProject
-		.gitignore = .gitignore
-		.gitmodules = .gitmodules
-		LICENSE = LICENSE
-		README.md = README.md
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Expr", "ParsingExpressionGrammar\Expr\Expr.csproj", "{EFF3E46C-89CB-4E15-84D3-BF7CE0D72B4B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Expr.Reify", "ParsingExpressionGrammar\Expr.Reify\Expr.Reify.csproj", "{0646D21E-DB97-480D-BDD3-F0A783F2BC84}"
