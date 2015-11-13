@@ -1,0 +1,20 @@
+language: csharp
+mono: 3.12.0
+solution: MathCog.sln
+
+git:
+  submodules: false
+
+before_install:
+  - sudo apt-get install nunit-console
+  - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+  - git submodule update --init --recursive
+
+before_script:
+  - nuget restore MathCog.sln
+
+script:
+  - xbuild /p:Configuration=Release MathCog.sln
+
+after_script:
+  - nunit-console bin/Release/MathCog.dll
