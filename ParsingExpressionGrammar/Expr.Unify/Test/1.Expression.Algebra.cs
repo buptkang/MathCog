@@ -16,7 +16,6 @@ namespace ExprPatternMatch
     {
         #region Algebra pattern match and eval
 
-        [Test]
         public void Test1()
         {
             //a+1+2
@@ -44,7 +43,6 @@ namespace ExprPatternMatch
 
         }
 
-        [Test]
         public void Test_1()
         {
             string txt = "a+1";

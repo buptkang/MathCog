@@ -66,7 +66,6 @@ namespace ExprPatternMatch
             Assert.True(eqGoal.Traces.Count == 0);*/
         }
 
-        [Test]
         public void Test1()
         {
             //x = 1 + 2
@@ -97,7 +96,6 @@ namespace ExprPatternMatch
             Assert.True(eqGoal.Rhs.Equals(3));
         }
 
-        [Test]
         public void Test2()
         {
             //x + 1 = 1 + 2

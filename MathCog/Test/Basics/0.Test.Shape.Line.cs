@@ -44,7 +44,6 @@ namespace MathCog
             Assert.True(line.C.Equals(-2.0));
         }
 
-        [Test]
         public void Test_Line_Concrete2()
         {
             var reasoner = Reasoner.Instance;
@@ -64,7 +63,6 @@ namespace MathCog
             Assert.True(lineSym.SymC.Equals("-1"));
         }
 
-        [Test]
         public void Test_Line_Concrete3()
         {
             var reasoner = Reasoner.Instance;
@@ -83,7 +81,6 @@ namespace MathCog
             Assert.True(lineSym.SymC.Equals("3"));
         }
 
-        [Test]
         public void Test_Line_Concrete4()
         {
             var reasoner = Reasoner.Instance;
@@ -102,7 +99,6 @@ namespace MathCog
             Assert.True(lineSym.SymC.Equals("3"));
         }
 
-        [Test]
         public void Test_Line_Concrete5()
         {
             var reasoner = Reasoner.Instance;
@@ -120,7 +116,6 @@ namespace MathCog
             Assert.True(lineSym.SymC.Equals("1"));
         }
 
-        [Test]
         public void Test_Line_Concrete6()
         {
          /*   var reasoner = Reasoner.Instance;
@@ -142,7 +137,6 @@ namespace MathCog
 
         #region Line Substitution (Reification)
 
-        [Test]
         public void Test_Line_Sub1()
         {
             /*
@@ -206,7 +200,6 @@ namespace MathCog
             Assert.Null(ls.RenderKnowledge);
         }
 
-        [Test]
         public void Test_Line_Sub2()
         {
             /*
@@ -307,7 +300,6 @@ namespace MathCog
             Assert.Null(ls.RenderKnowledge);
         }
 
-        [Test]
         public void Test_Line_Sub3()
         {
             var reasoner = Reasoner.Instance;
@@ -359,7 +351,6 @@ namespace MathCog
             Assert.Null(ls.RenderKnowledge);
         }
 
-        [Test]
         public void Test_Line_Sub4()
         {
             /*

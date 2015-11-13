@@ -73,7 +73,6 @@ namespace ExprPatternMatch
             Assert.True(term.Traces.Count == 1);
         }
 
-        [Test]
         public void Test_numerics_2()
         {
             //2-1+3
@@ -99,7 +98,6 @@ namespace ExprPatternMatch
             Assert.True(term.Traces.Count == 2);
         }
 
-        [Test]
         public void Test_numerics_3()
         {
             //2-3+4*1
@@ -115,7 +113,6 @@ namespace ExprPatternMatch
             Assert.True(term.Traces.Count == 3);
         }
 
-        [Test]
         public void Test_numerics_4()
         {
             string txt = "1+2.1+3";
@@ -146,7 +143,6 @@ namespace ExprPatternMatch
             Assert.True(2.1.Equals(number2));
         }
 
-        [Test]
         public void Test_numerics_5()
         {
             string txt = "1-1 + 2";
@@ -176,7 +172,6 @@ namespace ExprPatternMatch
             Assert.True(number.Equals(-1));
         }
 
-        [Test]
         public void Test_numerics_6()
         {
             //2+4*1

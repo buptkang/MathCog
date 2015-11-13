@@ -222,7 +222,6 @@ namespace ExprPatternMatch
             Assert.True(ls.SymC.Equals("1"));
         }
 
-        [Test]
         public void Test_Line_TruePositive_10()
         {
             const string txt = "ax-by+1=0";
@@ -240,7 +239,6 @@ namespace ExprPatternMatch
             Assert.True(ls.SymC.Equals("1"));
         }
 
-        [Test]
         public void Test_Line_TruePositive_11()
         {
             //11: -ax-by-9=0 
@@ -378,8 +376,7 @@ namespace ExprPatternMatch
             Assert.True(ls.SymIntercept.Equals("3"));
             Assert.True(ls.ToString().Equals("y=-x+3"));
         }
-
-        [Test]
+      
         public void Test_Line_TruePositive_18()
         {
             //18: y = -ax-3

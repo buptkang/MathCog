@@ -67,7 +67,6 @@ namespace MathCog
             Assert.True(eqGoal.Rhs.Equals(1.0));
         }
 
-        [Test]
         public void Test_PatternMatch1()
         {
             /*
@@ -122,7 +121,6 @@ namespace MathCog
 
         #region Point Reification(Substitution)
 
-        [Test]
         public void Test_Substitution_0()
         {
             ///////////////////////////////////////////////////////
@@ -174,7 +172,6 @@ namespace MathCog
             Assert.Null(ps.RenderKnowledge);
         }
 
-        [Test]
         public void Test_Substitution_1()
         {
             //With Arithmetic in the goal
@@ -210,8 +207,7 @@ namespace MathCog
             //var traceLst = gShapeExpr.KnowledgeTrace;
             //Assert.True(traceLst.Count == 3);
         }
-
-        [Test]
+        
         public void Test_Substitution_2()
         {
             const string fact1 = "(2,a)";
