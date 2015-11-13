@@ -2,7 +2,7 @@
 
 [![](https://travis-ci.org/buptkang/MathCog.png)](https://travis-ci.org/buptkang/MathCog)
 
-This cognitive tutor mainly contains three components from bottom to up: <a href="https://github.com/buptkang/CSharp.Logic">Logic Inference</a>, <a href="https://github.com/buptkang/Relation.Logic">Constraint Solving </a>, and Syntax Pattern Matching through Parsing expression grammar. If you need more references about , please refer to <a href="http://aima.cs.berkeley.edu/">Artificial Intelligence: A Modern Approach</a> and its corresponding <a href="https://code.google.com/p/aima-python/">source repo</a>.
+This cognitive tutor mainly contains three components from bottom to up: <a href="https://github.com/buptkang/CSharp.Logic">Logic Inference</a>, <a href="https://github.com/buptkang/Relation.Logic">Constraint Solving </a>, and Syntax Pattern Matching through Parsing expression grammar. If you need more background knowledge, please refer to <a href="http://aima.cs.berkeley.edu/">Artificial Intelligence: A Modern Approach</a> and its corresponding <a href="https://code.google.com/p/aima-python/">source repo</a>.
 
 ##Getting Started##
 
