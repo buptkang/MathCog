@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Expr.Generator</RootNamespace>
     <AssemblyName>Expr.Generator</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
@@ -58,7 +60,7 @@
       <Project>{b6ae1355-89f0-4ecb-83ac-b3b5118a6e4e}</Project>
       <Name>CSharpLogic</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Relation.Logic\Geometry.Logic.csproj">
+    <ProjectReference Include="..\..\Relation.Logic\RelationLogic.csproj">
       <Project>{37ff5773-06ae-41c1-bb0f-b7fe22fc874b}</Project>
       <Name>Geometry.Logic</Name>
     </ProjectReference>

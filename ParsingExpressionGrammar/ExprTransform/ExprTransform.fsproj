@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>ExprTransform</RootNamespace>
     <AssemblyName>ExprTransform</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <Name>ExprTransform</Name>
     <TargetFSharpCoreVersion>4.3.0.0</TargetFSharpCoreVersion>
     <TargetFrameworkProfile />

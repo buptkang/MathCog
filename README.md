@@ -6,6 +6,9 @@ This cognitive tutor mainly contains three components from bottom to up: <a href
 
 ##Getting Started##
 
+Input Specification:
+TODO:
+
 1. Consider one algebra-and-geometry problem: Find the distance betweeen A(2,0) and B(5,4)? Check out unit test to prime this problem using internal relational semantics, automate reason this question and generate intermediate steps to solve this question? [Test.Problem01.cs](https://github.com/buptkang/MathCog/blob/master/MathCog/Test/Problem/Test.Problem01.cs).
 
 ## License

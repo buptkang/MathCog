@@ -14,11 +14,9 @@
  * limitations under the License.
  *******************************************************************************/
 
-using System.Diagnostics;
-using System.Threading;
-
 namespace MathCog
 {
+    using System.Diagnostics;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
