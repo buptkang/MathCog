@@ -79,6 +79,7 @@ namespace ExprPatternMatch
                 {
 
                 }
+
                 var eqGoal = obj1 as EqGoal;
                 var eqGoalLst = obj1 as List<object>;
                 if (result)
@@ -93,18 +94,9 @@ namespace ExprPatternMatch
                 eq.UnEval();
                 eq.CachedEntities.Clear();
 
-                QuadraticCurveSymbol qcs;
-                result = eq.IsQuadraticCurveEquation(out qcs);
-                if (result)
-                {
-                    CircleSymbol cs;
-                    result = qcs.IsCircleEquation(out cs);
-                    if(result) dict.Add(PatternEnum.Circle, cs);
-
-                    EllipseSymbol es;
-                    result = qcs.IsEllipseEquation(out es);
-                    if(result) dict.Add(PatternEnum.Ellipse, es);
-                }
+                CircleSymbol cs;
+                result = eq.IsCircleEquation(out cs);
+                if (result) dict.Add(PatternEnum.Circle, cs);
 
                 if (dict.Count == 0)
                 {
@@ -119,7 +111,6 @@ namespace ExprPatternMatch
 
             return dict.Count == 1 ? dict.Values.ToList()[0] : dict;
         }
-
 
         public object UserMatch(Expr exp)
         {
