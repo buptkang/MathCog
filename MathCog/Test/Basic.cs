@@ -766,7 +766,34 @@ namespace MathCog
 
         #endregion
 
+        #endregion
 
+        #region Circle Shape
+
+        /*
+         *  1: (x-2)^2+(y-2)^2=1
+         *  2: (x+2)^2+(y+1)^2=4
+         *  3: (y-2)^2+(x+1)^2=16
+         *  4: x^2+y^2=1
+         *  TODO 5: (x-a)^2+(y+2)^2=1
+         *  TODO 6: x^2+y^2+2x+2y+4=0
+         */
+
+        [Test]
+        public void Test_Circle_Concrete1()
+        {
+            var reasoner = Reasoner.Instance;
+            const string fact1 = "(x-2)^2+(y-2)^2=1";
+            reasoner.Load(fact1);
+            var result = reasoner.TestGetShapeFacts();
+            Assert.NotNull(result);
+            Assert.True(result.Count == 1);
+            var cs = result[0];
+            Assert.NotNull(cs);
+            var circle = cs.ShapeSymbol.Shape as Circle;
+            Assert.NotNull(circle);
+            Assert.True(circle.Radius.Equals(1));
+        }
 
         #endregion
 
