@@ -146,6 +146,12 @@ namespace MathCog
             return false;
         }
 
+        public override int GetHashCode()
+        {
+            if (_shapeSymbol != null) return _shapeSymbol.GetHashCode();
+            return base.GetHashCode();
+        }
+
         #endregion
     }
 }

@@ -10,12 +10,16 @@ open System.Diagnostics
 open System.Collections.Generic
 open starPadSDK.MathExpr
 
-(* Transformation of Exprs to and from MathML. We only handle a subset of MathML for both input and output, though more would be possible even without
-   extending Expr. 
-   In Mathematica, use "someexpr // MathMLForm" to get mathml and "ToExpression["mathmlstring", MathMLForm]" to convert from it.
-   In Maple, use "MathML[ExportPresentation](someexpr)" to get mathml and "MathML[Import]("mathmlstring")" to convert from it.
-   In MS Math, right click on the displayed form in the log, go to Copy Special, and select MathML. The first attempt to copy and paste from MathML to Notepad may not work.
-   *)
+(* Transformation of Exprs to and from MathML. 
+   We only handle a subset of MathML for both input and output, 
+   though more would be possible even without extending Expr. 
+   In Mathematica, use "someexpr // MathMLForm" to get mathml and 
+   "ToExpression["mathmlstring", MathMLForm]" to convert from it.
+   In Maple, use "MathML[ExportPresentation](someexpr)" to get mathml and 
+   "MathML[Import]("mathmlstring")" to convert from it.
+   In MS Math, right click on the displayed form in the log, go to Copy Special, and 
+   select MathML. The first attempt to copy and paste from MathML to Notepad may not work.
+*)
 
 (********First is the code for conversion from MathML to Expr********)
 
@@ -236,6 +240,7 @@ type private MathMLInput() =
                 let mainoper = MainOpOf2 prec
                 CompositeExprFS(fromexpr mainoper,
                     arg1 :: (List.map (fun (oper, efs) -> if mainoper = oper then efs else CompositeExprFS(fromexpr oper, [efs])) tail))
+            | _ -> failwith "Internal error"
     and convertmfenced opendel closedel contents =
         let children = List.map toexprfs contents
         let child() = match children with | [efs] -> efs | args -> CompositeExprFS(WordSymFS("comma"), args)

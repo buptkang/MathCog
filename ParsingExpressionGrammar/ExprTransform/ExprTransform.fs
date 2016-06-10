@@ -73,7 +73,7 @@ type public ExprTransform() =
                 ls :> Expr
             | WordSymFS(w, factor) -> 
                 let result = new WordSym(w)
-                addFactor (result, factor)
+                addFactor (result, factor) |> ignore
                 result.Subscript <- toexpr sub
                 result :> Expr
             | _ -> 

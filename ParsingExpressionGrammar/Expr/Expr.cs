@@ -54,6 +54,12 @@ namespace starPadSDK.MathExpr
                 return base.Equals(obj);
             }
         }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         /*public static bool operator ==(Expr a, object b)
         {
             if (a is Expr && b is Expr)

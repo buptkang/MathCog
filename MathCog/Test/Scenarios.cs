@@ -1088,7 +1088,7 @@ namespace MathCog
             Assert.True(cachedPt.Traces.Count != 0);
             #endregion
 
-            const string userInput = "A(2,4)";
+            //const string userInput = "A(2,4)";
 
             Reasoner.Instance.Reset();
         }
@@ -1192,7 +1192,7 @@ namespace MathCog
 
             Assert.True(Reasoner.Instance.RelationGraph.Nodes.Count == 8);
 
-            const string query2 = "v";
+            //const string query2 = "v";
             //Reasoner.Instance.Load(query1);
             Reasoner.Instance.Reset();
         }
@@ -1420,12 +1420,12 @@ namespace MathCog
         [Test]
         public void Test_Problem_61()
         {
-            const string input0 = "is(line, A)";
+           /* const string input0 = "is(line, A)";
             const string input1 = "perpendicular(A, line)";
             const string input2 = "map(line, 2y=4x+8)"; //2y=4x+8
             const string input3 = "compose(lineA, (-2,-8))";
             const string query1 = "geometry(lineA)=";
-            const string query2 = "algebra(lineA)=";
+            const string query2 = "algebra(lineA)=";*/
         }
 
         #endregion
@@ -1435,12 +1435,12 @@ namespace MathCog
         [Test]
         public void Test_Problem_62()
         {
-            const string input0 = "is(line, C)";
+            /*const string input0 = "is(line, C)";
             const string input1 = "compose(C, (5,2))";
             const string input2 = "map(line, 4x+6y-12=0)"; //4x+6y-12=0
             const string input3 = "parallel(C, line)";
             const string query1 = "geometry(C)=";
-            const string query2 = "algebra(C)=";
+            const string query2 = "algebra(C)=";*/
         }
 
         #endregion
@@ -1450,9 +1450,9 @@ namespace MathCog
         [Test]
         public void Test_Problem_63()
         {
-            const string input0 = "(1,-3)"; //map(point, (1,-3))
+           /* const string input0 = "(1,-3)"; //map(point, (1,-3))
             const string input1 = "y=-x+6"; //map(line, y=-x+6)
-            const string input2 = "d=";     //distance(point, line, d), d=
+            const string input2 = "d=";     //distance(point, line, d), d=*/
         }
 
         #endregion
@@ -1462,12 +1462,12 @@ namespace MathCog
         [Test]
         public void Test_Problem_64()
         {
-            const string input0 = "is(circle, A)";
+          /*  const string input0 = "is(circle, A)";
             const string input1 = "compose(A, r=5)";
             const string input2 = "is(line, B)";
             const string input3 = "tangent(A,B, (-3,4))";
             const string query1 = "geometry(B)=";
-            const string query2 = "algebra(B)=";
+            const string query2 = "algebra(B)=";*/
         }
 
         #endregion
@@ -1477,11 +1477,11 @@ namespace MathCog
         [Test]
         public void Test_Problem_65()
         {
-            const string input1 = "map(A, 2y-4x=10)";
+           /* const string input1 = "map(A, 2y-4x=10)";
             const string input2 = "is(line, B)";
             const string input3 = "perpendicular(A,B)";
             const string query1 = "geometry(C)=";
-            const string query2 = "algebra(C)=";
+            const string query2 = "algebra(C)=";*/
         }
 
         #endregion
@@ -1491,14 +1491,14 @@ namespace MathCog
         [Test]
         public void Test_Problem_66()
         {
-            const string input0 = "map(line, y=2x-6)";
+            /*const string input0 = "map(line, y=2x-6)";
             const string input1 = "compose(line, m)";
             const string input2 = "is(line, D)";
             const string input3 = "compose(D, m1)";
             const string input4 = "m1=m";
             const string input5 = "compose(D, (0,5))";
             const string query1 = "geometry(D)=";
-            const string query2 = "algebra(D)=";
+            const string query2 = "algebra(D)=";*/
         }
 
         #endregion
@@ -1508,9 +1508,9 @@ namespace MathCog
         [Test]
         public void Test_Problem_67()
         {
-            const string input0 = "(-2,-4)"; //map(point, (1,-3))
+          /*  const string input0 = "(-2,-4)"; //map(point, (1,-3))
             const string input1 = "3y=-x+6"; //map(line, y=-x+6)
-            const string input2 = "d=";     //distance(point, line, d), d=
+            const string input2 = "d=";     //distance(point, line, d), d=*/
         }
 
         #endregion
@@ -1520,12 +1520,12 @@ namespace MathCog
         [Test]
         public void Test_Problem_68()
         {
-            const string input0 = "is(circle,A)"; //optional
+           /* const string input0 = "is(circle,A)"; //optional
             const string input1 = "map(A, (x-2)^2+(y-3)^2=25)";
             const string input2 = "is(line, B)";
             const string input3 = "tangent(A,B,(5,7))";
             const string query1 = "geometry(B)=";
-            const string query2 = "algebra(B)=";
+            const string query2 = "algebra(B)=";*/
         }
 
         #endregion

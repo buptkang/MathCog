@@ -1257,7 +1257,7 @@ namespace ExprPatternMatch
             const string txt = "ab(x+2y-1=0)";
             Expr expr = Text.Convert(txt);
             object obj;
-            LineSymbol ls;
+            //LineSymbol ls;
             bool result = expr.IsEquationLabel(out obj);
             Assert.True(result);
             var eq = obj as Equation;

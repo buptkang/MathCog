@@ -14,6 +14,9 @@
  * limitations under the License.
  *******************************************************************************/
 
+using System;
+using System.Xml;
+
 namespace AlgebraGeometry
 {
     using NUnit.Framework;
@@ -57,6 +60,17 @@ namespace AlgebraGeometry
 
             var str1 = expr.ToString();
             Assert.True(str.Equals("(1,2)"));
+        }
+
+        [Test]
+        public void Test_Generate_XML_1()
+        {
+            string expr1 = "1+2=3";
+            Expr expr = starPadSDK.MathExpr.Text.Convert(expr1);
+            var mathml = new MathML();
+            XmlDocument xml = mathml.Convert(expr);
+            xml.Save("a.xml");
+            Console.WriteLine(xml);
         }
     }
 }

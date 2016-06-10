@@ -57,6 +57,12 @@ namespace MathCog
             return Expr.Equals(knowledge.Expr);
         }
 
+        public override int GetHashCode()
+        {
+            if (_inputExpr != null) return _inputExpr.GetHashCode();
+            return base.GetHashCode();
+        }
+
         #endregion
 
         #region Virtual Functions and Utils

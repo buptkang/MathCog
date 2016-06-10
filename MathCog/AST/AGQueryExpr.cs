@@ -95,6 +95,11 @@ namespace MathCog
             return QueryTag.Equals(queryExpr.QueryTag);
         }
 
+        public override int GetHashCode()
+        {
+            return _query.GetHashCode();
+        }
+
         #endregion
     }
 }

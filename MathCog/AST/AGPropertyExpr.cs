@@ -95,6 +95,12 @@ namespace MathCog
             return Goal.Equals(propExpr.Goal);
         }
 
+        public override int GetHashCode()
+        {
+            if (_goal != null) return _goal.GetHashCode();
+            return base.GetHashCode();
+        }
+
         #endregion
     }
 }

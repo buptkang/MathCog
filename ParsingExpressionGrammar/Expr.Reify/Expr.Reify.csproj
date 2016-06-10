@@ -33,8 +33,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\packages\NUnit.3.0.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -63,6 +63,10 @@
     <ProjectReference Include="..\..\Relation.Logic\RelationLogic.csproj">
       <Project>{37ff5773-06ae-41c1-bb0f-b7fe22fc874b}</Project>
       <Name>Geometry.Logic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ExprMathML\ExprMathML.fsproj">
+      <Project>{3a21b2d0-02cb-4b1f-a9cc-1484f00eb4e4}</Project>
+      <Name>ExprMathML</Name>
     </ProjectReference>
     <ProjectReference Include="..\ExprText\ExprText.fsproj">
       <Project>{3d169bb6-4e9a-4757-a82c-e9a20a8f7a94}</Project>

@@ -149,6 +149,12 @@ namespace MathCog
             return Equation.Equals(eqExpr.Equation);
         }
 
+        public override int GetHashCode()
+        {
+            if (_equation != null) return _equation.GetHashCode();
+            return base.GetHashCode();
+        }
+
         #endregion
     }
 }
