@@ -121,6 +121,8 @@ namespace MathCog
             }
 
             object rTemp = null;
+            //TODO, reasoning
+/*
             if (tutorMode)
             {
                 rTemp = ExprVisitor.Instance.UserMatch(expr);
@@ -129,6 +131,10 @@ namespace MathCog
             {
                 rTemp = ExprVisitor.Instance.Match(expr);
             }
+*/
+
+            rTemp = ExprVisitor.Instance.Match(expr);
+
              //input patter match
             Debug.Assert(rTemp != null);
             object output;

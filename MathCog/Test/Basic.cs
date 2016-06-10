@@ -784,7 +784,9 @@ namespace MathCog
         {
             var reasoner = Reasoner.Instance;
             const string fact1 = "(x-2)^2+(y-2)^2=1";
-            reasoner.Load(fact1);
+            object knowledge = reasoner.Load(fact1);
+
+            Assert.True(knowledge is AGShapeExpr);
             var result = reasoner.TestGetShapeFacts();
             Assert.NotNull(result);
             Assert.True(result.Count == 1);

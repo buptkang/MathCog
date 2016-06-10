@@ -178,7 +178,7 @@ namespace MathCog
         {
             if (!userInput) RelationGraph.AddNode(ss);
 
-            expr = ExprG.Generate(ss);
+            //expr = ExprG.Generate(ss);
             output = new AGShapeExpr(expr, ss);
             return true;
         }

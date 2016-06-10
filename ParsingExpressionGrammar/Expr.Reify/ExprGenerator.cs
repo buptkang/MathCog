@@ -90,6 +90,9 @@ namespace AlgebraGeometry
             var lineSeg = ss as LineSegmentSymbol;
             if (lineSeg != null) return lineSeg.ToExpr();
 
+            var circle = ss as CircleSymbol;
+            if (circle != null) return circle.ToExpr();
+
             return null;
         }
 
@@ -264,6 +267,14 @@ namespace AlgebraGeometry
         {
             Debug.Assert(lss.Shape.Label != null);
             return Text.Convert(lss.ToString());
+        }
+    }
+
+    public static class CircleExtension
+    {
+        public static Expr ToExpr(this CircleSymbol cs)
+        {
+            return Text.Convert(cs.ToString());
         }
     }
 }
