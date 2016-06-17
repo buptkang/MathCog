@@ -14,7 +14,9 @@
  * limitations under the License.
  *******************************************************************************/
 
-using starPadSDK.UnicodeNs;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ExprPatternMatch
 {
@@ -898,7 +900,18 @@ namespace ExprPatternMatch
          *  22: y-3=10
          *  23: 4y=x
          *  24: y=3x
-         * 
+         *  25: 3y=2x-9
+         *  26: y+7=2x+5
+         *  27: y=-2x+2
+         *  28: y-4=3(x-5)
+         *  29: y-9=1/2(x+2)
+         *  30: y=(1/2)x+1+9
+         *  31: y=(2/3)x 
+         *  32: y=(2/3)x-3
+         *  33: y=-(3/2)x-7
+         *  34: y=(2/3)x+4
+         *  35: y=-1/3x-5
+         *  
          * False Negative Test:
          *  
          *  1: 2+1=0
@@ -1355,10 +1368,124 @@ namespace ExprPatternMatch
             Assert.True(result);
             var eq = obj as Equation;
             Assert.NotNull(eq);
+            result = eq.IsLineEquation(out ls);
+            Assert.True(result);
+        }
+
+        [Test]
+        public void Test_Line_TruePositive_25()
+        {
+            //25: 3y=2x-9
+            const string txt = "3y=2x-9";
+            Expr expr = Text.Convert(txt);
+            object obj;
+            LineSymbol ls;
+            bool result = expr.IsEquationLabel(out obj);
+            Assert.True(result);
+            var eq = obj as Equation;
+            Assert.NotNull(eq);
+            result = eq.IsLineEquation(out ls);
+            Assert.True(result);
+        }
+
+        [Test]
+        public void Test_Line_TruePositive_26()
+        {
+            //26: y+7=2x+5
+            const string txt = "y+7=2x+5";
+            Expr expr = Text.Convert(txt);
+            object obj;
+            LineSymbol ls;
+            bool result = expr.IsEquationLabel(out obj);
+            Assert.True(result);
+            var eq = obj as Equation;
+            Assert.NotNull(eq);
+            result = eq.IsLineEquation(out ls);
+            Assert.True(result);
+        }
+        
+        [Test]
+        public void Test_Line_TruePositive_27()
+        {
+            //27: y=-2x+2
+            const string txt = "y=-2x+2";
+            Expr expr = Text.Convert(txt);
+            object obj;
+            LineSymbol ls;
+            bool result = expr.IsEquationLabel(out obj);
+            Assert.True(result);
+            var eq = obj as Equation;
+            Assert.NotNull(eq);
 
             result = eq.IsLineEquation(out ls);
             Assert.True(result);
-            //            Assert.True(ls.ToString().Equals("-x+4y=0"));
+        }
+
+        [Test]
+        public void Test_Line_TruePositive_28()
+        {
+            //28: y-4=3(x-5)
+            const string txt = "y-4=3(x-5)";
+            Expr expr = Text.Convert(txt);
+            object obj;
+            LineSymbol ls;
+            bool result = expr.IsEquationLabel(out obj);
+            Assert.True(result);
+            var eq = obj as Equation;
+            Assert.NotNull(eq);
+            result = eq.IsLineEquation(out ls);
+            Assert.True(result);
+        }
+
+        [Test]
+        public void Test_Line_TruePositive_29()
+        {
+            //y=(1/2)x
+            const string txt = "y=(1/2)x";
+            Expr expr = Text.Convert(txt);
+            object obj;
+            LineSymbol ls;
+            bool result = expr.IsEquationLabel(out obj);
+            Assert.True(result);
+            var eq = obj as Equation;
+            Assert.NotNull(eq);
+            result = eq.IsLineEquation(out ls);
+            Assert.True(result);
+            Assert.True(ls.ToString().Equals("-x+2y=0"));
+        }
+
+        [Test]
+        public void Test_Line_TruePositive_30()
+        {
+            //30: y-9=1/2(x+2)
+            const string txt = "y-9=1/2(x+2)";
+            Expr expr = Text.Convert(txt);
+            object obj;
+            LineSymbol ls;
+            bool result = expr.IsEquationLabel(out obj);
+            Assert.True(result);
+            var eq = obj as Equation;
+            Assert.NotNull(eq);
+            result = eq.IsLineEquation(out ls);
+            Assert.True(result);
+            Assert.True(ls.ToString().Equals("-x+2y-20=0"));
+        }
+
+        [Test]
+        public void Test_Line_TruePositive_36()
+        {
+            //30: (1/3)x-y+1=0
+            const string txt = "y-9=1/2(x+2)";
+            Expr expr = Text.Convert(txt);
+            object obj;
+            LineSymbol ls;
+            bool result = expr.IsEquationLabel(out obj);
+            Assert.True(result);
+            var eq = obj as Equation;
+            Assert.NotNull(eq);
+            result = eq.IsLineEquation(out ls);
+            Assert.True(result);
+            Assert.True(ls.ToString().Equals("-x+2y-20=0"));
         }
 
         [Test]
@@ -1505,6 +1632,68 @@ namespace ExprPatternMatch
                         Assert.True(dict.ContainsKey(PatternEnum.Label));
                         Assert.True(dict.ContainsKey(PatternEnum.Expression));
              */
+        }
+    }
+
+    [TestFixture]
+    public class TestRealTime
+    {
+        [Test]
+        public void Test_Line_RealTime_Testing()
+        {
+            string _path = @"C:\\1-Production\\MathApollo\\Math-Visual2\\LogFiles\\Data";
+            string fileName = "Log_01_406_2016615121233.bin";
+            string path = System.IO.Path.Combine("@", _path, fileName);
+
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream(path,
+                                      FileMode.Open,
+                                      FileAccess.Read,
+                                      FileShare.Read);
+            var obj = (List<Expr>)formatter.Deserialize(stream);
+            stream.Close();
+            Console.WriteLine(obj.Count);
+        }
+
+        [Test]
+        public void Test_Line_Realtime_Testing_2()
+        {
+            string _path = @"C:\\1-Production\\MathApollo\\Math-Visual2\\LogFiles\\Data";
+            string fileName = "Log_01_406_201661711129.bin";
+            string path = System.IO.Path.Combine("@", _path, fileName);
+
+            //x^2+y^2=5^2
+
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream(path,
+                                      FileMode.Open,
+                                      FileAccess.Read,
+                                      FileShare.Read);
+            var lst = formatter.Deserialize(stream) as List<Expr>;
+            stream.Close();
+            Assert.NotNull(lst);
+            Assert.True(lst.Count == 1);
+
+            var expr1 = lst[0];
+
+            object obj;
+            LineSymbol ls;
+            bool result = expr1.IsEquationLabel(out obj);
+
+            Assert.True(result);
+            var eq = obj as Equation;
+            Assert.NotNull(eq);
+
+            object obj1;
+            eq.EvalEquation(out obj1, true, false);
+
+/*            result = eq.IsLineEquation(out ls);
+            Assert.True(result);
+            Console.WriteLine(ls.ToString());*/
+
+            CircleSymbol cs;
+            result = eq.IsCircleEquation(out cs);
+            Assert.True(result);
         }
     }
 }

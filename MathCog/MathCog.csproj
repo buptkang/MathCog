@@ -71,6 +71,10 @@
       <Project>{c4f74bbb-98d6-462f-9d63-2590f646b9d3}</Project>
       <Name>Expr.Unify</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ParsingExpressionGrammar\ExprMathML\ExprMathML.fsproj">
+      <Project>{3a21b2d0-02cb-4b1f-a9cc-1484f00eb4e4}</Project>
+      <Name>ExprMathML</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ParsingExpressionGrammar\ExprText\ExprText.fsproj">
       <Project>{3d169bb6-4e9a-4757-a82c-e9a20a8f7a94}</Project>
       <Name>ExprText</Name>

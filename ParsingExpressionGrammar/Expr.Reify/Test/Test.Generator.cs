@@ -15,6 +15,10 @@
  *******************************************************************************/
 
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 
 namespace AlgebraGeometry
@@ -71,6 +75,77 @@ namespace AlgebraGeometry
             XmlDocument xml = mathml.Convert(expr);
             xml.Save("a.xml");
             Console.WriteLine(xml);
+        }
+
+        [Test]
+        public void Test_Generate_XML_2()
+        {
+            var xml = new XmlDocument();
+            xml.Load("a.xml");
+            Console.WriteLine(xml.InnerXml);
+        }
+
+        [Test]
+        public void Test_Generate_XML_3()
+        {
+            // Serialize
+            string txt1 = "x+1=1";
+            Expr expr1 = starPadSDK.MathExpr.Text.Convert(txt1);
+
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream("MyFile.bin",
+                                     FileMode.Create,
+                                     FileAccess.Write, FileShare.None);
+            formatter.Serialize(stream, expr1);
+            stream.Close();
+        }
+
+        [Test]
+        public void Test_Generate_XML_4()
+        {
+            // Deserialize
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream("MyFile.bin",
+                                      FileMode.Open,
+                                      FileAccess.Read,
+                                      FileShare.Read);
+            Expr obj = (Expr)formatter.Deserialize(stream);
+            stream.Close();
+            Console.WriteLine(obj);
+        }
+
+        [Test]
+        public void Test_Generate_XML_5()
+        {
+            // Serialize
+            string txt1 = "x+1=1";
+            Expr expr1 = starPadSDK.MathExpr.Text.Convert(txt1);
+
+            string txt2 = "x=0";
+            Expr expr2 = starPadSDK.MathExpr.Text.Convert(txt2);
+
+            var lst = new List<Expr> {expr1, expr2};
+
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream("MyFile2.bin",
+                                     FileMode.Create,
+                                     FileAccess.Write, FileShare.None);
+            formatter.Serialize(stream, lst);
+            stream.Close();
+        }
+
+        [Test]
+        public void Test_Generate_XML_6()
+        {
+            // Deserialize
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream("MyFile2.bin",
+                                      FileMode.Open,
+                                      FileAccess.Read,
+                                      FileShare.Read);
+            var obj = (List<Expr>)formatter.Deserialize(stream);
+            stream.Close();
+            Console.WriteLine(obj.Count);
         }
     }
 }

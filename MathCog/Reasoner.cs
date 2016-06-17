@@ -58,6 +58,16 @@ namespace MathCog
         /// Key: Expr; Value: IKnowledge
         /// </summary>
         private ObservableCollection<KeyValuePair<object, object>> _cache;
+
+        public ObservableCollection<KeyValuePair<object, object>> Cache
+        {
+            get { return _cache; }
+            set { _cache = value;}
+        }
+
+
+
+
         /// <summary>
         /// Key: String; Value: Expr
         /// </summary>
@@ -93,6 +103,7 @@ namespace MathCog
             return output;
         }
 
+        //Algebra Side Input Format
         private object Load(Expr expr, ShapeType? st = null, 
             bool tutorMode = false, bool algebraSide = true)
         {
@@ -141,7 +152,7 @@ namespace MathCog
 
             EvalExprPatterns(expr, rTemp, st, out output, tutorMode);
             var iKnowledge = output as IKnowledge;
-            if (iKnowledge != null && !tutorMode)
+            if (iKnowledge != null)
             {
                 _cache.Add(new KeyValuePair<object, object>(expr, iKnowledge));
             }

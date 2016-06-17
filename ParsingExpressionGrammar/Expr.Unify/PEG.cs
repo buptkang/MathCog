@@ -309,7 +309,10 @@ namespace ExprPatternMatch
             if (root.Args.Count() == 1 && root.Head.Equals(WellKnownSym.divide))
             {
                 var exp = root.Args[0];
-                return exp.IsExpression(out obj);
+                object tt;
+                exp.IsExpression(out tt);
+                obj = new Term(Expression.Divide, new List<object> {1, tt});
+                return true;
             }
             return false;
         }
@@ -319,6 +322,7 @@ namespace ExprPatternMatch
             obj = null;
             if (expr.IsNumeric(out obj)) return true;
             if (expr.IsExpressionTerm(out obj)) return true;
+            if (expr.IsDivideExpression(out obj)) return true;
 
             var root = expr as CompositeExpr;
             if (root != null)
@@ -521,8 +525,10 @@ namespace ExprPatternMatch
 
                 object obj1, obj2;
 
-                if (lhsExpr.IsExpression(out obj1)
-                    && rhsExpr.IsExpression(out obj2))
+                bool cond1 = lhsExpr.IsExpression(out obj1);
+                bool cond2 = rhsExpr.IsExpression(out obj2);
+
+                if (cond1 && cond2)
                 {
                     obj = new Equation(obj1, obj2);
                     return true;
