@@ -1472,6 +1472,20 @@ namespace ExprPatternMatch
         }
 
         [Test]
+        public void Test_Line_TruePositive_31()
+        {
+            const string txt = "y=1/2";
+            Expr expr = Text.Convert(txt);
+            object obj;
+            LineSymbol ls;
+            bool result = expr.IsEquationLabel(out obj);
+            Assert.True(result);
+            var eq = obj as Equation;
+            Assert.NotNull(eq);
+            result = eq.IsLineEquation(out ls);
+        }
+
+        [Test]
         public void Test_Line_TruePositive_36()
         {
             //30: (1/3)x-y+1=0
@@ -1659,7 +1673,7 @@ namespace ExprPatternMatch
         public void Test_Line_Realtime_Testing_2()
         {
             string _path = @"C:\\1-Production\\MathApollo\\Math-Visual2\\LogFiles\\Data";
-            string fileName = "Log_01_406_201661711129.bin";
+            string fileName = "Log_UniModal_01_404_2016621114711.bin";
             string path = System.IO.Path.Combine("@", _path, fileName);
 
             //x^2+y^2=5^2
@@ -1672,7 +1686,7 @@ namespace ExprPatternMatch
             var lst = formatter.Deserialize(stream) as List<Expr>;
             stream.Close();
             Assert.NotNull(lst);
-            Assert.True(lst.Count == 1);
+            Assert.True(lst.Count == 4);
 
             var expr1 = lst[0];
 

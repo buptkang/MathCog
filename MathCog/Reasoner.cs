@@ -65,9 +65,6 @@ namespace MathCog
             set { _cache = value;}
         }
 
-
-
-
         /// <summary>
         /// Key: String; Value: Expr
         /// </summary>
@@ -83,6 +80,10 @@ namespace MathCog
             var str = obj as string;     // text input
             if (str != null) return Load(str, st, tutorMode, algebraSide);
             var expr = obj as Expr;      // sketch input
+
+            //error checking
+            if(expr.ContainErrorTerm()) return null;
+
             if (expr != null) return Load(expr, st, tutorMode, algebraSide);
             var ss = obj as ShapeSymbol;
             if (ss != null) return Load(ss, tutorMode);

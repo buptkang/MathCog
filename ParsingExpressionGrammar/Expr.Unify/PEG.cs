@@ -61,7 +61,7 @@ namespace ExprPatternMatch
                     if (composite.Args.Count() == 2)
                     {
                         object tempObj0;
-                        bool result = composite.Args[0].IsLabel(out tempObj0);
+                        var result = composite.Args[0].IsLabel(out tempObj0);
                         if (result)
                         {
                             object tempObj1;
@@ -76,10 +76,10 @@ namespace ExprPatternMatch
                         }
                     }
 
-                    foreach (Expr tempExpr in composite.Args)
+                    foreach (var tempExpr in composite.Args)
                     {
                         object tempObj;
-                        bool result = tempExpr.IsLabel(out tempObj);
+                        var result = tempExpr.IsLabel(out tempObj);
                         if (!result) return false;
                         builder.Append(tempObj);
                     }
@@ -110,7 +110,7 @@ namespace ExprPatternMatch
             if (expr.IsNegativeTerm(out outputExpr))
             {
                 expr = outputExpr;
-                bool innerTerm = expr.IsWordTerm(out obj);
+                var innerTerm = expr.IsWordTerm(out obj);
                 if (innerTerm)
                 {
                     var str = obj as string;
@@ -147,10 +147,10 @@ namespace ExprPatternMatch
                 if (composite.Head.Equals(WellKnownSym.times))
                 {
                     var builder = new StringBuilder();
-                    foreach (Expr tempExpr in composite.Args)
+                    foreach (var tempExpr in composite.Args)
                     {
                         object tempObj;
-                        bool result = tempExpr.IsLabel(out tempObj);
+                        var result = tempExpr.IsLabel(out tempObj);
                         if (!result) return false;
                         builder.Append(tempObj);
                     }
@@ -218,6 +218,19 @@ namespace ExprPatternMatch
             }
             return false;
         }
+
+        public static bool ContainErrorTerm(this Expr expr)
+        {
+            var errorExpr = expr as ErrorExpr;
+            if (errorExpr != null) return true;
+
+            var compExpr = expr as CompositeExpr;
+            if (compExpr != null)
+            {
+                return compExpr.Args.Any(tExpr => tExpr.ContainErrorTerm());
+            }
+            return false;
+        }
     }
 
     public static class QueryPatternExtensions
@@ -231,10 +244,10 @@ namespace ExprPatternMatch
 
             if (composite.Args.Length == 1)
             {
-                Expr expr1 = composite.Args[0];
+                var expr1 = composite.Args[0];
 
                 object obj;
-                bool result = expr1.IsLabel(out obj);
+                var result = expr1.IsLabel(out obj);
                 if (result)
                 {
                     //property = new KeyValuePair<string, object>("Label", new Var(obj));
@@ -253,13 +266,13 @@ namespace ExprPatternMatch
             }
             else if (composite.Args.Length == 2)
             {
-                Expr expr1 = composite.Args[0];
-                Expr expr2 = composite.Args[1];
+                var expr1 = composite.Args[0];
+                var expr2 = composite.Args[1];
 
                 if(expr2 is ErrorExpr)
                 {                    
                     object obj;
-                    bool result = expr1.IsLabel(out obj);
+                    var result = expr1.IsLabel(out obj);
                     if (result)
                     {
                         //property = new KeyValuePair<string, object>("Label", new Var(obj));
@@ -289,7 +302,7 @@ namespace ExprPatternMatch
     {
         private static bool IsExpressionTerm(this Expr expr, out object obj)
         {
-            bool result = expr.IsWordTerm(out obj);
+            var result = expr.IsWordTerm(out obj);
             if (result)
             {
                 var str = obj as string;
@@ -332,7 +345,7 @@ namespace ExprPatternMatch
                     #region Addition Terms
                     var argCount = root.Args.Count();
                     var lst = new List<object>();
-                    for (int i = 0; i < argCount; i++)
+                    for (var i = 0; i < argCount; i++)
                     {
                         object tempObj;
                         if (root.Args[i].IsExpression(out tempObj))
@@ -364,7 +377,7 @@ namespace ExprPatternMatch
                 if (root.Head.Equals(WellKnownSym.times))
                 {
                     #region Multiply Term
-                    int argCount = root.Args.Count();
+                    var argCount = root.Args.Count();
 
                     if (argCount == 2)
                     {
@@ -401,7 +414,7 @@ namespace ExprPatternMatch
                         {
                             obj = new Term(Expression.Multiply, new List<object>() { obj1, obj2 });
                             object tempObj;
-                            for (int i = 2; i < argCount; i++)
+                            for (var i = 2; i < argCount; i++)
                             {
                                 if (root.Args[i].IsExpression(out tempObj))
                                 {
@@ -425,7 +438,7 @@ namespace ExprPatternMatch
                     var argCount = root.Args.Count();
                     if (argCount != 2) return false;
                     var lst = new List<object>();
-                    for (int i = 0; i < argCount; i++)
+                    for (var i = 0; i < argCount; i++)
                     {
                         object tempObj;
                         if (root.Args[i].IsExpression(out tempObj))
@@ -490,7 +503,7 @@ namespace ExprPatternMatch
             if (compExpr == null) return false;
 
             object label;
-            bool isLabel = compExpr.Head.IsLabel(out label);
+            var isLabel = compExpr.Head.IsLabel(out label);
 
             string labelStr;
             if (isLabel)
@@ -520,8 +533,8 @@ namespace ExprPatternMatch
             if (compExpr.Head.Equals(WellKnownSym.equals) &&
                 compExpr.Args.Count() == 2)
             {
-                Expr lhsExpr = compExpr.Args[0];
-                Expr rhsExpr = compExpr.Args[1];
+                var lhsExpr = compExpr.Args[0];
+                var rhsExpr = compExpr.Args[1];
 
                 object obj1, obj2;
 
@@ -637,7 +650,7 @@ namespace ExprPatternMatch
             if (composite == null) return false;
 
             var headExpr = composite.Head;
-            bool hasLabel = headExpr.IsLabel(out label);
+            var hasLabel = headExpr.IsLabel(out label);
 
             if (!hasLabel)
             {
@@ -748,7 +761,7 @@ namespace ExprPatternMatch
 
         public static PointSymbol CreatePointSymbol(string label, object coord1, object coord2)
         {
-            PointSymbol ps = CreatePointSymbol(coord1, coord2);
+            var ps = CreatePointSymbol(coord1, coord2);
             if (ps != null)
             {
                 ps.Shape.Label = label;
@@ -780,8 +793,8 @@ namespace ExprPatternMatch
                         expr1.Args.Count() == 2)
                     {
                         object obj1, obj2;
-                        bool result1 = expr1.Args[0].IsLabel(out obj1);
-                        bool result2 = expr1.Args[1].IsLabel(out obj2);
+                        var result1 = expr1.Args[0].IsLabel(out obj1);
+                        var result2 = expr1.Args[1].IsLabel(out obj2);
 
                         if (result1 && result2)
                         {
@@ -789,7 +802,7 @@ namespace ExprPatternMatch
                             var str2 = obj2 as string;
                             Debug.Assert(str1 != null);
                             Debug.Assert(str2 != null);
-                            string label = str1 + str2;
+                            var label = str1 + str2;
                             var line = new Line(label);
                             ls = new LineSymbol(line);
                             return true;
